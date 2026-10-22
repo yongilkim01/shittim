@@ -1,6 +1,39 @@
 # Shittim
 
-Hyprland용 Quickshell 0.3.2 상단 바. 왼쪽에는 워크스페이스, 오른쪽에는 배터리와 초 단위 시계를 표시한다.
+Hyprland용 Quickshell 0.3.2 상단 바. 왼쪽에는 워크스페이스, 오른쪽에는 네트워크·배터리·초 단위 시계를 표시한다.
+
+## 네트워크
+
+- `Quickshell.Networking` 내장 모듈로 NetworkManager D-Bus 상태를 읽는다. NetworkManager와 시스템 D-Bus가 필요하며 `nmcli` 프로세스나 폴링 타이머는 사용하지 않는다.
+- `Networking.devices.values`에서 Wi-Fi와 유선 장치를 탐색한다. 인터페이스 이름을 고정하지 않고 `lo`, `p2p-dev-*`를 제외한다.
+- 연결된 Wi-Fi 장치의 `networks.values`에서 `connected` 네트워크를 골라 `WifiNetwork.name`의 실제 SSID를 표시한다. 연결 프로필 이름을 사용하지 않는다.
+- SSID를 구분자로 분리하거나 셸 명령에 전달하지 않는다. 공백·한글·콜론·역슬래시·따옴표를 그대로 보존하며 `Text.PlainText`로 표시해 HTML처럼 보이는 SSID도 문자로 처리한다. 표시 폭은 240px로 제한하고 긴 이름은 말줄임한다.
+- `signalStrength`는 0~1이다. 25%·50%·75%를 경계로 Nerd Font Wi-Fi 아이콘을 바꾼다.
+- 연결 시 SSID, 해제 시 `Wi-Fi disconnected`, 연결 중 `Wi-Fi connecting`, 종료 중 `Wi-Fi disconnecting`, 소프트웨어 끄기 `Wi-Fi off`, 하드웨어 차단 `Wi-Fi blocked`를 표시한다.
+- 연결된 유선은 `LAN`으로 표시한다. 유선과 Wi-Fi 동시 연결 시 둘 다 표시하며, Wi-Fi 장치 없이 유선만 있으면 해제 상태도 `LAN disconnected`로 표시한다. 이는 장치 연결 상태이며 인터넷 도달 가능 여부를 보장하는 표시는 아니다.
+- 장치가 없으면 `No network device`, 백엔드를 사용할 수 없으면 `Network unavailable`을 표시한다. QML 바인딩으로 장치 추가·제거, 연결 상태, 무선 활성화, SSID·신호 강도 변경을 반영한다.
+- 사용자 확인 결과의 `QM_Wifi_20F`는 활성 연결 프로필 이름이다. 실제 SSID가 같을 때만 같은 문구가 표시된다.
+
+API: [Networking](https://quickshell.org/docs/v0.3.2/types/Quickshell.Networking/Networking/), [NetworkDevice](https://quickshell.org/docs/v0.3.2/types/Quickshell.Networking/NetworkDevice/), [Network](https://quickshell.org/docs/v0.3.2/types/Quickshell.Networking/Network/), [WifiNetwork](https://quickshell.org/docs/v0.3.2/types/Quickshell.Networking/WifiNetwork/), [v0.3.2 SSID·신호 강도 구현](https://github.com/quickshell-mirror/quickshell/blob/v0.3.2/src/network/nm/network.cpp).
+
+Arch에서 NetworkManager와 실제 SSID·신호를 확인한다.
+
+```sh
+quickshell --version
+systemctl is-active NetworkManager.service
+nmcli -t -f DEVICE,TYPE,STATE,CONNECTION device status
+nmcli radio wifi
+nmcli -f IN-USE,SSID,SIGNAL,DEVICE device wifi list --rescan no
+```
+
+실기 확인: 연결된 SSID·신호 아이콘, Wi-Fi 해제·재연결, 무선 끄기·켜기, 유선 연결·분리, 동시 연결, 장치가 없는 환경을 확인한다. 공백·한글·특수문자가 있는 SSID와 연결 프로필 이름이 다른 경우도 비교한다. 테스트에 사용하는 Wi-Fi 장치 이름은 위 목록에서 확인한다.
+
+```sh
+nmcli radio wifi off
+nmcli radio wifi on
+```
+
+Windows에서는 실제 NetworkManager 통신과 Quickshell UI를 검증할 수 없다. 기존 셸이 실행 중이면 파일 변경의 자동 재로딩을 확인하며, 다른 Kitty에서 같은 셸을 추가 실행하지 않는다.
 
 ## 배터리
 
@@ -23,11 +56,11 @@ PowerShell에서 실행한다. 소유권 경고를 피하기 위한 `-c safe.dir
 ```powershell
 Set-Location C:\Users\User\Desktop\Yongil\projects\shittim
 git -c safe.directory=C:/Users/User/Desktop/Yongil/projects/shittim diff --check
-git -c safe.directory=C:/Users/User/Desktop/Yongil/projects/shittim diff -- components/TopBar.qml
-Get-Content components/Battery.qml, README.md
-git -c safe.directory=C:/Users/User/Desktop/Yongil/projects/shittim add -- components/Battery.qml components/TopBar.qml README.md
+git -c safe.directory=C:/Users/User/Desktop/Yongil/projects/shittim diff -- components/TopBar.qml README.md
+Get-Content components/Network.qml
+git -c safe.directory=C:/Users/User/Desktop/Yongil/projects/shittim add -- components/Network.qml components/TopBar.qml README.md
 git -c safe.directory=C:/Users/User/Desktop/Yongil/projects/shittim diff --cached
-git -c safe.directory=C:/Users/User/Desktop/Yongil/projects/shittim commit -m "Add UPower battery indicator to top bar"
+git -c safe.directory=C:/Users/User/Desktop/Yongil/projects/shittim commit -m "feat: add network status indicator to top bar"
 ```
 
 변경 검토 및 사용자 승인 후에만 푸시한다.

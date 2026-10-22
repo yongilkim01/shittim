@@ -17,6 +17,10 @@ PanelWindow {
 		anchors.verticalCenter: parent.verticalCenter
 		spacing: 16
 
+		Network {
+			anchors.verticalCenter: parent.verticalCenter
+		}
+
 		Battery {
 			anchors.verticalCenter: parent.verticalCenter
 		}
