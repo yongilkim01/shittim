@@ -1,6 +1,36 @@
 # Shittim
 
-Hyprland용 Quickshell 0.3.2 상단 바. 왼쪽에는 워크스페이스, 오른쪽에는 네트워크·배터리·초 단위 시계를 표시한다.
+Hyprland용 Quickshell 0.3.2 상단 바. 왼쪽에는 워크스페이스, 오른쪽에는 네트워크·볼륨·배터리·초 단위 시계를 표시한다.
+
+## 볼륨
+
+- `Quickshell.Services.Pipewire`의 `Pipewire.defaultAudioSink`를 사용한다. PulseAudio 호환 서버를 거치지 않고 PipeWire의 현재 기본 출력 장치를 추적한다.
+- `PwObjectTracker.objects`를 `[sink]`에 바인딩해 기본 출력 장치가 바뀌면 새 장치를 추적한다. `sink.ready`와 `sink.audio`를 확인한 뒤 볼륨과 음소거 상태를 읽고 조작한다.
+- `audio.volume`의 1.0을 100%로 표시한다. 음량 0%·1~50%·50% 초과 및 음소거에 따라 Nerd Font 아이콘을 바꾼다. 음소거 시 빨간색(`#f38ba8`)과 `MUTE`, 그 외에는 기본 글자색(`#cdd6f4`)을 사용한다.
+- 볼륨 표시를 왼쪽 클릭하면 음소거를 전환한다. 마우스 휠 위·아래 한 칸에 5%씩 조절하며 설정값은 0~100%로 제한한다. 작은 휠 델타는 누적하며 장치를 바꾸면 누적값을 초기화한다.
+- 휠 조절은 음소거 상태를 바꾸지 않는다. 외부 도구에서 설정한 100% 초과 볼륨은 실제 값으로 표시하고, 이 컴포넌트로 조절할 때 0~100% 제한을 적용한다.
+- 기본 출력 장치가 없거나 준비 중이면 `N/A`를 표시하고 조작을 비활성화한다. 유효하지 않은 볼륨 값은 `--%`로 표시한다. 외부 볼륨·음소거 변경은 QML 바인딩으로 반영한다.
+
+API: [Pipewire](https://quickshell.org/docs/v0.3.2/types/Quickshell.Services.Pipewire/Pipewire/), [PwNodeAudio](https://quickshell.org/docs/v0.3.2/types/Quickshell.Services.Pipewire/PwNodeAudio/), [PwObjectTracker](https://quickshell.org/docs/v0.3.2/types/Quickshell.Services.Pipewire/PwObjectTracker/), [v0.3.2 볼륨 구현](https://github.com/quickshell-mirror/quickshell/blob/v0.3.2/src/services/pipewire/node.cpp).
+
+Arch에서 기존 PulseAudio 호환 서버의 도구로 비교한다.
+
+```sh
+pactl info
+pactl get-sink-volume @DEFAULT_SINK@
+pactl get-sink-mute @DEFAULT_SINK@
+pactl list short sinks
+```
+
+외부 변경 반영은 다음 명령으로 확인한다. UI에서 왼쪽 클릭 후 `get-sink-mute`, 휠 한 칸 이동 후 `get-sink-volume`을 다시 실행해 음소거 전환과 5% 조절을 비교한다. 0%·100%에서 휠을 더 움직여도 범위를 벗어나지 않아야 한다.
+
+```sh
+pactl set-sink-volume @DEFAULT_SINK@ 50%
+pactl set-sink-mute @DEFAULT_SINK@ toggle
+pactl set-sink-mute @DEFAULT_SINK@ 0
+```
+
+출력 장치 변경은 다른 출력 장치 연결 후 데스크톱 설정 또는 `pactl set-default-sink`로 기본 장치를 바꿔 확인한다. `set-default-sink`에는 `pactl list short sinks`에 나온 실제 장치 이름을 전달한다. 장치 제거·기본 출력 미지정 상태에서도 `N/A` 처리와 나머지 상단 바 동작을 확인한다. Windows에서는 Quickshell·PipeWire 실행 검증을 하지 않는다.
 
 ## 네트워크
 
@@ -57,10 +87,10 @@ PowerShell에서 실행한다. 소유권 경고를 피하기 위한 `-c safe.dir
 Set-Location C:\Users\User\Desktop\Yongil\projects\shittim
 git -c safe.directory=C:/Users/User/Desktop/Yongil/projects/shittim diff --check
 git -c safe.directory=C:/Users/User/Desktop/Yongil/projects/shittim diff -- components/TopBar.qml README.md
-Get-Content components/Network.qml
-git -c safe.directory=C:/Users/User/Desktop/Yongil/projects/shittim add -- components/Network.qml components/TopBar.qml README.md
+Get-Content components/Volume.qml
+git -c safe.directory=C:/Users/User/Desktop/Yongil/projects/shittim add -- components/Volume.qml components/TopBar.qml README.md
 git -c safe.directory=C:/Users/User/Desktop/Yongil/projects/shittim diff --cached
-git -c safe.directory=C:/Users/User/Desktop/Yongil/projects/shittim commit -m "feat: add network status indicator to top bar"
+git -c safe.directory=C:/Users/User/Desktop/Yongil/projects/shittim commit -m "feat: add volume control to top bar"
 ```
 
 변경 검토 및 사용자 승인 후에만 푸시한다.
