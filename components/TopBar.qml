@@ -11,6 +11,12 @@ PanelWindow {
 	implicitHeight: 40
 	color: "#1e1e2e"
 
+	Clock {
+		anchors.right: parent.right
+		anchors.rightMargin: 16
+		anchors.verticalCenter: parent.verticalCenter
+	}
+
 	Row {
 		anchors.left: parent.left
 		anchors.leftMargin: 16
