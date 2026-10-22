@@ -1,0 +1,52 @@
+pragma Singleton
+import QtQuick
+
+QtObject {
+	readonly property string name: "SHITTIM HUD"
+	readonly property color background: "#020f15"
+	readonly property color surface: "#041923"
+	readonly property color surfaceElevated: "#08232e"
+	readonly property color accent: "#00d9f5"
+	readonly property color accentBright: "#50eaff"
+	readonly property color accentDim: "#08798b"
+	readonly property color textPrimary: "#d5f8ff"
+	readonly property color textSecondary: "#76aebc"
+	readonly property color textMuted: "#477481"
+	readonly property color border: "#145263"
+	readonly property color borderActive: accent
+	readonly property color success: "#42e3b4"
+	readonly property color warning: "#ffc56b"
+	readonly property color danger: "#ff637e"
+	readonly property color transparent: "transparent"
+
+	readonly property string fontMono: "Hack Nerd Font Mono"
+	readonly property string fontKorean: "D2Coding"
+	readonly property int textCaption: 10
+	readonly property int textStatus: 12
+	readonly property int textBody: 14
+	readonly property int textTitle: 16
+	readonly property int textValue: 24
+	readonly property real titleTracking: 2.5
+	readonly property real sectionTracking: 1.5
+	readonly property int iconSize: 14
+
+	readonly property int spaceXS: 4
+	readonly property int spaceS: 8
+	readonly property int spaceM: 12
+	readonly property int spaceL: 16
+	readonly property int spaceXL: 24
+	readonly property int barHeight: 40
+	readonly property int barPadding: 16
+	readonly property int controlHeight: 28
+	readonly property int workspaceWidth: 32
+	readonly property int networkTextWidth: 200
+	readonly property int lineWidth: 1
+	readonly property int cornerLength: 8
+	readonly property int cornerRadius: 1
+	readonly property int progressHeight: 2
+
+	readonly property int hoverDuration: 150
+	readonly property int stateDuration: 200
+	readonly property int panelDuration: 250
+	readonly property int easing: Easing.OutCubic
+}

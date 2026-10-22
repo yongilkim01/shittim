@@ -1,7 +1,8 @@
 import QtQuick
 import Quickshell.Services.Pipewire
+import "../ui"
 
-Text {
+HudStatus {
 	id: root
 
 	readonly property PwNode sink: Pipewire.defaultAudioSink
@@ -10,7 +11,7 @@ Text {
 	readonly property int percentage: validVolume ? Math.round(sink.audio.volume * 100) : 0
 	readonly property bool muted: available && sink.audio.muted
 	readonly property string icon: {
-		if (!available || muted) return "\uf6a9"
+		if (!available || muted) return "\uf026"
 		if (!validVolume || percentage === 0) return "\uf026"
 		if (percentage <= 50) return "\uf027"
 		return "\uf028"
@@ -33,17 +34,29 @@ Text {
 		objects: [root.sink]
 	}
 
-	text: !available ? icon + " N/A"
-		: icon + " " + (validVolume ? percentage + "%" : "--%") + (muted ? " MUTE" : "")
-	color: muted ? "#f38ba8" : "#cdd6f4"
-	font.pixelSize: 14
-	font.family: "Hack Nerd Font Mono"
+	glyph: icon
+	text: !available ? "N/A"
+		: (validVolume ? percentage + "%" : "--%") + (muted ? " MUTE" : "")
+	color: muted ? Theme.danger : (available ? Theme.textPrimary : Theme.textMuted)
+	hovered: mouse.containsMouse && available
+	HudProgress {
+		anchors.left: parent.left
+		anchors.right: parent.right
+		anchors.bottom: parent.bottom
+		anchors.leftMargin: Theme.spaceXS
+		anchors.rightMargin: Theme.spaceXS
+		visible: root.hovered && root.validVolume
+		value: root.validVolume ? root.sink.audio.volume : 0
+		fillColor: root.muted ? Theme.danger : Theme.accent
+	}
 
 	MouseArea {
+		id: mouse
 		anchors.fill: parent
 		enabled: root.available
 		acceptedButtons: Qt.LeftButton
 		cursorShape: Qt.PointingHandCursor
+		hoverEnabled: true
 
 		onClicked: root.toggleMute()
 		onWheel: wheel => {

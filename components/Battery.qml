@@ -1,7 +1,8 @@
 import QtQuick
 import Quickshell.Services.UPower
+import "../ui"
 
-Text {
+HudStatus {
 	id: root
 
 	readonly property UPowerDevice battery: UPower.displayDevice
@@ -37,10 +38,18 @@ Text {
 	}
 
 	visible: available
+	glyph: icon
 	text: !available ? ""
-		: icon + " " + (validPercentage ? percentage + "%" : "--%")
+		: (validPercentage ? percentage + "%" : "--%")
 			+ (lowBattery ? " LOW" : "") + (status.length > 0 ? " " + status : "")
-	color: lowBattery ? "#f38ba8" : "#a6e3a1"
-	font.pixelSize: 14
-	font.family: "Hack Nerd Font Mono"
+	color: lowBattery ? Theme.danger : (charging || fullyCharged ? Theme.success : Theme.textPrimary)
+	HudProgress {
+		anchors.left: parent.left
+		anchors.right: parent.right
+		anchors.bottom: parent.bottom
+		anchors.leftMargin: Theme.spaceXS
+		anchors.rightMargin: Theme.spaceXS
+		value: root.validPercentage ? root.battery.percentage : 0
+		fillColor: root.lowBattery ? Theme.danger : Theme.accentDim
+	}
 }

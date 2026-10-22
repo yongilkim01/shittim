@@ -1,0 +1,8 @@
+singleton Theme 1.0 Theme.qml
+HudText 1.0 HudText.qml
+HudIcon 1.0 HudIcon.qml
+HudStatus 1.0 HudStatus.qml
+HudPanel 1.0 HudPanel.qml
+HudButton 1.0 HudButton.qml
+HudDivider 1.0 HudDivider.qml
+HudProgress 1.0 HudProgress.qml

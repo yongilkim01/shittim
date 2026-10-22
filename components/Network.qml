@@ -1,9 +1,10 @@
 import QtQuick
 import Quickshell.Networking as Net
+import "../ui"
 
 Row {
 	id: root
-	spacing: 10
+	spacing: Theme.spaceXS
 
 	readonly property bool backendAvailable: Net.Networking.backend !== Net.NetworkBackendType.None
 	readonly property var devices: Net.Networking.devices.values.filter(device =>
@@ -44,38 +45,30 @@ Row {
 		return "Wi-Fi disconnected"
 	}
 
-	Text {
+	HudStatus {
 		visible: root.backendAvailable && root.wiredDevices.length > 0
 			&& (root.wiredConnected || root.wifiDevices.length === 0)
-		text: root.wiredConnected ? "󰈀 LAN" : "󰌙 LAN disconnected"
-		color: root.wiredConnected ? "#a6e3a1" : "#f38ba8"
-		font.pixelSize: 14
-		font.family: "Hack Nerd Font Mono"
+		glyph: root.wiredConnected ? "󰈀" : "󰌙"
+		text: root.wiredConnected ? "LAN" : "LAN disconnected"
+		color: root.wiredConnected ? Theme.success : Theme.danger
 		anchors.verticalCenter: parent.verticalCenter
 	}
 
-	Text {
+	HudStatus {
 		visible: root.backendAvailable && root.wifiDevices.length > 0
-		text: root.wifiIcon + " " + root.wifiStatus
-		textFormat: Text.PlainText
-		wrapMode: Text.NoWrap
-		maximumLineCount: 1
-		elide: Text.ElideRight
-		width: Math.min(implicitWidth, 240)
-		color: root.wifiConnected ? "#a6e3a1"
+		glyph: root.wifiIcon
+		text: root.wifiStatus
+		maximumTextWidth: Theme.networkTextWidth
+		color: root.wifiConnected ? Theme.success
 			: (root.wifiDevice !== null && root.wifiEnabled
-				&& root.wifiDevice.state === Net.ConnectionState.Connecting ? "#cdd6f4" : "#f38ba8")
-		font.pixelSize: 14
-		font.family: "Hack Nerd Font Mono"
+				&& root.wifiDevice.state === Net.ConnectionState.Connecting ? Theme.warning : Theme.danger)
 		anchors.verticalCenter: parent.verticalCenter
 	}
 
-	Text {
+	HudStatus {
 		visible: !root.backendAvailable || root.devices.length === 0
 		text: root.backendAvailable ? "No network device" : "Network unavailable"
-		color: "#cdd6f4"
-		font.pixelSize: 14
-		font.family: "Hack Nerd Font Mono"
+		color: Theme.textMuted
 		anchors.verticalCenter: parent.verticalCenter
 	}
 }

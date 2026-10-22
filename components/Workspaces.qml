@@ -1,36 +1,21 @@
 import QtQuick
 import Quickshell.Hyprland
+import "../ui"
 
 Row{
-	spacing: 6
+	spacing: Theme.spaceXS
 
 	Repeater{
 		model: Hyprland.workspaces
 
-		delegate: Rectangle {
+		delegate: HudButton {
 			id: workspaceButton
 
 			required property HyprlandWorkspace modelData
 
-			width: 32
-			height: 28
-			radius: 6
-
-			color: modelData.focused ? "#89b4fa" : "313244"
-			Text {
-				anchors.centerIn: parent
-				text: workspaceButton.modelData.name
-				color: workspaceButton.modelData.focused ? "#11111b" : "#cdd6f4"
-				font.pixelSize: 13
-				font.bold: true
-			}	
-
-			MouseArea {
-				anchors.fill: parent
-				cursorShape: Qt.PointingHandCursor
-
-				onClicked: workspaceButton.modelData.activate()
-			}
+			active: modelData.focused
+			text: workspaceButton.modelData.name
+			onClicked: workspaceButton.modelData.activate()
 		}
 	}
 }
