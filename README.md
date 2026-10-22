@@ -5,6 +5,7 @@ Hyprland용 Quickshell 0.3.2 상단 바. 왼쪽에는 워크스페이스, 오른
 ## 배터리
 
 - `Quickshell.Services.UPower`의 `UPower.displayDevice`를 사용한다. UPower 데몬이 필요하다.
+- DisplayDevice는 합성 장치이므로 `isLaptopBattery` 대신 `ready`, 배터리 타입, `isPresent`로 표시 가능 여부를 확인한다. `isLaptopBattery`가 요구하는 `powerSupply`는 DisplayDevice에서 보장되지 않는다.
 - Quickshell 0.3.2의 `percentage`는 0~1 범위이므로 100을 곱해 반올림한다.
 - 충전 중은 `Charging`, 완충은 `Full`로 표시하고 녹색을 사용한다. 100%만으로 완충을 판단하지 않는다.
 - 충전 대기는 `Plugged in`, 방전 대기는 `On battery`, 알 수 없는 상태는 `Unknown`으로 표시한다.

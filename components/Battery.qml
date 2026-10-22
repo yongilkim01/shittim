@@ -6,7 +6,7 @@ Text {
 
 	readonly property UPowerDevice battery: UPower.displayDevice
 	readonly property bool available: battery !== null && battery.ready
-		&& battery.isLaptopBattery && battery.isPresent
+		&& battery.type === UPowerDeviceType.Battery && battery.isPresent
 	readonly property bool validPercentage: available && isFinite(battery.percentage)
 		&& battery.percentage >= 0 && battery.percentage <= 1
 	readonly property int percentage: validPercentage ? Math.round(battery.percentage * 100) : 0
