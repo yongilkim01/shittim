@@ -11,10 +11,19 @@ PanelWindow {
 	implicitHeight: 40
 	color: "#1e1e2e"
 
-	Clock {
+	Row {
 		anchors.right: parent.right
 		anchors.rightMargin: 16
 		anchors.verticalCenter: parent.verticalCenter
+		spacing: 16
+
+		Battery {
+			anchors.verticalCenter: parent.verticalCenter
+		}
+
+		Clock {
+			anchors.verticalCenter: parent.verticalCenter
+		}
 	}
 
 	Row {
