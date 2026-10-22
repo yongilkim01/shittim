@@ -12,56 +12,62 @@ PanelWindow {
 	}
 
 	implicitHeight: Theme.barHeight
-	color: Theme.background
+	color: Theme.transparent
 
-	HudPanel {
+	Canvas {
 		anchors.fill: parent
-		color: Theme.background
-		border.width: 0
-		corners: false
-	}
-	Rectangle {
-		anchors.left: parent.left
-		anchors.right: parent.right
-		anchors.bottom: parent.bottom
-		height: Theme.lineWidth
-		color: Theme.accentDim
+		onWidthChanged: requestPaint()
+		onHeightChanged: requestPaint()
+		onPaint: {
+			const ctx = getContext("2d")
+			const bottom = height - Theme.lineWidth / 2
+			const shoulder = bottom - Theme.barNotchHeight
+			ctx.clearRect(0, 0, width, height)
+			ctx.beginPath()
+			ctx.moveTo(0, shoulder)
+			ctx.lineTo(Theme.barNotchShoulder, shoulder)
+			ctx.lineTo(Theme.barNotchWidth, bottom)
+			ctx.lineTo(width - Theme.barNotchWidth, bottom)
+			ctx.lineTo(width - Theme.barNotchShoulder, shoulder)
+			ctx.lineTo(width, shoulder)
+			ctx.lineTo(width, 0)
+			ctx.lineTo(0, 0)
+			ctx.closePath()
+			ctx.fillStyle = Theme.background
+			ctx.fill()
+			ctx.beginPath()
+			ctx.moveTo(0, shoulder)
+			ctx.lineTo(Theme.barNotchShoulder, shoulder)
+			ctx.lineTo(Theme.barNotchWidth, bottom)
+			ctx.lineTo(width - Theme.barNotchWidth, bottom)
+			ctx.lineTo(width - Theme.barNotchShoulder, shoulder)
+			ctx.lineTo(width, shoulder)
+			ctx.strokeStyle = Theme.accentDim
+			ctx.lineWidth = Theme.lineWidth
+			ctx.stroke()
+		}
 	}
 	RowLayout {
+		objectName: "barLayout"
 		anchors.fill: parent
 		anchors.leftMargin: Theme.barPadding
 		anchors.rightMargin: Theme.barPadding
-		spacing: Theme.spaceM
+		spacing: Theme.spaceXL
 
-		Row {
-			spacing: Theme.spaceS
+		HudText {
+			text: "SHITTIM"
+			textStyle: "title"
+			color: Theme.accentBright
 			Layout.alignment: Qt.AlignVCenter
-			HudPanel {
-				width: Theme.spaceXL
-				height: Theme.spaceXL
-				active: true
-				anchors.verticalCenter: parent.verticalCenter
-				HudIcon {
-					anchors.centerIn: parent
-					text: "\uf2db"
-					color: Theme.accent
-				}
-			}
-			HudText {
-				text: "SHITTIM"
-				textStyle: "title"
-				font.pixelSize: Theme.textBody
-				color: Theme.accent
-				anchors.verticalCenter: parent.verticalCenter
-			}
+			Layout.rightMargin: Theme.spaceXL
 		}
-		HudDivider { Layout.alignment: Qt.AlignVCenter }
 		Flickable {
+			objectName: "workspaceViewport"
 			Layout.fillWidth: true
 			Layout.minimumWidth: 0
 			Layout.preferredWidth: workspaces.implicitWidth
 			Layout.maximumWidth: workspaces.implicitWidth
-			Layout.preferredHeight: Theme.controlHeight
+			Layout.preferredHeight: Theme.barWorkspaceHeight
 			Layout.alignment: Qt.AlignVCenter
 			contentWidth: workspaces.width
 			contentHeight: workspaces.height
@@ -72,15 +78,14 @@ PanelWindow {
 		}
 		Item { Layout.fillWidth: true; Layout.minimumWidth: Theme.spaceS }
 		Row {
+			objectName: "barStatuses"
 			Layout.alignment: Qt.AlignVCenter
-			spacing: Theme.spaceS
-			Network { anchors.verticalCenter: parent.verticalCenter }
+			spacing: Theme.spaceXL
+			Network { compact: true; anchors.verticalCenter: parent.verticalCenter }
+			Volume { compact: true; anchors.verticalCenter: parent.verticalCenter }
+			Battery { compact: true; anchors.verticalCenter: parent.verticalCenter }
 			HudDivider { anchors.verticalCenter: parent.verticalCenter }
-			Volume { anchors.verticalCenter: parent.verticalCenter }
-			HudDivider { visible: battery.visible; anchors.verticalCenter: parent.verticalCenter }
-			Battery { id: battery; anchors.verticalCenter: parent.verticalCenter }
-			HudDivider { anchors.verticalCenter: parent.verticalCenter }
-			Clock { anchors.verticalCenter: parent.verticalCenter }
+			Clock { compact: true; anchors.verticalCenter: parent.verticalCenter }
 		}
 	}
 }

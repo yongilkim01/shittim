@@ -36,7 +36,15 @@ QtObject {
 	readonly property int spaceL: 16
 	readonly property int spaceXL: 24
 	readonly property int barHeight: 40
-	readonly property int barPadding: 16
+	readonly property int barPadding: 38
+	readonly property int barNotchWidth: 24
+	readonly property int barNotchShoulder: 8
+	readonly property int barNotchHeight: 16
+	readonly property int barWorkspaceWidth: 20
+	readonly property int barWorkspaceHeight: 18
+	readonly property int barWorkspaceRadius: 3
+	readonly property int barTextSize: 14
+	readonly property int barIconSize: 24
 	readonly property int controlHeight: 28
 	readonly property int workspaceWidth: 32
 	readonly property int networkTextWidth: 200

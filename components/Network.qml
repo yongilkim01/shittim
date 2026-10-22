@@ -4,6 +4,7 @@ import "../ui"
 
 Row {
 	id: root
+	property bool compact: false
 	spacing: Theme.spaceXS
 
 	readonly property bool backendAvailable: Net.Networking.backend !== Net.NetworkBackendType.None
@@ -29,7 +30,7 @@ Row {
 	readonly property string wifiIcon: {
 		if (!wifiEnabled) return "󰤮"
 		if (!wifiConnected || wifiNetwork === null) return "󰤯"
-		if (signalStrength >= 0.75) return "󰤨"
+		if (signalStrength >= 0.75) return compact ? "\uf1eb" : "󰤨"
 		if (signalStrength >= 0.50) return "󰤥"
 		if (signalStrength >= 0.25) return "󰤢"
 		return "󰤟"
@@ -46,27 +47,34 @@ Row {
 	}
 
 	HudStatus {
+		compact: root.compact
+		iconOnly: compact
 		visible: root.backendAvailable && root.wiredDevices.length > 0
 			&& (root.wiredConnected || root.wifiDevices.length === 0)
 		glyph: root.wiredConnected ? "󰈀" : "󰌙"
 		text: root.wiredConnected ? "LAN" : "LAN disconnected"
-		color: root.wiredConnected ? Theme.success : Theme.danger
+		color: root.wiredConnected ? (compact ? Theme.accentBright : Theme.success) : Theme.danger
 		anchors.verticalCenter: parent.verticalCenter
 	}
 
 	HudStatus {
+		compact: root.compact
+		iconOnly: compact
 		visible: root.backendAvailable && root.wifiDevices.length > 0
 		glyph: root.wifiIcon
 		text: root.wifiStatus
 		maximumTextWidth: Theme.networkTextWidth
-		color: root.wifiConnected ? Theme.success
+		color: root.wifiConnected ? (compact ? Theme.accentBright : Theme.success)
 			: (root.wifiDevice !== null && root.wifiEnabled
 				&& root.wifiDevice.state === Net.ConnectionState.Connecting ? Theme.warning : Theme.danger)
 		anchors.verticalCenter: parent.verticalCenter
 	}
 
 	HudStatus {
+		compact: root.compact
+		iconOnly: compact
 		visible: !root.backendAvailable || root.devices.length === 0
+		glyph: "󰤮"
 		text: root.backendAvailable ? "No network device" : "Network unavailable"
 		color: Theme.textMuted
 		anchors.verticalCenter: parent.verticalCenter

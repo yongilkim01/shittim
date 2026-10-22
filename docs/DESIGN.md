@@ -45,9 +45,9 @@ HudPanel {
 | --- | --- |
 | `HudText` | `textStyle`: `status`, `caption`, `section`, `body`, `title`, `value`, `secondary`. 일반 텍스트·한 줄·말줄임 기본값 |
 | `HudIcon` | Nerd Font 전용 아이콘. `text`와 `color` 지정 |
-| `HudStatus` | `glyph`, `text`, `color`, `maximumTextWidth`, `hovered`. 시스템 상태용 공통 배치 |
+| `HudStatus` | `glyph`, `text`, `color`, `maximumTextWidth`, `hovered`. `compact`는 바용 크기, `iconOnly`는 호버 시에만 텍스트 표시 |
 | `HudPanel` | `active`, `corners`. 얇은 경계와 정적인 모서리 장식 |
-| `HudButton` | `text`, `active`, `enabled`, `clicked`. 마우스 호버·왼쪽 클릭·키보드 Space/Return |
+| `HudButton` | `text`, `active`, `enabled`, `clicked`. `compact`는 작은 워크스페이스 표시. 마우스 호버·왼쪽 클릭·키보드 Space/Return |
 | `HudDivider` | `vertical`로 방향 지정. 기본 세로 구분선 |
 | `HudProgress` | `value` 0~1, `fillColor`. 범위 제한과 200ms 폭 전환 |
 
@@ -57,13 +57,15 @@ HudPanel {
 
 ## 상단 바
 
-- 왼쪽: 정적인 모서리 장식의 시스템 마크, SHITTIM, 워크스페이스.
-- 오른쪽: Network → Volume → Battery → Clock. 초 단위 시계 형식은 유지한다.
-- 활성 워크스페이스: 시안 경계·문자·하단 선. 비활성: 어두운 면과 청록 문자. 호버 150ms, OutCubic.
-- 긴 SSID: 200px 말줄임. 실제 SSID 데이터는 보존한다.
+- 왼쪽: SHITTIM 텍스트와 실제 Hyprland 워크스페이스. 별도 시스템 마크는 표시하지 않는다.
+- 오른쪽: Network → Volume → Battery → 구분선 → Clock. 날짜·시각은 `MM/dd HH:mm`으로 표시한다.
+- 배경은 `#020f15`, 높이는 40px. 하단의 얇은 시안 경계가 양 끝에서 사선으로 올라가며, 바깥 모서리는 투명하다. Canvas는 크기 변경 때만 다시 그린다.
+- 활성 워크스페이스: 기본 20×18px의 밝은 시안 면과 어두운 숫자. 비활성: 배경 없이 청록 숫자. 이름이 길면 표시 폭이 늘어난다. 호버 150ms, OutCubic.
+- 네트워크는 평소 아이콘만 표시하고 호버 시 실제 SSID 또는 연결 상태를 표시한다. 긴 SSID는 200px 말줄임이며 원본 데이터는 보존한다.
 - 공간이 부족하면 워크스페이스 영역이 줄고 가로로 스크롤할 수 있다. 오른쪽 상태 영역과 겹치지 않는다.
-- 배터리 부족과 음소거는 Danger, 네트워크 연결 중은 Warning. 충전·완충·연결 상태는 Success.
-- 배터리·볼륨 하단에는 얇은 진행률을 표시하며 볼륨 진행률은 호버 중에만 보인다.
+- 정상 상태의 아이콘·수치는 밝은 시안으로 통일한다. 배터리 부족과 음소거는 Danger, 네트워크 연결 중은 Warning.
+- 배터리는 평소 아이콘과 잔량만 표시한다. 호버 시 충전·방전 등의 상태와 진행률을 표시한다. 볼륨은 클릭 음소거·5% 휠 조절을 유지하며 호버 시 진행률과 음소거 문구를 표시한다.
+- 바 전용 `compact` 표현은 상태 조회 로직과 분리되어 있다. 일반 패널용 HUD 컴포넌트의 기본 표현은 유지한다.
 
 ## 검증
 

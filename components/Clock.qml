@@ -3,7 +3,9 @@ import QtQuick
 import "../ui"
 
 HudText {
-	text: Qt.formatDateTime(systemClock.date, "yyyy-MM-dd ddd  HH:mm:ss")
+	property bool compact: false
+	font.pixelSize: compact ? Theme.barTextSize : Theme.textStatus
+	text: Qt.formatDateTime(systemClock.date, compact ? "MM/dd HH:mm" : "yyyy-MM-dd ddd  HH:mm:ss")
 	color: Theme.textPrimary
 
 	SystemClock {

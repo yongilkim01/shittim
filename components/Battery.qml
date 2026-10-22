@@ -41,9 +41,11 @@ HudStatus {
 	glyph: icon
 	text: !available ? ""
 		: (validPercentage ? percentage + "%" : "--%")
-			+ (lowBattery ? " LOW" : "") + (status.length > 0 ? " " + status : "")
-	color: lowBattery ? Theme.danger : (charging || fullyCharged ? Theme.success : Theme.textPrimary)
+			+ (!compact || hovered ? (lowBattery ? " LOW" : "") + (status.length > 0 ? " " + status : "") : "")
+	color: lowBattery ? Theme.danger : (compact ? Theme.accentBright
+		: (charging || fullyCharged ? Theme.success : Theme.textPrimary))
 	HudProgress {
+		visible: !root.compact || root.hovered
 		anchors.left: parent.left
 		anchors.right: parent.right
 		anchors.bottom: parent.bottom

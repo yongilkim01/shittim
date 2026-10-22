@@ -36,8 +36,8 @@ HudStatus {
 
 	glyph: icon
 	text: !available ? "N/A"
-		: (validVolume ? percentage + "%" : "--%") + (muted ? " MUTE" : "")
-	color: muted ? Theme.danger : (available ? Theme.textPrimary : Theme.textMuted)
+		: (validVolume ? percentage + "%" : "--%") + (muted && (!compact || hovered) ? " MUTE" : "")
+	color: muted ? Theme.danger : (available ? (compact ? Theme.accentBright : Theme.textPrimary) : Theme.textMuted)
 	hovered: mouse.containsMouse && available
 	HudProgress {
 		anchors.left: parent.left

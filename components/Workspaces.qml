@@ -3,7 +3,7 @@ import Quickshell.Hyprland
 import "../ui"
 
 Row{
-	spacing: Theme.spaceXS
+	spacing: Theme.spaceM
 
 	Repeater{
 		model: Hyprland.workspaces
@@ -14,6 +14,7 @@ Row{
 			required property HyprlandWorkspace modelData
 
 			active: modelData.focused
+			compact: true
 			text: workspaceButton.modelData.name
 			onClicked: workspaceButton.modelData.activate()
 		}
