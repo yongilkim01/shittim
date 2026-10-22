@@ -22,6 +22,7 @@ PanelWindow {
 		}
 
 		Clock {
+			color: "#cdd6f4"
 			anchors.verticalCenter: parent.verticalCenter
 		}
 	}
