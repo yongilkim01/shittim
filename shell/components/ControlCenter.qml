@@ -40,6 +40,7 @@ PanelWindow {
 		ControlContent {
 			id: content; anchors.fill: parent
 			audio: AudioState; network: NetworkState; battery: BatteryState; system: SystemControl
+			notifications: NotificationState
 			page: ControlState.page
 			onNavigate: destination => ControlState.page = destination
 			onCloseRequested: ControlState.close()

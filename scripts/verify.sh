@@ -39,6 +39,10 @@ for shittim_unit in shittim.service shittim-fcitx5.service shittim-polkit.servic
     systemctl --user cat "$shittim_unit" >/dev/null || shittim_failures=$((shittim_failures + 1))
 done
 if [[ -n ${HYPRLAND_INSTANCE_SIGNATURE:-} ]]; then
+    python3 "$SHITTIM_ROOT/scripts/notification-owner.py" --audit
+    if systemctl --user is-active --quiet shittim.service; then
+        python3 "$SHITTIM_ROOT/scripts/notification-owner.py" --check || { warn '알림 서버 소유권 충돌 또는 미등록: scripts/verify-notifications.sh로 확인하세요.'; shittim_failures=$((shittim_failures + 1)); }
+    fi
     if ! systemctl --user is-active --quiet shittim.service; then
         warn '현재 Shittim 서비스가 비활성입니다. 새 설정 적용 후 다음 로그인에서 실행됩니다.'
     fi

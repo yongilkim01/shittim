@@ -11,4 +11,6 @@ ShellRoot {
 	}
 	ControlCenter {}
 	AppLauncher {}
+	NotificationCenter {}
+	NotificationPopups {}
 }

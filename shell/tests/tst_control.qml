@@ -55,6 +55,12 @@ TestCase {
 		property var battery: null
 	}
 	QtObject {
+		id: notificationsFixture
+		property bool available: true
+		property bool dnd: false
+		function toggleDnd() { dnd = !dnd }
+	}
+	QtObject {
 		id: systemFixture
 		property string error: ""
 		property bool ready: true
@@ -190,5 +196,16 @@ TestCase {
 		compare(findChild(content, "quick-dnd").interactive, false)
 		compare(findChild(content, "quick-dark").interactive, false)
 		compare(findChild(content, "overviewVolume").width, 217)
+	}
+	function test_sharedDndToggleKeepsReferenceGrid() {
+		const content = createTemporaryObject(contentFactory, testCase, {width: 337, height: 293, notifications: notificationsFixture})
+		const tile = findChild(content, "quick-dnd")
+		compare(tile.x, 124); compare(tile.y, 173); compare(tile.interactive, true)
+		notificationsFixture.dnd = false; compare(tile.active, false)
+		mouseClick(tile, tile.width / 2, tile.height / 2)
+		compare(notificationsFixture.dnd, true); compare(tile.active, true)
+		notificationsFixture.dnd = false; compare(tile.active, false)
+		notificationsFixture.available = false; compare(tile.interactive, false)
+		notificationsFixture.available = true
 	}
 }

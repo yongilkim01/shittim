@@ -7,6 +7,7 @@ Item {
     required property var network
     required property var battery
     required property var system
+    property var notifications: null
     signal navigate(string page)
     readonly property real ratio: width / 337
     implicitWidth: 337
@@ -59,7 +60,7 @@ Item {
         Repeater {
             model: [
                 {name: "Screen Cast", key: "cast", icon: "󰍹", hint: "화면 공유 제어는 아직 지원하지 않습니다."},
-                {name: "Do Not Disturb", key: "dnd", icon: "\uf186", hint: "알림 센터가 없어 방해 금지 전환은 지원하지 않습니다."},
+                {name: "Do Not Disturb", key: "dnd", icon: "\uf186", hint: "방해 금지 전환 · 긴급 알림은 표시합니다."},
                 {name: "Dark Mode", key: "dark", icon: "\uf042", hint: "고정 HUD 테마이며 시스템 테마 전환은 지원하지 않습니다."},
                 {name: "Power", key: "power", icon: "\uf011", hint: "배터리와 전원 프로필"},
                 {name: "Screenshot", key: "screenshot", icon: "󰆟", hint: "패널을 닫고 화면을 저장합니다."},
@@ -71,9 +72,11 @@ Item {
                 objectName: "quick-" + modelData.key
                 x: 18 + (index % 3) * 106; y: 173 + Math.floor(index / 3) * 59
                 width: index % 3 === 0 ? 93 : 92; height: 49
-                title: modelData.name; glyph: modelData.icon; hint: modelData.hint
-                interactive: ["power", "settings"].indexOf(modelData.key) >= 0 || modelData.key === "screenshot" && root.system.screenshotAvailable
-                onClicked: { if (modelData.key === "screenshot") root.system.takeScreenshot(); else root.navigate(modelData.key) }
+                title: modelData.name; glyph: modelData.icon
+                hint: modelData.key === "dnd" && root.notifications !== null && !root.notifications.available ? "Shittim 알림 서버 소유권을 확인하세요." : modelData.hint
+                active: modelData.key === "dnd" && root.notifications !== null && root.notifications.dnd
+                interactive: ["power", "settings"].indexOf(modelData.key) >= 0 || modelData.key === "screenshot" && root.system.screenshotAvailable || modelData.key === "dnd" && root.notifications !== null && root.notifications.available
+                onClicked: { if (modelData.key === "dnd") root.notifications.toggleDnd(); else if (modelData.key === "screenshot") root.system.takeScreenshot(); else root.navigate(modelData.key) }
             }
         }
     }

@@ -6,6 +6,8 @@ Arch Linux + Hyprland + Quickshell 기반 데스크톱 환경. SHITTIM HUD 디�
 
 **Super+Space**로 전용 App Launcher를 연다. 원본 시안 2번 패널을 재현하며 실제 XDG 앱 검색·아이콘·키보드 탐색·터미널 앱 실행을 지원한다. 검증 전까지 **Super+R의 Fuzzel은 유지**한다. [런처 적용·검증·Fuzzel 대체/복원](docs/app-launcher.md)을 참고한다.
 
+상단 바의 종 아이콘은 원본 시안 3번의 Notification Center를 연다. 실제 Linux 알림·팝업·세션 기록·액션·미읽음·ALL/SYSTEM/APP 필터와 Control Center 공통 DND를 지원한다. 다른 알림 데몬은 자동 종료하지 않는다. [알림 적용·충돌 검사·실기 테스트](docs/notifications.md)를 참고한다.
+
 ## 새 Arch Linux 환경 설치
 
 설치된 Arch Linux x86_64에서 네트워크 연결과 일반 사용자 계정, `git`, `sudo` 및 해당 사용자의 sudo 권한을 먼저 준비한다. Arch 설치 ISO/chroot나 root 계정에서 실행하지 않는다. TTY 로그인 비밀번호는 유지하며 디스플레이 매니저와 자동 로그인은 설치하지 않는다.

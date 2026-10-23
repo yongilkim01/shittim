@@ -11,6 +11,7 @@ if (( SHITTIM_DRY_RUN )); then
 fi
 check_session_versions
 config_tool autostart
+python3 "$SHITTIM_ROOT/scripts/notification-owner.py" --audit
 systemctl --user daemon-reload
 fc-cache -f
 info '자동 실행 구성 완료. 현재 Hyprland·Shittim·Fcitx5는 재시작하지 않았습니다.'

@@ -15,7 +15,11 @@ PanelWindow {
 	implicitHeight: Theme.barHeight
 	color: Theme.transparent
 	TapHandler {
-		onTapped: if (ControlState.opened && point.position.x < statusArea.mapToItem(null, 0, 0).x) ControlState.close()
+		onTapped: {
+			if (ControlState.opened && point.position.x < statusArea.mapToItem(null, 0, 0).x) ControlState.close()
+			const notificationX = notificationArea.mapToItem(null, 0, 0).x
+			if (NotificationState.opened && (point.position.x < notificationX || point.position.x > notificationX + notificationArea.width)) NotificationState.close()
+		}
 	}
 
 	Canvas {
@@ -81,6 +85,22 @@ PanelWindow {
 			Workspaces { id: workspaces }
 		}
 		Item { Layout.fillWidth: true; Layout.minimumWidth: Theme.spaceS }
+		Item {
+			id: notificationArea
+			Layout.preferredWidth: notificationStatus.implicitWidth
+			Layout.preferredHeight: Theme.barIconSize
+			Layout.alignment: Qt.AlignVCenter
+			Row {
+				id: notificationStatus; spacing: Theme.spaceXS
+				HudIcon {
+					text: NotificationState.dnd ? "\uf1f6" : "\uf0f3"; font.pixelSize: Theme.barIconSize; width: Theme.barIconSize
+					color: NotificationState.ownership === "conflict" || NotificationState.ownership === "error" ? Theme.warning
+						: NotificationState.unread > 0 || NotificationState.dnd ? Theme.accent : Theme.textSecondary
+				}
+				HudText { visible: NotificationState.unread > 0; text: NotificationState.unread > 99 ? "99+" : String(NotificationState.unread); font.pixelSize: 10; height: Theme.barIconSize; color: Theme.accentBright }
+			}
+			MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: NotificationState.toggle(bar) }
+		}
 		Item {
 			id: statusArea
 			implicitWidth: statuses.implicitWidth

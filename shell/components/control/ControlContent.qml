@@ -8,6 +8,7 @@ FocusScope {
 	required property var network
 	required property var battery
 	required property var system
+	property var notifications: null
 	property string page: "overview"
 	signal navigate(string destination)
 	signal closeRequested()
@@ -66,7 +67,7 @@ FocusScope {
 		}
 	}
 	Connections { target: root.system; function onPromptChanged() { pin.clear(); if (pin.visible) pin.forceActiveFocus() } }
-	Component { id: overviewPage; ControlOverview { audio: root.audio; network: root.network; battery: root.battery; system: root.system; onNavigate: destination => root.navigate(destination) } }
+	Component { id: overviewPage; ControlOverview { audio: root.audio; network: root.network; battery: root.battery; system: root.system; notifications: root.notifications; onNavigate: destination => root.navigate(destination) } }
 	Component { id: wifiPage; WifiPage { network: root.network; system: root.system } }
 	Component { id: bluetoothPage; BluetoothPage { system: root.system } }
 	Component { id: audioPage; AudioPage { audio: root.audio } }

@@ -4,3 +4,4 @@ singleton BatteryState 1.0 BatteryState.qml
 singleton ControlState 1.0 ControlState.qml
 singleton SystemControl 1.0 SystemControl.qml
 singleton LauncherState 1.0 LauncherState.qml
+singleton NotificationState 1.0 NotificationState.qml
