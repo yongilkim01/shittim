@@ -8,7 +8,7 @@ ColumnLayout {
 	spacing: Theme.spaceS
 	LevelControl {
 		Layout.fillWidth: true; title: "밝기"; glyph: "󰃠"
-		available: root.system.backlight !== null && root.system.backlight.writable && root.system.ready && !root.system.busy
+		available: root.system.backlight !== null && root.system.backlight.writable && root.system.ready
 		value: root.system.backlight !== null ? root.system.backlight.value : 0
 		detail: root.system.backlight !== null ? root.system.backlight.name : "백라이트 장치 없음"
 		deferred: true; onChanged: fraction => root.system.setBrightness(fraction)

@@ -22,11 +22,13 @@
 | Wi-Fi | [Networking](https://quickshell.org/docs/v0.3.2/types/Quickshell.Networking/Networking/), [WifiNetwork](https://quickshell.org/docs/v0.3.2/types/Quickshell.Networking/WifiNetwork/) | 장치 자동 탐색, 실제 SSID, 검색, 연결·해제. 저장된 인증을 먼저 시도하고 `NoSecrets`이면 WPA/WPA2 PSK·WPA3 SAE 비밀번호 입력. |
 | 고급 Wi-Fi | [nm-connection-editor](https://archlinux.org/packages/extra/x86_64/nm-connection-editor/) | 기업용 802.1X·WEP·숨겨진 SSID는 시스템 연결 편집기로 설정. 단순 PSK 입력으로 처리하지 않는다. |
 | Bluetooth | [Quickshell Bluetooth](https://quickshell.org/docs/v0.3.2/types/Quickshell.Bluetooth/), [BlueZ Agent1](https://bluez.readthedocs.io/en/latest/agent-api/) | 내장 모델로 어댑터·장치 추적과 전원·검색. 페어링·연결·해제는 인증 요청과 오류를 받을 수 있도록 같은 D-Bus 연결에서 처리. PIN·숫자 비교·원격 코드 표시·사용자 거부를 지원. 기본 에이전트를 가로채지 않는다. |
-| 밝기 | [brightnessctl](https://github.com/Hummer12007/brightnessctl) + `/sys/class/backlight` | 실제 장치 선택. 해제 시 적용, 최소 1%로 검은 화면 방지. 장치 없음·권한 오류 시 비활성화. 외부 모니터 DDC/CI와 자동 밝기는 미지원. |
+| 밝기 | [brightnessctl](https://github.com/Hummer12007/brightnessctl), [logind SetBrightness](https://www.freedesktop.org/software/systemd/man/latest/org.freedesktop.login1.html), `/sys/class/backlight` | 실제 장치 선택. 해제 시 적용, 최소 1%로 검은 화면 방지. 명령 실패 시 현재 UID의 활성 로컬 세션을 찾아 logind로 재시도한다. 둘 다 권한이 거부될 때 비활성화하며 상세 화면에서 새로고침할 수 있다. 외부 모니터 DDC/CI와 자동 밝기는 미지원. |
 | 배터리·전원 | UPower, `org.freedesktop.UPower.PowerProfiles` | 기존 배터리 상태 공유. 전원 서비스가 노출한 프로필만 표시하며 성능 모드를 만들어내지 않는다. 0.3.2 PowerProfiles에는 서비스 가용성·실패 신호가 없으므로 보조 프로세스에서 비동기 D-Bus 결과를 확인한다. |
 | 패널 | [HyprlandFocusGrab](https://quickshell.org/docs/v0.3.2/types/Quickshell.Hyprland/HyprlandFocusGrab/) + PanelWindow | 클릭한 화면, 화면 경계 제한, 외부 클릭·Escape, 화면 제거 시 닫기. |
 
 `shell/services/`의 싱글턴을 바와 상세 화면이 공유한다. 기능별 상태는 실제 서비스의 QML 바인딩을 사용한다. `control-service.py`는 패널이 열린 동안만 실행하며, 밝기·선택적 전원 프로필·시스템 상태를 2초 간격으로 확인한다. 외부 Python 파일은 가상 QML URL이 아닌 `Quickshell.shellDir`의 실제 파일 경로로 실행한다. Bluetooth 검색은 45초 또는 패널 닫기 때 끝난다. 패널을 닫거나 재로드하면 인증 요청을 거부하고 진행 중인 페어링을 취소한다.
+
+밝기 요청 처리 중에도 슬라이더는 활성 상태를 유지하고 마지막으로 선택한 값을 순서대로 적용한다. 명령 실패를 모두 권한 오류로 처리하지 않으며, 권한 거부·활성 세션 없음·명령 실패·응답 시간 초과를 구분한다. logind 재시도는 현재 사용자 소유의 활성 로컬 세션이 하나로 결정될 때만 사용하고 장치 권한이나 사용자 그룹을 변경하지 않는다.
 
 Wi-Fi 비밀번호는 마스킹된 입력란에서 NetworkManager 내장 API로 직접 전달한다. 제출·취소·패널 닫기 때 입력란을 비운다. 명령 인자·환경 변수·로그·저장소 파일에 기록하지 않는다. NetworkManager 자체의 정상 인증 저장소에는 저장될 수 있다. 보조 프로세스도 stdin JSON을 평가하거나 원문을 로그에 출력하지 않는다.
 

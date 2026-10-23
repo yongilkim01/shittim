@@ -27,11 +27,16 @@ Scope {
 	property bool bluetoothReady: false
 	property var prompt: null
 	property var pending: ({})
+	property var queuedBrightness: null
 	property int sequence: 0
 	property var scanAdapter: null
 	readonly property bool busy: Object.keys(pending).length > 0
 	function errorText(code) {
 		if (code === "BrightnessPermissionDenied") return "밝기 제어 권한이 없습니다. 세션 권한을 확인한 뒤 새로고침하세요."
+		if (code === "BrightnessSessionUnavailable") return "밝기를 조절할 현재 사용자의 활성 로컬 세션을 찾지 못했습니다."
+		if (code === "BrightnessCommandFailed" || code === "BrightnessLogindFailed") return "밝기 변경 명령이 실패했습니다. 장치 상태를 확인하고 다시 시도하세요."
+		if (code === "BrightnessToolUnavailable") return "brightnessctl이 없고 세션 밝기 제어도 사용할 수 없습니다."
+		if (code === "BrightnessTimeout") return "밝기 변경 응답 시간이 초과되었습니다."
 		if (code === "DBusDependencyUnavailable") return "D-Bus 보조 서비스를 시작하지 못했습니다. python-dbus-next 설치를 확인하세요."
 		if (code === "AuthenticationRejected" || code === "AuthenticationFailed") return "Bluetooth 인증이 거부되었거나 실패했습니다."
 		if (code === "NotReady") return "어댑터 전원 또는 하드웨어 차단 상태를 확인하세요."
@@ -47,8 +52,11 @@ Scope {
 		bridge.write(JSON.stringify(message) + "\n")
 	}
 	function setBrightness(value) {
-		if (backlight !== null && backlight.writable && !busy)
-			send({action: "brightness", device: backlight.name, value: value})
+		if (!ready || backlight === null || !backlight.writable) return
+		const message = {action: "brightness", device: backlight.name, value: value}
+		if (Object.values(pending).some(request => request.action === "brightness")) { queuedBrightness = message; return }
+		error = ""
+		send(message)
 	}
 	function setProfile(value) { if (profiles.indexOf(value) >= 0 && !busy) send({action: "profile", profile: value}) }
 	function refresh() { error = ""; send({action: "refresh"}) }
@@ -105,12 +113,17 @@ Scope {
 			pending = next
 			if (!message.ok) error = errorText(message.error)
 			else if (request && request.action === "pair") send({action: "connect", device: request.device})
+			if (request && request.action === "brightness") {
+				const queued = queuedBrightness
+				queuedBrightness = null
+				if (message.ok && queued !== null && backlight !== null && queued.device === backlight.name) send(queued)
+			}
 		}
 	}
 	Connections {
 		target: ControlState
 		function onOpenedChanged() {
-			if (!ControlState.opened) { root.stopDiscovery(); root.prompt = null }
+			if (!ControlState.opened) { root.stopDiscovery(); root.prompt = null; root.queuedBrightness = null }
 			else root.error = root.screenshotError
 		}
 	}
@@ -132,6 +145,7 @@ Scope {
 		onExited: {
 			root.ready = false
 			root.pending = ({})
+			root.queuedBrightness = null
 			root.prompt = null
 			if (ControlState.opened) root.error = "보조 서비스가 종료되었습니다. 패널을 닫았다 다시 열어 주세요."
 		}

@@ -24,7 +24,7 @@ def brightness_devices(base=Path('/sys/class/backlight')):
             maximum = int((path / 'max_brightness').read_text())
             current = int((path / 'brightness').read_text())
             if maximum > 0:
-                devices.append({'name': path.name, 'value': max(0, min(1, current / maximum))})
+                devices.append({'name': path.name, 'value': max(0, min(1, current / maximum)), 'maximum': maximum})
         except (OSError, ValueError):
             continue
     return devices
@@ -68,6 +68,64 @@ class Bridge:
         if not valid_device(path):
             raise ControlError('InvalidDevice')
         return await self.call('org.bluez', path, 'org.bluez.Device1', member, timeout=timeout)
+
+    async def logind_brightness(self, device, percent):
+        sessions = await self.call('org.freedesktop.login1', '/org/freedesktop/login1',
+                                   'org.freedesktop.login1.Manager', 'ListSessions', timeout=2)
+        candidates = []
+        for _, uid, _, seat, path in sessions[0]:
+            if uid != os.getuid() or not seat or (os.environ.get('XDG_SEAT') and seat != os.environ['XDG_SEAT']):
+                continue
+            result = await self.call('org.freedesktop.login1', path,
+                'org.freedesktop.DBus.Properties', 'GetAll', 's', ['org.freedesktop.login1.Session'], timeout=2)
+            properties = result[0]
+            if properties['Active'].value and not properties['Remote'].value:
+                candidates.append(path)
+        if len(candidates) != 1:
+            raise ControlError('BrightnessSessionUnavailable')
+        maximum = device['maximum']
+        level = max(1, min(maximum, (maximum * percent + 50) // 100))
+        await self.call('org.freedesktop.login1', candidates[0], 'org.freedesktop.login1.Session',
+                        'SetBrightness', 'ssu', ['backlight', device['name'], level], timeout=4)
+
+    async def set_brightness(self, name, fraction):
+        devices = brightness_devices()
+        args = brightness_command(name, fraction, devices)
+        device = next(item for item in devices if item['name'] == name)
+        code = 'BrightnessToolUnavailable'
+        try:
+            process = await asyncio.create_subprocess_exec(*args, stdout=asyncio.subprocess.DEVNULL,
+                                                           stderr=asyncio.subprocess.PIPE, env=dict(os.environ, LC_ALL='C'))
+            try:
+                _, stderr = await asyncio.wait_for(process.communicate(), 4)
+            except asyncio.TimeoutError:
+                process.kill()
+                await process.wait()
+                raise ControlError('BrightnessTimeout')
+            if process.returncode == 0:
+                return
+            # Classify known errors without forwarding command output to QML or logs.
+            code = 'BrightnessPermissionDenied' if any(text in stderr.lower() for text in (
+                b'permission denied', b'operation not permitted', b'root privileges')) else 'BrightnessCommandFailed'
+        except FileNotFoundError:
+            pass
+        if self.bus is not None:
+            try:
+                await self.logind_brightness(device, int(args[-1][:-1]))
+                return
+            except ControlError as error:
+                reason = str(error)
+                if reason in ('AccessDenied', 'NotYourDevice'):
+                    code = 'BrightnessPermissionDenied'
+                elif reason == 'BrightnessSessionUnavailable':
+                    code = reason
+                else:
+                    code = 'BrightnessLogindFailed'
+            except asyncio.TimeoutError:
+                code = 'BrightnessTimeout'
+        if code == 'BrightnessPermissionDenied':
+            self.blocked_backlights.add(name)
+        raise ControlError(code)
 
     async def setup(self):
         try:
@@ -184,19 +242,7 @@ class Bridge:
             if action == 'refresh':
                 self.blocked_backlights.clear()
             elif action == 'brightness':
-                device = message.get('device')
-                args = brightness_command(device, message.get('value'), brightness_devices())
-                process = await asyncio.create_subprocess_exec(*args, stdout=asyncio.subprocess.DEVNULL,
-                                                               stderr=asyncio.subprocess.DEVNULL)
-                try:
-                    status = await asyncio.wait_for(process.wait(), 4)
-                except asyncio.TimeoutError:
-                    process.kill()
-                    await process.wait()
-                    raise ControlError('BrightnessTimeout')
-                if status:
-                    self.blocked_backlights.add(device)
-                    raise ControlError('BrightnessPermissionDenied')
+                await self.set_brightness(message.get('device'), message.get('value'))
             elif action in ('pair', 'connect', 'disconnect', 'cancel-pair'):
                 path = message.get('device')
                 if not valid_device(path):
@@ -231,11 +277,13 @@ class Bridge:
         except Exception as error:
             code = str(error) if isinstance(error, ControlError) else type(error).__name__
             self.emit({'event': 'result', 'id': key, 'ok': False, 'error': code})
+            if action == 'brightness':
+                await self.snapshot()
 
     async def snapshot(self):
         devices = brightness_devices()
         for device in devices:
-            device['writable'] = shutil.which('brightnessctl') is not None and device['name'] not in self.blocked_backlights
+            device['writable'] = (shutil.which('brightnessctl') is not None or self.bus is not None) and device['name'] not in self.blocked_backlights
         state = {'event': 'state', 'backlights': devices, 'profiles': [], 'profile': '', 'bluetooth': False,
                  'screenshotAvailable': shutil.which('grim') is not None}
         if self.bus:

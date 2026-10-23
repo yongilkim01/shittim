@@ -48,8 +48,8 @@ Item {
         HudIcon { x: 24; y: 137; width: 18; height: 20; font.pixelSize: 22; text: "󰖙"; color: Theme.accentBright }
         MouseArea { x: 22; y: 135; width: 24; height: 24; onClicked: root.navigate("brightness") }
         HudSlider {
-            id: brightness; x: 51; y: 136; width: 217; height: 20; padding: 0; implicitHeight: 20; trackHeight: 6
-            enabled: root.system.backlight !== null && root.system.backlight.writable && root.system.ready && !root.system.busy
+			id: brightness; objectName: "overviewBrightness"; x: 51; y: 136; width: 217; height: 20; padding: 0; implicitHeight: 20; trackHeight: 6
+			enabled: root.system.backlight !== null && root.system.backlight.writable && root.system.ready
             Binding { target: brightness; property: "value"; value: root.system.backlight !== null ? root.system.backlight.value : 0; when: !brightness.pressed; restoreMode: Binding.RestoreNone }
             onMoved: if (!pressed) root.system.setBrightness(value)
             onPressedChanged: if (!pressed) root.system.setBrightness(value)

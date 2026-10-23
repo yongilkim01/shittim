@@ -99,7 +99,7 @@ TestCase {
 		networkFixture.needsPassword = false; networkFixture.pendingNetwork = null; networkFixture.networks = []; networkFixture.wifiDevices = []
 		audioFixture.available = false; audioFixture.validVolume = false; audioFixture.outputs = []; audioFixture.streams = []; audioFixture.sink = null
 		systemFixture.adapter = null; systemFixture.adapters = []; systemFixture.devices = []; systemFixture.backlight = null; systemFixture.backlights = []; systemFixture.profiles = []
-		systemFixture.prompt = null; systemFixture.error = ""; closeSpy.target = null; closeSpy.clear()
+		systemFixture.prompt = null; systemFixture.error = ""; systemFixture.busy = false; closeSpy.target = null; closeSpy.clear()
 	}
 	function populatedFixtures() {
 		audioFixture.outputs = [{name: "test-output", description: "검사용 출력 장치", nickname: "", ready: true, audio: {volume: 0.7, muted: false}}]
@@ -163,6 +163,21 @@ TestCase {
 		tryCompare(slider, "value", 0.8)
 		level.value = 5
 		tryCompare(slider, "value", 1)
+	}
+	function test_brightnessRemainsInteractiveWhileRequestIsPending_data() {
+		return [{tag: "overview", page: "overview", slider: "overviewBrightness"},
+			{tag: "detail", page: "brightness", slider: "levelSlider"}]
+	}
+	function test_brightnessRemainsInteractiveWhileRequestIsPending(data) {
+		populatedFixtures()
+		const content = createTemporaryObject(contentFactory, testCase, {page: data.page})
+		const slider = findChild(content, data.slider)
+		verify(slider !== null)
+		compare(slider.enabled, true)
+		systemFixture.busy = true
+		compare(slider.enabled, true)
+		systemFixture.backlight = {name: "test-backlight", value: 0.32, writable: false}
+		compare(slider.enabled, false)
 	}
 	function test_referenceGridAndUnavailableControls() {
 		const content = createTemporaryObject(contentFactory, testCase, {width: 337, height: 293})

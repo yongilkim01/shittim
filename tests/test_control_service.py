@@ -21,7 +21,7 @@ class Backlight(unittest.TestCase):
             device.mkdir()
             (device / 'max_brightness').write_text('1000')
             (device / 'brightness').write_text('450')
-            self.assertEqual(TOOL.brightness_devices(base), [{'name': 'panel0', 'value': 0.45}])
+            self.assertEqual(TOOL.brightness_devices(base), [{'name': 'panel0', 'value': 0.45, 'maximum': 1000}])
             (device / 'max_brightness').write_text('0')
             self.assertEqual(TOOL.brightness_devices(base), [])
 
@@ -67,13 +67,85 @@ class Protocol(unittest.IsolatedAsyncioTestCase):
 
     async def test_denied_brightness_is_disabled_until_refresh(self):
         process = Mock()
-        process.wait = AsyncMock(return_value=1)
+        process.returncode = 1
+        process.communicate = AsyncMock(return_value=(b'', b'Permission denied'))
         with patch.object(TOOL, 'brightness_devices', return_value=[{'name': 'panel0', 'value': 0.5}]), \
                 patch.object(TOOL.asyncio, 'create_subprocess_exec', new=AsyncMock(return_value=process)) as spawn:
             await self.bridge.handle({'id': 3, 'action': 'brightness', 'device': 'panel0', 'value': 0.8})
         self.assertIn('panel0', self.bridge.blocked_backlights)
-        self.assertEqual(self.events[-1]['error'], 'BrightnessPermissionDenied')
+        self.assertEqual(self.events[-2]['error'], 'BrightnessPermissionDenied')
+        self.assertFalse(self.events[-1]['backlights'][0]['writable'])
         self.assertNotIn('shell', spawn.call_args.kwargs)
+
+    async def test_failed_cli_uses_owned_active_local_session_without_privilege_changes(self):
+        process = Mock(returncode=1)
+        process.communicate = AsyncMock(return_value=(b'', b'Failed to set brightness: No session'))
+        device = {'name': 'panel0', 'value': 0.32, 'maximum': 937}
+        active = '/org/freedesktop/login1/session/_37'
+        self.bridge.bus = object()
+        self.bridge.call = AsyncMock(side_effect=[[
+            [('other', 2000, 'other-user', 'seat0', '/other'),
+             ('ours', 1000, 'local-user', 'seat0', active)]
+        ], [{'Active': Mock(value=True), 'Remote': Mock(value=False)}], []])
+        with patch.object(TOOL.os, 'getuid', return_value=1000, create=True), \
+                patch.dict(TOOL.os.environ, {'XDG_SEAT': 'seat0'}), \
+                patch.object(TOOL, 'brightness_devices', return_value=[device]), \
+                patch.object(TOOL.asyncio, 'create_subprocess_exec', new=AsyncMock(return_value=process)) as spawn:
+            await self.bridge.set_brightness('panel0', 0.7)
+        self.assertEqual(self.bridge.call.await_count, 3)
+        self.assertEqual(self.bridge.call.call_args.args,
+            ('org.freedesktop.login1', active, 'org.freedesktop.login1.Session',
+             'SetBrightness', 'ssu', ['backlight', 'panel0', 656]))
+        self.assertEqual(spawn.call_args.args[0], 'brightnessctl')
+        self.assertFalse(self.bridge.blocked_backlights)
+
+    async def test_inactive_remote_and_ambiguous_sessions_cannot_control_brightness(self):
+        session = '/org/freedesktop/login1/session/_37'
+        properties = lambda active, remote: [{'Active': Mock(value=active), 'Remote': Mock(value=remote)}]
+        for records, replies in [
+                ([('ours', 1000, 'u', 'seat0', session)], [properties(False, False)]),
+                ([('ours', 1000, 'u', 'seat0', session)], [properties(True, True)]),
+                ([('ours', 1000, 'u', 'seat0', session), ('ours2', 1000, 'u', 'seat1', session + '1')],
+                 [properties(True, False), properties(True, False)])]:
+            with self.subTest(records=records, replies=replies), \
+                    patch.object(TOOL.os, 'getuid', return_value=1000, create=True), \
+                    patch.dict(TOOL.os.environ, {'XDG_SEAT': ''}):
+                self.bridge.call = AsyncMock(side_effect=[[records]] + replies)
+                with self.assertRaisesRegex(TOOL.ControlError, 'BrightnessSessionUnavailable'):
+                    await self.bridge.logind_brightness({'name': 'panel0', 'maximum': 1000}, 50)
+                self.assertFalse(any(call.args[3] == 'SetBrightness' for call in self.bridge.call.call_args_list))
+
+    async def test_successful_cli_does_not_need_a_login_session(self):
+        process = Mock(returncode=0)
+        process.communicate = AsyncMock(return_value=(b'', b''))
+        self.bridge.logind_brightness = AsyncMock()
+        with patch.object(TOOL, 'brightness_devices', return_value=[{'name': 'panel0'}]), \
+                patch.object(TOOL.asyncio, 'create_subprocess_exec', new=AsyncMock(return_value=process)):
+            await self.bridge.set_brightness('panel0', 0.6)
+        self.bridge.logind_brightness.assert_not_awaited()
+
+    async def test_command_error_is_not_misreported_as_permission_denied_or_logged(self):
+        process = Mock(returncode=1)
+        process.communicate = AsyncMock(return_value=(b'', b'device error private-marker'))
+        self.bridge.snapshot = AsyncMock()
+        with patch.object(TOOL, 'brightness_devices', return_value=[{'name': 'panel0'}]), \
+                patch.object(TOOL.asyncio, 'create_subprocess_exec', new=AsyncMock(return_value=process)):
+            await self.bridge.handle({'id': 7, 'action': 'brightness', 'device': 'panel0', 'value': 0.6})
+        self.assertEqual(self.events[-1]['error'], 'BrightnessCommandFailed')
+        self.assertFalse(self.bridge.blocked_backlights)
+        self.assertNotIn('private-marker', repr(self.events))
+        self.bridge.snapshot.assert_awaited_once()
+
+    async def test_timed_out_brightness_process_is_killed_and_reaped(self):
+        process = Mock()
+        process.communicate = AsyncMock(side_effect=asyncio.TimeoutError)
+        process.wait = AsyncMock(return_value=-9)
+        with patch.object(TOOL, 'brightness_devices', return_value=[{'name': 'panel0'}]), \
+                patch.object(TOOL.asyncio, 'create_subprocess_exec', new=AsyncMock(return_value=process)):
+            with self.assertRaisesRegex(TOOL.ControlError, 'BrightnessTimeout'):
+                await self.bridge.set_brightness('panel0', 0.6)
+        process.kill.assert_called_once()
+        process.wait.assert_awaited_once()
 
     async def test_profile_without_daemon_returns_error_not_success(self):
         try:
