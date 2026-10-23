@@ -6,6 +6,7 @@ import Quickshell.Bluetooth
 
 Scope {
 	id: root
+	readonly property string helperPath: Quickshell.shellDir + "/../scripts/control-service.py"
 	property bool ready: false
 	property string error: ""
 	property var backlights: []
@@ -116,7 +117,7 @@ Scope {
 	Timer { id: scanTimeout; interval: 45000; onTriggered: root.stopDiscovery() }
 	Process {
 		id: bridge
-		command: ["python3", "-u", decodeURIComponent(Qt.resolvedUrl("../../scripts/control-service.py").toString().replace(/^file:\/\//, ""))]
+		command: ["python3", "-u", root.helperPath]
 		running: ControlState.opened
 		stdinEnabled: true
 		onStarted: { root.ready = false; root.error = root.screenshotError }
@@ -139,7 +140,7 @@ Scope {
 	function openNetworkEditor() { editor.startDetached(); ControlState.close() }
 	Process {
 		id: screenshot
-		command: ["python3", "-u", decodeURIComponent(Qt.resolvedUrl("../../scripts/control-service.py").toString().replace(/^file:\/\//, "")), "--screenshot"]
+		command: ["python3", "-u", root.helperPath, "--screenshot"]
 		onExited: (code, status) => { if (code !== 0) { root.screenshotError = "스크린샷을 저장하지 못했습니다."; root.error = root.screenshotError } }
 	}
 	function takeScreenshot() {

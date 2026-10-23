@@ -26,7 +26,7 @@
 | 배터리·전원 | UPower, `org.freedesktop.UPower.PowerProfiles` | 기존 배터리 상태 공유. 전원 서비스가 노출한 프로필만 표시하며 성능 모드를 만들어내지 않는다. 0.3.2 PowerProfiles에는 서비스 가용성·실패 신호가 없으므로 보조 프로세스에서 비동기 D-Bus 결과를 확인한다. |
 | 패널 | [HyprlandFocusGrab](https://quickshell.org/docs/v0.3.2/types/Quickshell.Hyprland/HyprlandFocusGrab/) + PanelWindow | 클릭한 화면, 화면 경계 제한, 외부 클릭·Escape, 화면 제거 시 닫기. |
 
-`shell/services/`의 싱글턴을 바와 상세 화면이 공유한다. 기능별 상태는 실제 서비스의 QML 바인딩을 사용한다. `control-service.py`는 패널이 열린 동안만 실행하며, 밝기·선택적 전원 프로필·시스템 상태를 2초 간격으로 확인한다. Bluetooth 검색은 45초 또는 패널 닫기 때 끝난다. 패널을 닫거나 재로드하면 인증 요청을 거부하고 진행 중인 페어링을 취소한다.
+`shell/services/`의 싱글턴을 바와 상세 화면이 공유한다. 기능별 상태는 실제 서비스의 QML 바인딩을 사용한다. `control-service.py`는 패널이 열린 동안만 실행하며, 밝기·선택적 전원 프로필·시스템 상태를 2초 간격으로 확인한다. 외부 Python 파일은 가상 QML URL이 아닌 `Quickshell.shellDir`의 실제 파일 경로로 실행한다. Bluetooth 검색은 45초 또는 패널 닫기 때 끝난다. 패널을 닫거나 재로드하면 인증 요청을 거부하고 진행 중인 페어링을 취소한다.
 
 Wi-Fi 비밀번호는 마스킹된 입력란에서 NetworkManager 내장 API로 직접 전달한다. 제출·취소·패널 닫기 때 입력란을 비운다. 명령 인자·환경 변수·로그·저장소 파일에 기록하지 않는다. NetworkManager 자체의 정상 인증 저장소에는 저장될 수 있다. 보조 프로세스도 stdin JSON을 평가하거나 원문을 로그에 출력하지 않는다.
 
@@ -54,7 +54,7 @@ bash scripts/verify-control-center.sh
 
 ## 검증
 
-`verify-control-center.sh`는 Bash 문법·Python 테스트·Qt 화면 테스트를 실행하고, 마지막으로 **실제 Quickshell**에서 모든 컴포넌트를 숨긴 채 생성해 import 검사를 한다. 검증 진입점 `shell/verify-control-center.qml`은 실제 `shell.qml`과 같은 설정 루트를 사용한다. Quickshell 0.3.2는 이 루트 밖으로 향하는 상대 import를 차단하므로 진입점을 `shell/tests/` 아래로 옮기지 않는다. 두 번째 바를 표시하지 않고 1.2초 후 종료한다. 실제 Hyprland의 Kitty에서 실행한다. 코드 검사에서 시스템 설정을 변경하지 않는다.
+`verify-control-center.sh`는 Bash 문법·Python 테스트·Qt 화면 테스트를 실행하고, 마지막으로 **실제 Quickshell**에서 모든 컴포넌트를 숨긴 채 생성해 import 검사를 한다. 검증 진입점 `shell/verify-control-center.qml`은 실제 `shell.qml`과 같은 설정 루트를 사용한다. Quickshell 0.3.2는 이 루트 밖으로 향하는 상대 import를 차단하므로 진입점을 `shell/tests/` 아래로 옮기지 않는다. 두 번째 바를 표시하지 않고 같은 경로의 보조 프로그램을 실행해 준비·상태 응답과 백라이트 장치 수를 확인한 뒤 종료한다. 12초 안에 응답이 없거나 먼저 종료되면 검사 실패다. 실제 Hyprland의 Kitty에서 실행한다. 코드 검사에서 시스템 설정을 변경하지 않는다.
 
 실기에서는 다음을 확인한다.
 
