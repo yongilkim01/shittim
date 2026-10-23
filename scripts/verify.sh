@@ -21,6 +21,8 @@ if (( SHITTIM_DRY_RUN )); then
     info '설치 전 점검 완료. 서비스 시작·파일 변경은 수행하지 않았습니다.'; exit 0
 fi
 check_session_versions
+python3 -c 'import dbus_next' || { warn 'Control Center용 python-dbus-next가 없습니다.'; shittim_failures=$((shittim_failures + 1)); }
+if ! systemctl is-active --quiet bluetooth.service; then warn 'Bluetooth 서비스가 비활성입니다. 어댑터가 없으면 정상이며 Control Center는 해당 기능을 비활성화합니다.'; fi
 for shittim_service in NetworkManager.service upower.service; do
     if ! systemctl is-active --quiet "$shittim_service"; then
         warn "서비스 비활성: $shittim_service"; shittim_failures=$((shittim_failures + 1))

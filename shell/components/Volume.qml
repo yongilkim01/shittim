@@ -1,15 +1,16 @@
 import QtQuick
 import Quickshell.Services.Pipewire
 import "../ui"
+import "../services"
 
 HudStatus {
 	id: root
 
-	readonly property PwNode sink: Pipewire.defaultAudioSink
-	readonly property bool available: sink !== null && sink.ready && sink.audio !== null
-	readonly property bool validVolume: available && isFinite(sink.audio.volume) && sink.audio.volume >= 0
-	readonly property int percentage: validVolume ? Math.round(sink.audio.volume * 100) : 0
-	readonly property bool muted: available && sink.audio.muted
+	readonly property PwNode sink: AudioState.sink
+	readonly property bool available: AudioState.available
+	readonly property bool validVolume: AudioState.validVolume
+	readonly property int percentage: AudioState.percentage
+	readonly property bool muted: AudioState.muted
 	readonly property string icon: {
 		if (!available || muted) return "\uf026"
 		if (!validVolume || percentage === 0) return "\uf026"
@@ -20,19 +21,9 @@ HudStatus {
 
 	onSinkChanged: wheelRemainder = 0
 
-	function toggleMute(): void {
-		if (!available) return
-		sink.audio.muted = !sink.audio.muted
-	}
-
-	function adjustVolume(steps: int): void {
-		if (!validVolume) return
-		sink.audio.volume = Math.max(0, Math.min(1, sink.audio.volume + steps * 0.05))
-	}
-
-	PwObjectTracker {
-		objects: [root.sink]
-	}
+	signal controlCenterRequested()
+	function toggleMute(): void { AudioState.toggleMute() }
+	function adjustVolume(steps: int): void { AudioState.adjustVolume(steps) }
 
 	glyph: icon
 	text: !available ? "N/A"
@@ -54,11 +45,14 @@ HudStatus {
 		id: mouse
 		anchors.fill: parent
 		enabled: root.available
-		acceptedButtons: Qt.LeftButton
+		acceptedButtons: Qt.LeftButton | Qt.RightButton
 		cursorShape: Qt.PointingHandCursor
 		hoverEnabled: true
 
-		onClicked: root.toggleMute()
+		onClicked: event => {
+			if (event.button === Qt.RightButton) root.controlCenterRequested()
+			else root.toggleMute()
+		}
 		onWheel: wheel => {
 			if (!root.validVolume || wheel.angleDelta.y === 0) {
 				wheel.accepted = false

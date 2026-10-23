@@ -2,6 +2,8 @@
 
 Arch Linux + Hyprland + Quickshell 기반 데스크톱 환경. SHITTIM HUD 디자인 시스템을 사용하며 워크스페이스·네트워크·볼륨·배터리·시계를 표시한다.
 
+상단 바 오른쪽을 클릭하면 Control Center를 연다. 원본 시안 5번 패널의 3열 타일·두 줄 슬라이더·3열×2행 버튼을 사용하며 시스템 제어는 하위 화면에서 관리한다. [Control Center 사용법·패키지·실기 검사](docs/control-center.md)를 참고한다.
+
 ## 새 Arch Linux 환경 설치
 
 설치된 Arch Linux x86_64에서 네트워크 연결과 일반 사용자 계정, `git`, `sudo` 및 해당 사용자의 sudo 권한을 먼저 준비한다. Arch 설치 ISO/chroot나 root 계정에서 실행하지 않는다. TTY 로그인 비밀번호는 유지하며 디스플레이 매니저와 자동 로그인은 설치하지 않는다.

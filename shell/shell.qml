@@ -2,5 +2,12 @@ import Quickshell
 import "./components"
 
 ShellRoot {
-	TopBar {}
+	Variants {
+		model: Quickshell.screens
+		TopBar {
+			required property var modelData
+			screen: modelData
+		}
+	}
+	ControlCenter {}
 }

@@ -1,8 +1,14 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)/scripts/common.sh"
+shittim_remaining=()
+for shittim_arg in "${SHITTIM_ARGS[@]}"; do
+    if [[ $shittim_arg == --with-power-profiles ]]; then export SHITTIM_WITH_POWER_PROFILES=1
+    else shittim_remaining+=("$shittim_arg"); fi
+done
+SHITTIM_ARGS=("${shittim_remaining[@]}")
 if [[ ${SHITTIM_ARGS[0]:-} == --help ]]; then
-    printf '사용법: ./install.sh [--dry-run]\n일반 사용자로 실행합니다. pacman 작업만 sudo를 사용합니다.\n'; exit 0
+    printf '사용법: ./install.sh [--dry-run] [--with-power-profiles]\n일반 사용자로 실행합니다. pacman 작업만 sudo를 사용합니다.\n'; exit 0
 fi
 no_extra_args
 require_user

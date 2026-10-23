@@ -32,7 +32,10 @@ config_tool() {
     (( SHITTIM_DRY_RUN == 0 )) || flags+=(--dry-run)
     python3 "$SHITTIM_ROOT/scripts/config-tool.py" "$@" "${flags[@]}"
 }
-load_packages() { mapfile -t SHITTIM_PACKAGES < <(sed -e 's/#.*//' -e '/^[[:space:]]*$/d' "$SHITTIM_ROOT/scripts/packages.txt"); }
+load_packages() {
+    mapfile -t SHITTIM_PACKAGES < <(sed -e 's/#.*//' -e '/^[[:space:]]*$/d' "$SHITTIM_ROOT/scripts/packages.txt")
+    if [[ ${SHITTIM_WITH_POWER_PROFILES:-0} == 1 ]]; then SHITTIM_PACKAGES+=(power-profiles-daemon); fi
+}
 check_session_versions() {
     local version
     version=$(pacman -Q hyprland | awk '{print $2}')

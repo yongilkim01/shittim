@@ -2,6 +2,7 @@ import Quickshell
 import QtQuick
 import QtQuick.Layouts
 import "../ui"
+import "../services"
 
 PanelWindow {
 	id: bar
@@ -13,6 +14,9 @@ PanelWindow {
 
 	implicitHeight: Theme.barHeight
 	color: Theme.transparent
+	TapHandler {
+		onTapped: if (ControlState.opened && point.position.x < statusArea.mapToItem(null, 0, 0).x) ControlState.close()
+	}
 
 	Canvas {
 		anchors.fill: parent
@@ -77,15 +81,24 @@ PanelWindow {
 			Workspaces { id: workspaces }
 		}
 		Item { Layout.fillWidth: true; Layout.minimumWidth: Theme.spaceS }
-		Row {
-			objectName: "barStatuses"
+		Item {
+			id: statusArea
+			implicitWidth: statuses.implicitWidth
+			implicitHeight: statuses.implicitHeight
 			Layout.alignment: Qt.AlignVCenter
-			spacing: Theme.spaceXL
-			Network { compact: true; anchors.verticalCenter: parent.verticalCenter }
-			Volume { compact: true; anchors.verticalCenter: parent.verticalCenter }
-			Battery { compact: true; anchors.verticalCenter: parent.verticalCenter }
-			HudDivider { anchors.verticalCenter: parent.verticalCenter }
-			Clock { compact: true; anchors.verticalCenter: parent.verticalCenter }
+			MouseArea {
+				anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+				onClicked: ControlState.toggle(bar)
+			}
+			Row {
+				id: statuses; objectName: "barStatuses"
+				spacing: Theme.spaceXL
+				Network { compact: true; anchors.verticalCenter: parent.verticalCenter }
+				Volume { compact: true; anchors.verticalCenter: parent.verticalCenter; onControlCenterRequested: ControlState.toggle(bar) }
+				Battery { compact: true; anchors.verticalCenter: parent.verticalCenter }
+				HudDivider { anchors.verticalCenter: parent.verticalCenter }
+				Clock { compact: true; anchors.verticalCenter: parent.verticalCenter }
+			}
 		}
 	}
 }

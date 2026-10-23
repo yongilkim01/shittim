@@ -6,6 +6,10 @@ git
 dolphin
 fuzzel
 networkmanager
+nm-connection-editor
+bluez
+bluez-utils
+python-dbus-next
 pipewire
 pipewire-audio
 pipewire-pulse
@@ -21,6 +25,7 @@ ttf-d2coding-nerd
 fontconfig
 upower
 brightnessctl
+grim
 playerctl
 xdg-desktop-portal-hyprland
 xdg-desktop-portal-gtk

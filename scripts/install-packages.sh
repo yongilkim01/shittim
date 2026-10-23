@@ -12,6 +12,13 @@ if (( SHITTIM_DRY_RUN )); then
     info '실제 설치 시 전체 업그레이드 후 패키지 이름과 공식 저장소 소속을 다시 검사합니다.'
     exit 0
 fi
+if [[ ${SHITTIM_WITH_POWER_PROFILES:-0} == 1 ]]; then
+    for shittim_competitor in tlp auto-cpufreq tuned tuned-ppd; do
+        if pacman -Q -- "$shittim_competitor" >/dev/null 2>&1; then
+            die "다른 전원 관리 패키지($shittim_competitor)가 있습니다. --with-power-profiles 없이 설치하고 기존 서비스를 유지하세요."
+        fi
+    done
+fi
 sudo pacman -Syu
 for shittim_package in "${SHITTIM_PACKAGES[@]}"; do
     shittim_repo=$(LC_ALL=C pacman -Si -- "$shittim_package" | awk '/^Repository[[:space:]]*:/ {print $3; exit}')
@@ -32,5 +39,8 @@ fi
 sudo systemctl enable NetworkManager.service
 if ! systemctl is-active --quiet NetworkManager.service; then sudo systemctl start NetworkManager.service; fi
 if ! systemctl is-active --quiet upower.service; then sudo systemctl start upower.service; fi
+sudo systemctl enable bluetooth.service
+if [[ -d /sys/class/bluetooth ]] && ! systemctl is-active --quiet bluetooth.service; then sudo systemctl start bluetooth.service; fi
+if [[ ${SHITTIM_WITH_POWER_PROFILES:-0} == 1 ]]; then sudo systemctl enable --now power-profiles-daemon.service; fi
 systemctl --user enable --now pipewire.socket pipewire-pulse.socket wireplumber.service
 info '현재 네트워크·오디오 서비스를 restart하지 않았습니다. UPower는 D-Bus로 활성화되는 서비스입니다.'

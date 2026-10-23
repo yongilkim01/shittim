@@ -6,3 +6,5 @@ HudPanel 1.0 HudPanel.qml
 HudButton 1.0 HudButton.qml
 HudDivider 1.0 HudDivider.qml
 HudProgress 1.0 HudProgress.qml
+HudSlider 1.0 HudSlider.qml
+HudInput 1.0 HudInput.qml

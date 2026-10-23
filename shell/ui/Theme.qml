@@ -52,6 +52,9 @@ QtObject {
 	readonly property int cornerLength: 8
 	readonly property int cornerRadius: 1
 	readonly property int progressHeight: 2
+	readonly property int controlPanelWidth: 337
+	readonly property int controlPanelHeight: 293
+	readonly property int controlDetailHeight: 650
 
 	readonly property int hoverDuration: 150
 	readonly property int stateDuration: 200

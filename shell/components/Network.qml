@@ -1,32 +1,24 @@
 import QtQuick
 import Quickshell.Networking as Net
 import "../ui"
+import "../services"
 
 Row {
 	id: root
 	property bool compact: false
 	spacing: Theme.spaceXS
 
-	readonly property bool backendAvailable: Net.Networking.backend !== Net.NetworkBackendType.None
-	readonly property var devices: Net.Networking.devices.values.filter(device =>
-		(device.type === Net.DeviceType.Wifi || device.type === Net.DeviceType.Wired)
-		&& device.name !== "lo" && !device.name.startsWith("p2p-dev-"))
-	readonly property var wifiDevices: devices.filter(device => device.type === Net.DeviceType.Wifi)
-	readonly property var wiredDevices: devices.filter(device => device.type === Net.DeviceType.Wired)
-	readonly property bool wiredConnected: wiredDevices.some(device => device.connected)
-	readonly property var wifiDevice: wifiDevices.find(device => device.connected)
-		|| wifiDevices.find(device => device.state === Net.ConnectionState.Connecting)
-		|| wifiDevices[0] || null
-	readonly property bool wifiEnabled: Net.Networking.wifiEnabled && Net.Networking.wifiHardwareEnabled
-	readonly property bool wifiConnected: wifiEnabled && wifiDevice !== null && wifiDevice.connected
-	readonly property var wifiNetwork: {
-		if (!wifiConnected) return null
-		return wifiDevice.networks.values.find(network => network.connected) || null
-	}
-	// WifiNetwork.name is the SSID; nmSettings contains connection profile names.
-	readonly property string ssid: wifiNetwork !== null ? wifiNetwork.name : ""
-	readonly property real signalStrength: wifiNetwork !== null && isFinite(wifiNetwork.signalStrength)
-		? Math.max(0, Math.min(1, wifiNetwork.signalStrength)) : 0
+	readonly property bool backendAvailable: NetworkState.backendAvailable
+	readonly property var devices: NetworkState.devices
+	readonly property var wifiDevices: NetworkState.wifiDevices
+	readonly property var wiredDevices: NetworkState.wiredDevices
+	readonly property bool wiredConnected: NetworkState.wiredConnected
+	readonly property var wifiDevice: NetworkState.wifiDevice
+	readonly property bool wifiEnabled: NetworkState.wifiEnabled
+	readonly property bool wifiConnected: NetworkState.wifiConnected
+	readonly property var wifiNetwork: NetworkState.wifiNetwork
+	readonly property string ssid: NetworkState.ssid
+	readonly property real signalStrength: NetworkState.signalStrength
 	readonly property string wifiIcon: {
 		if (!wifiEnabled) return "󰤮"
 		if (!wifiConnected || wifiNetwork === null) return "󰤯"
