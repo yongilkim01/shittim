@@ -3,6 +3,8 @@ hyprland
 quickshell
 kitty
 git
+dolphin
+fuzzel
 networkmanager
 pipewire
 pipewire-audio
@@ -18,6 +20,8 @@ ttf-hack-nerd
 ttf-d2coding-nerd
 fontconfig
 upower
+brightnessctl
+playerctl
 xdg-desktop-portal-hyprland
 xdg-desktop-portal-gtk
 xdg-utils

@@ -105,13 +105,16 @@ TTY에서는 아직 그래픽 프로세스가 없어도 설치 상태를 검사�
 
 | 역할 | 공식 패키지 |
 | --- | --- |
-| 데스크톱 | `hyprland`, `quickshell`, `kitty`, `git` |
+| 데스크톱 | `hyprland`, `quickshell`, `kitty`, `git`, `dolphin`, `fuzzel` |
 | 네트워크·전원 | `networkmanager`, `upower` |
 | 오디오 | `pipewire`, `pipewire-audio`, `pipewire-pulse`, `wireplumber`, `libpulse` |
+| 밝기·미디어 단축키 | `brightnessctl`, `playerctl` |
 | 한글 입력 | `fcitx5`, `fcitx5-hangul`, `fcitx5-gtk`, `fcitx5-qt`, `fcitx5-configtool` |
 | 폰트 | `ttf-hack-nerd`, `ttf-d2coding-nerd`, `fontconfig` |
 | 데스크톱 통합 | `xdg-desktop-portal-hyprland`, `xdg-desktop-portal-gtk`, `polkit-kde-agent`, `wl-clipboard`, `xdg-utils`, `xdg-user-dirs` |
 | 설치·검증 도구 | `python`, `lua`, `util-linux`, `procps-ng`, `dbus` |
+
+수집된 Hyprland 설정의 파일 관리자(SUPER+E), 런처(SUPER+R), 밝기·미디어 키에 필요한 [Dolphin](https://archlinux.org/packages/extra/x86_64/dolphin/), [Fuzzel](https://archlinux.org/packages/extra/x86_64/fuzzel/), [brightnessctl](https://archlinux.org/packages/extra/x86_64/brightnessctl/), [playerctl](https://archlinux.org/packages/extra/x86_64/playerctl/)도 설치 목록에 포함한다. 설치와 검증은 같은 `scripts/packages.txt`를 읽는다.
 
 Arch의 D2Coding Nerd Font 실제 family를 `fc-list`에서 탐색하고 `D2Coding` 별칭을 사용자 Fontconfig에 추가한다. 기존 `shell/`의 폰트 지정·디자인 코드는 변경하지 않는다. 관련 공식 패키지: [Hyprland](https://archlinux.org/packages/extra/x86_64/hyprland/), [Quickshell](https://archlinux.org/packages/extra/x86_64/quickshell/), [Fcitx5 Hangul](https://archlinux.org/packages/extra/x86_64/fcitx5-hangul/), [Hack Nerd Font](https://archlinux.org/packages/extra/any/ttf-hack-nerd/), [D2Coding Nerd Font](https://archlinux.org/packages/extra/any/ttf-d2coding-nerd/).
 
