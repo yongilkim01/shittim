@@ -149,6 +149,10 @@ class Desktop:
         if self.files.dry:
             files.say('기본 앱·포털·단축키 설치 전 점검: 실제 파일·서비스는 변경하지 않았습니다.')
             return
+        if not self.manifest.is_file():
+            raise ValueError('데스크톱 설정 파일이 없습니다: ' + str(self.manifest)
+                             + '\nbash scripts/setup-desktop.sh 실행 후 bash scripts/verify-desktop.sh로 다시 검사하세요.'
+                             + '\n설치가 중단되었다면 ./install.sh를 먼저 완료하세요.')
         data = json.loads(self.manifest.read_text(encoding='utf-8'))
         errors = []
         for name, expected in [('hypr/shittim-desktop.lua', self.lua(data['bindings'])),
@@ -257,6 +261,10 @@ def main():
 if __name__ == '__main__':
     try:
         sys.exit(main())
+    except FileNotFoundError as error:
+        target = json.dumps(str(error.filename), ensure_ascii=False) if error.filename else '(경로 정보 없음)'
+        print('[Shittim:오류] 파일 또는 실행 명령을 찾을 수 없습니다: ' + target, file=sys.stderr)
+        sys.exit(1)
     except (OSError, ValueError, configparser.Error, subprocess.SubprocessError) as error:
         # No command output, browser profile data, or media metadata is forwarded.
         print('[Shittim:오류] ' + (str(error) if isinstance(error, ValueError) else type(error).__name__), file=sys.stderr)

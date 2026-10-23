@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
 from unittest.mock import Mock, patch
@@ -117,6 +118,23 @@ class DesktopSetup(unittest.TestCase):
         self.config.dry = True
         self.desktop.setup()
         self.assertFalse(self.config.config.exists()); self.assertFalse(self.config.state.exists())
+
+    def test_verify_without_setup_reports_missing_manifest_and_recovery(self):
+        result = subprocess.run([sys.executable, str(ROOT / 'scripts/desktop-tool.py'), 'verify'],
+                                capture_output=True, text=True, encoding='utf-8')
+        self.assertEqual(result.returncode, 1)
+        self.assertIn(str(self.desktop.manifest), result.stderr)
+        self.assertIn('bash scripts/setup-desktop.sh', result.stderr)
+        self.assertNotIn('Traceback', result.stderr)
+        self.assertFalse(self.config.config.exists()); self.assertFalse(self.config.state.exists())
+
+    def test_missing_executable_reports_its_name_without_command_output(self):
+        environment = dict(os.environ, PATH='', PYTHONUTF8='1')
+        result = subprocess.run([sys.executable, str(ROOT / 'scripts/desktop-tool.py'), 'launch', 'files'],
+                                env=environment, capture_output=True, text=True, encoding='utf-8')
+        self.assertEqual(result.returncode, 1)
+        self.assertIn('xdg-open', result.stderr)
+        self.assertNotIn('Traceback', result.stderr)
 
     def test_clipboard_service_is_opt_in_and_uses_watch_action(self):
         with patch.object(TOOL.subprocess, 'run') as run:
