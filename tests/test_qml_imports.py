@@ -35,10 +35,12 @@ class QmlImports(unittest.TestCase):
         self.check_entrypoint(ROOT / 'shell/shell.qml')
 
     def test_verification_uses_an_entrypoint_with_resolvable_imports(self):
-        script = (ROOT / 'scripts/verify-control-center.sh').read_text(encoding='utf-8')
-        match = re.search(r'quickshell --path "\$SHITTIM_ROOT/([^"\n]+)"', script)
-        self.assertIsNotNone(match, 'Quickshell verification command is missing')
-        self.check_entrypoint(ROOT / match.group(1))
+        for name in ['verify-control-center.sh', 'verify-launcher.sh']:
+            with self.subTest(script=name):
+                script = (ROOT / 'scripts' / name).read_text(encoding='utf-8')
+                match = re.search(r'quickshell --path "\$SHITTIM_ROOT/([^"\n]+)"', script)
+                self.assertIsNotNone(match, 'Quickshell verification command is missing')
+                self.check_entrypoint(ROOT / match.group(1))
 
 
 if __name__ == '__main__':

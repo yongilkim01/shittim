@@ -305,13 +305,23 @@ class Config:
         base = self.config / 'hypr/shittim-base.lua'
         start = '/usr/bin/bash ' + shlex.quote(str(self.root / 'scripts/session-services.sh'))
         stop = 'systemctl --user stop ' + ' '.join(UNITS)
+        launcher = '/usr/bin/bash ' + shlex.quote(str(self.root / 'scripts/launcher.sh')) + ' toggle'
+        launcher_key = self.config / 'shittim/launcher-key'
         return ('-- ' + MARKER + '; original settings are loaded without editing.\n'
                 'assert(hl and hl.on and hl.exec_cmd, "Shittim requires Hyprland >= 0.55 Lua API")\n'
                 'dofile(' + json.dumps(str(base), ensure_ascii=False) + ')\n'
                 'hl.env("QT_IM_MODULE", os.getenv("QT_IM_MODULE") or "fcitx")\n'
                 'hl.env("XMODIFIERS", os.getenv("XMODIFIERS") or "@im=fcitx")\n'
                 'hl.on("hyprland.start", function()\n    hl.exec_cmd(' + json.dumps(start, ensure_ascii=False) + ')\nend)\n'
-                'hl.on("hyprland.shutdown", function()\n    hl.exec_cmd(' + json.dumps(stop) + ')\nend)\n')
+                'hl.on("hyprland.shutdown", function()\n    hl.exec_cmd(' + json.dumps(stop) + ')\nend)\n'
+                'hl.bind("SUPER + SPACE", hl.dsp.exec_cmd(' + json.dumps(launcher, ensure_ascii=False) + '))\n'
+                'local launcher_key = io.open(' + json.dumps(str(launcher_key), ensure_ascii=False) + ', "r")\n'
+                'if launcher_key then\n    local key = launcher_key:read("*l")\n    launcher_key:close()\n'
+                '    if key == "SUPER + R" then\n        hl.unbind("SUPER + R")\n'
+                '        hl.bind("SUPER + R", hl.dsp.exec_cmd(' + json.dumps(launcher, ensure_ascii=False) + '))\n    end\nend\n')
+
+    def launcher_key(self, replace=False):
+        self.write(self.config / 'shittim/launcher-key', 'SUPER + R\n' if replace else 'SUPER + SPACE\n')
 
     def service(self, script, description):
         argument = str(self.root / 'scripts' / script).replace('\\', '\\\\').replace('"', '\\"').replace('%', '%%').replace('$', '$$')
@@ -431,9 +441,10 @@ class Config:
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', choices=['capture', 'link', 'autostart', 'verify', 'scan', 'shell-running', 'repair-login'])
+    parser.add_argument('action', choices=['capture', 'link', 'autostart', 'verify', 'scan', 'shell-running', 'repair-login', 'launcher-key'])
     parser.add_argument('--dry-run', action='store_true')
     parser.add_argument('--update', action='store_true')
+    parser.add_argument('--replace-fuzzel', action='store_true')
     args = parser.parse_args()
     config = Config(dry=args.dry_run)
     if args.action == 'shell-running':
@@ -448,6 +459,8 @@ def main():
         say('수집본 검사 통과: {}개 파일'.format(len(config.inventory())))
     elif args.action == 'repair-login':
         config.repair_login()
+    elif args.action == 'launcher-key':
+        config.launcher_key(args.replace_fuzzel)
     else:
         config.verify(preflight=args.dry_run)
     return 0

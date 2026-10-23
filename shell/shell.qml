@@ -10,4 +10,5 @@ ShellRoot {
 		}
 	}
 	ControlCenter {}
+	AppLauncher {}
 }

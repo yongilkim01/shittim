@@ -55,6 +55,8 @@ QtObject {
 	readonly property int controlPanelWidth: 337
 	readonly property int controlPanelHeight: 293
 	readonly property int controlDetailHeight: 650
+	readonly property int launcherWidth: 394
+	readonly property int launcherHeight: 187
 
 	readonly property int hoverDuration: 150
 	readonly property int stateDuration: 200

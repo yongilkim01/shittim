@@ -5,7 +5,7 @@ no_extra_args
 require_user
 [[ -n ${WAYLAND_DISPLAY:-} && -n ${HYPRLAND_INSTANCE_SIGNATURE:-} ]] || die 'Hyprland 그래픽 세션에서 실행해야 합니다.'
 shittim_environment=()
-for shittim_variable in WAYLAND_DISPLAY DISPLAY HYPRLAND_INSTANCE_SIGNATURE XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP XDG_SESSION_TYPE QT_IM_MODULE XMODIFIERS XDG_CONFIG_HOME; do
+for shittim_variable in WAYLAND_DISPLAY DISPLAY HYPRLAND_INSTANCE_SIGNATURE XDG_CURRENT_DESKTOP XDG_SESSION_DESKTOP XDG_SESSION_TYPE QT_IM_MODULE XMODIFIERS XDG_CONFIG_HOME XDG_DATA_HOME XDG_DATA_DIRS PATH QS_ICON_THEME; do
     [[ -z ${!shittim_variable+x} ]] || shittim_environment+=("$shittim_variable")
 done
 dbus-update-activation-environment --systemd "${shittim_environment[@]}"

@@ -10,6 +10,10 @@ nm-connection-editor
 bluez
 bluez-utils
 python-dbus-next
+python-gobject
+xdg-terminal-exec
+hicolor-icon-theme
+adwaita-icon-theme
 pipewire
 pipewire-audio
 pipewire-pulse

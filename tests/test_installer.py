@@ -1,7 +1,9 @@
 """Installer file operations against temporary homes; no system installation."""
 import importlib.util
 import os
+import json
 from pathlib import Path
+import shutil
 import subprocess
 import tempfile
 import unittest
@@ -241,6 +243,46 @@ class InstallerFiles(unittest.TestCase):
             self.assertEqual((self.config.config / 'hypr/shittim-base.lua').resolve(), default.resolve())
             self.assertEqual(list((self.root / 'dotfiles').iterdir()), [])
             self.config.verify()
+
+    def test_launcher_binding_keeps_base_and_requires_explicit_fuzzel_replacement(self):
+        base = self.file(self.config.config, 'hypr/shittim-base.lua', 'hl.bind("SUPER + R", hl.dsp.exec_cmd("fuzzel"))\n')
+        before = base.read_bytes()
+        generated = self.config.lua()
+        self.assertIn('hl.bind("SUPER + SPACE"', generated)
+        self.assertIn('launcher.sh', generated)
+        preference = self.config.config / 'shittim/launcher-key'
+        self.assertFalse(preference.exists())
+        self.config.launcher_key(replace=True)
+        self.assertEqual(preference.read_text(), 'SUPER + R\n')
+        backups = sorted(str(path) for path in self.config.backups.rglob('*'))
+        self.config.launcher_key(replace=True)
+        self.assertEqual(sorted(str(path) for path in self.config.backups.rglob('*')), backups)
+        self.config.launcher_key(replace=False)
+        self.assertEqual(preference.read_text(), 'SUPER + SPACE\n')
+        self.assertEqual(base.read_bytes(), before)
+
+    def test_launcher_preference_dry_run_does_not_write_files(self):
+        dry = TOOL.Config(self.root, self.home, dry=True)
+        dry.launcher_key(replace=True)
+        self.assertFalse((self.config.config / 'shittim/launcher-key').exists())
+
+    @unittest.skipUnless(shutil.which('lua'), 'Lua 실행 파일이 있는 Linux에서 생성 설정 실행 검사')
+    def test_generated_lua_applies_and_reverts_only_the_opted_in_binding(self):
+        self.file(self.config.config, 'hypr/shittim-base.lua', 'hl.bind("SUPER + R", hl.dsp.exec_cmd("fuzzel"))\n')
+        generated = self.file(self.config.config, 'hypr/hyprland.lua', self.config.lua())
+        prelude = ('local bindings = {}\nhl = { dsp = {exec_cmd = function(command) return command end},\n'
+                   'on = function() end, env = function() end, exec_cmd = function() end,\n'
+                   'bind = function(key, command) bindings[key] = command end,\n'
+                   'unbind = function(key) bindings[key] = nil end }\n'
+                   'dofile(' + json.dumps(str(generated)) + ')\n'
+                   'assert(bindings["SUPER + SPACE"]:find("launcher.sh", 1, true))\n')
+        for replace in [False, True, False]:
+            with self.subTest(replace=replace):
+                self.config.launcher_key(replace)
+                assertion = ('assert(bindings["SUPER + R"]:find("launcher.sh", 1, true))\n' if replace
+                             else 'assert(bindings["SUPER + R"] == "fuzzel")\n')
+                subprocess.run([shutil.which('lua'), '-'], input=prelude + assertion, text=True,
+                               check=True, capture_output=True, timeout=5)
 
 
 if __name__ == '__main__':
