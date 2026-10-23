@@ -33,6 +33,8 @@ Scope {
 	property bool needsPassword: false
 	onPendingNetworkChanged: if (pendingNetwork === null) needsPassword = false
 	property string error: ""
+	readonly property bool interactive: ControlState.opened || DashboardState.opened && DashboardState.page === "network"
+	function syncConsumer() { scanning = interactive; if (!interactive) resetPrompt() }
 	readonly property var networks: controlDevice === null ? [] : controlDevice.networks.values.slice().sort((a, b) =>
 		Number(b.connected) - Number(a.connected) || b.signalStrength - a.signalStrength)
 	function supportsPsk(network) {
@@ -60,15 +62,19 @@ Scope {
 		pendingNetwork.connectWithPsk(psk)
 		connectionTimeout.restart()
 	}
-	function refresh() { scanning = false; Qt.callLater(() => { if (ControlState.opened) scanning = true }) }
+	function refresh() { scanning = false; Qt.callLater(() => { if (root.interactive) scanning = true }) }
 	onControlDeviceChanged: { resetPrompt(); error = "" }
 	onWifiEnabledChanged: if (!wifiEnabled) resetPrompt()
 	Connections {
 		target: ControlState
 		function onOpenedChanged() {
-			root.scanning = ControlState.opened
-			if (!ControlState.opened) root.resetPrompt()
+			root.syncConsumer()
 		}
+	}
+	Connections {
+		target: DashboardState
+		function onOpenedChanged() { root.syncConsumer() }
+		function onPageChanged() { root.syncConsumer() }
 	}
 	Instantiator {
 		model: root.wifiDevices
@@ -85,7 +91,7 @@ Scope {
 		function onConnectionFailed(reason) {
 			connectionTimeout.stop()
 			if (reason === Net.ConnectionFailReason.NoSecrets && root.supportsPsk(root.pendingNetwork)) {
-				root.needsPassword = ControlState.opened
+				root.needsPassword = root.interactive
 				root.error = "Wi-Fi 비밀번호가 필요하거나 올바르지 않습니다."
 			} else if (reason === Net.ConnectionFailReason.NoSecrets) {
 				root.error = "기업용/WEP 인증 설정은 네트워크 편집기에서 구성하세요."

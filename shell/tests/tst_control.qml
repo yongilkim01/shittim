@@ -208,4 +208,13 @@ TestCase {
 		notificationsFixture.available = false; compare(tile.interactive, false)
 		notificationsFixture.available = true
 	}
+	function test_dashboardEmbeddedControlsKeepBrightnessAndEscape() {
+		populatedFixtures()
+		const content = createTemporaryObject(contentFactory, testCase, {page: "brightness", embedded: true, width: 589, height: 272})
+		compare(findChild(content, "controlHeader").visible, false)
+		compare(findChild(content, "levelSlider").enabled, true)
+		closeSpy.target = content
+		content.forceActiveFocus(); keyClick(Qt.Key_Escape); compare(closeSpy.count, 1)
+		content.embedded = false; compare(findChild(content, "controlHeader").visible, true)
+	}
 }

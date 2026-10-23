@@ -9,6 +9,7 @@ FocusScope {
 	required property var battery
 	required property var system
 	property var notifications: null
+	property bool embedded: false
 	property string page: "overview"
 	signal navigate(string destination)
 	signal closeRequested()
@@ -16,12 +17,13 @@ FocusScope {
 	ColumnLayout {
 		anchors.fill: parent; anchors.margins: root.page === "overview" ? 0 : Theme.spaceL; spacing: root.page === "overview" ? 0 : Theme.spaceM
 		RowLayout {
-			visible: root.page !== "overview"
+			objectName: "controlHeader"
+			visible: root.page !== "overview" && !root.embedded
 			HudButton { visible: root.page !== "overview"; text: "󰁍"; onClicked: root.navigate("overview") }
 			HudText { text: "CONTROL CENTER"; textStyle: "section"; color: Theme.accent; Layout.fillWidth: true }
 			HudButton { text: "󰅖"; onClicked: root.closeRequested() }
 		}
-		HudDivider { visible: root.page !== "overview"; vertical: false; Layout.fillWidth: true }
+		HudDivider { visible: root.page !== "overview" && !root.embedded; vertical: false; Layout.fillWidth: true }
 		HudText {
 			text: root.system.error; visible: root.page !== "overview" && text.length > 0; color: Theme.danger
 			Layout.fillWidth: true; wrapMode: Text.WordWrap; maximumLineCount: 4

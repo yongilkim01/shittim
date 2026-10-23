@@ -15,6 +15,7 @@ Scope {
     property int generation: 0
     property int sequence: 0
     property int launchGeneration: 0
+    signal applicationLaunched()
     readonly property alias model: search
     readonly property string helperPath: Quickshell.shellDir + "/../scripts/launcher-service.py"
     LauncherModel { id: search }
@@ -78,6 +79,7 @@ Scope {
                     else if (message.event === "error") root.error = root.errorText(message.error)
                     else if (message.event === "launched" && message.request === root.sequence) {
                         root.launching = false
+                        if (message.ok) root.applicationLaunched()
                         if (message.ok && root.launchGeneration === root.generation) root.close()
                         else if (!message.ok) root.error = root.errorText(message.error)
                     }

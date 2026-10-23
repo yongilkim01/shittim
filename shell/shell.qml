@@ -13,4 +13,5 @@ ShellRoot {
 	AppLauncher {}
 	NotificationCenter {}
 	NotificationPopups {}
+	SystemDashboard {}
 }

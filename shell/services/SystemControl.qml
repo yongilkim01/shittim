@@ -31,6 +31,11 @@ Scope {
 	property int sequence: 0
 	property var scanAdapter: null
 	readonly property bool busy: Object.keys(pending).length > 0
+	readonly property bool active: ControlState.opened || DashboardState.controlsActive
+	function syncConsumer() {
+		if (!active) { stopDiscovery(); prompt = null; queuedBrightness = null; error = "" }
+		else error = screenshotError
+	}
 	function errorText(code) {
 		if (code === "BrightnessPermissionDenied") return "밝기 제어 권한이 없습니다. 세션 권한을 확인한 뒤 새로고침하세요."
 		if (code === "BrightnessSessionUnavailable") return "밝기를 조절할 현재 사용자의 활성 로컬 세션을 찾지 못했습니다."
@@ -123,15 +128,15 @@ Scope {
 	Connections {
 		target: ControlState
 		function onOpenedChanged() {
-			if (!ControlState.opened) { root.stopDiscovery(); root.prompt = null; root.queuedBrightness = null }
-			else root.error = root.screenshotError
+			root.syncConsumer()
 		}
 	}
+	Connections { target: DashboardState; function onControlsActiveChanged() { root.syncConsumer() } }
 	Timer { id: scanTimeout; interval: 45000; onTriggered: root.stopDiscovery() }
 	Process {
 		id: bridge
 		command: ["python3", "-u", root.helperPath]
-		running: ControlState.opened
+		running: root.active
 		stdinEnabled: true
 		onStarted: { root.ready = false; root.error = root.screenshotError }
 		stdout: SplitParser {
@@ -147,11 +152,11 @@ Scope {
 			root.pending = ({})
 			root.queuedBrightness = null
 			root.prompt = null
-			if (ControlState.opened) root.error = "보조 서비스가 종료되었습니다. 패널을 닫았다 다시 열어 주세요."
+			if (root.active) root.error = "보조 서비스가 종료되었습니다. 패널을 닫았다 다시 열어 주세요."
 		}
 	}
 	Process { id: editor; command: ["nm-connection-editor"] }
-	function openNetworkEditor() { editor.startDetached(); ControlState.close() }
+	function openNetworkEditor() { editor.startDetached(); ControlState.close(); DashboardState.close() }
 	Process {
 		id: screenshot
 		command: ["python3", "-u", root.helperPath, "--screenshot"]

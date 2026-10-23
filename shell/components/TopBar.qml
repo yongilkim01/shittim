@@ -19,6 +19,8 @@ PanelWindow {
 			if (ControlState.opened && point.position.x < statusArea.mapToItem(null, 0, 0).x) ControlState.close()
 			const notificationX = notificationArea.mapToItem(null, 0, 0).x
 			if (NotificationState.opened && (point.position.x < notificationX || point.position.x > notificationX + notificationArea.width)) NotificationState.close()
+			const logoX = logo.mapToItem(null, 0, 0).x
+			if (DashboardState.opened && (point.position.x < logoX || point.position.x > logoX + logo.width)) DashboardState.close()
 		}
 	}
 
@@ -63,11 +65,13 @@ PanelWindow {
 		spacing: Theme.spaceXL
 
 		HudText {
+			id: logo
 			text: "SHITTIM"
 			textStyle: "title"
 			color: Theme.accentBright
 			Layout.alignment: Qt.AlignVCenter
 			Layout.rightMargin: Theme.spaceXL
+			MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: DashboardState.toggle(bar) }
 		}
 		Flickable {
 			objectName: "workspaceViewport"
