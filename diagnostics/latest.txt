@@ -1,0 +1,367 @@
+Shittim 로그인 진단
+수집 시각: 2026-10-23T04:46:29.637720+00:00
+자동 실행/서비스/설정 변경 없음. 의심 줄은 제외되며 원본 로그는 복사하지 않음.
+
+=== 저장소 버전 ===
+[종료 코드 0]
+8b40b12 feat: collect and publish laptop login diagnostics
+
+=== 세션 환경 (허용한 변수만) ===
+SHELL=/usr/bin/bash
+XDG_SESSION_ID=9
+XDG_SESSION_TYPE=wayland
+XDG_VTNR=2
+XDG_CURRENT_DESKTOP=Hyprland
+XDG_SESSION_DESKTOP=Hyprland
+DISPLAY=:0
+WAYLAND_DISPLAY=wayland-1
+XDG_RUNTIME_DIR=/run/user/1000
+XDG_CONFIG_HOME=<unset>
+
+=== 현재 터미널 ===
+[종료 코드 0]
+/dev/pts/0
+
+=== 실행 파일 ===
+bash=/usr/bin/bash
+start-hyprland=/usr/bin/start-hyprland
+Hyprland=/usr/bin/Hyprland
+quickshell=/usr/bin/quickshell
+systemctl=/usr/bin/systemctl
+[민감 정보 의심 줄 제외]
+
+=== 설치 버전 ===
+[종료 코드 0]
+hyprland 0.56.2-4
+quickshell 0.3.2-1
+bash 5.3.20-1
+systemd 262.1-1
+util-linux 2.42.4-1
+
+=== 프로필 발췌 $HOME/.bash_profile ===
+5: [[ -f ~/.bashrc ]] && . ~/.bashrc
+7: if [[ -z "$WAYLAND_DISPLAY" && -z "$DISPLAY" && "$(tty)" == "/dev/tty1" ]]; then
+8: 	exec start-hypland
+9: fi
+10: # >>> Shittim TTY autostart >>>
+11: if [ -z "${DISPLAY:-}" ] && [ -z "${WAYLAND_DISPLAY:-}" ] &&
+12:    [ -z "${SSH_CONNECTION:-}" ] && [ -z "${SSH_TTY:-}" ] &&
+13:    [ "$(tty 2>/dev/null)" = /dev/tty1 ] &&
+14:    [ ! -e $HOME/.config/shittim/disable-autostart ]; then
+[민감 정보 의심 줄 제외]
+16: fi
+17: # <<< Shittim TTY autostart <<<
+
+=== Bash 문법 .bash_profile ===
+[종료 코드 0]
+
+=== 프로필 발췌 $HOME/.bash_login ===
+[파일 없음]
+
+=== 프로필 발췌 $HOME/.profile ===
+[파일 없음]
+
+=== 프로필 발췌 $HOME/.bashrc ===
+6: [[ $- != *i* ]] && return
+
+=== Bash 문법 .bashrc ===
+[종료 코드 0]
+
+=== 프로필 발췌 $HOME/.zprofile ===
+[파일 없음]
+
+=== 프로필 발췌 $HOME/.zshrc ===
+[파일 없음]
+
+=== 자동 실행 중지 파일 ===
+있음
+
+=== 설치 상태 검증 ===
+[종료 코드 0]
+[Shittim] 설정 링크, Hyprland·Shittim 자동 실행, 진입 파일 검사 통과
+HackNerdFontMono-Regular.ttf: "Hack Nerd Font Mono" "Regular"
+D2Coding.ttc: "D2Coding" "Regular"
+[Shittim] 설치 상태 검증 완료
+
+=== Hyprland 설정 오류 ===
+[종료 코드 0]
+[
+	""
+]
+
+
+=== 사용자 서비스 상태 ===
+[종료 코드 0]
+Id=shittim.service
+ActiveState=active
+SubState=running
+Result=success
+ExecMainStatus=0
+
+Id=shittim-fcitx5.service
+ActiveState=inactive
+SubState=dead
+Result=success
+ExecMainStatus=0
+
+Id=shittim-polkit.service
+ActiveState=active
+SubState=running
+Result=success
+ExecMainStatus=0
+
+=== 사용자 서비스 정의 ===
+[종료 코드 0]
+# $HOME/.config/systemd/user/shittim.service
+# Managed by Shittim
+[Unit]
+Description=Shittim desktop shell
+PartOf=graphical-session.target
+StartLimitIntervalSec=30
+StartLimitBurst=3
+
+[Service]
+Type=simple
+[민감 정보 의심 줄 제외]
+Restart=on-failure
+RestartSec=2
+
+# $HOME/.config/systemd/user/shittim-fcitx5.service
+# Managed by Shittim
+[Unit]
+Description=Shittim input method
+PartOf=graphical-session.target
+StartLimitIntervalSec=30
+StartLimitBurst=3
+
+[Service]
+Type=simple
+[민감 정보 의심 줄 제외]
+Restart=on-failure
+RestartSec=2
+
+# $HOME/.config/systemd/user/shittim-polkit.service
+# Managed by Shittim
+[Unit]
+Description=Shittim authentication agent
+PartOf=graphical-session.target
+StartLimitIntervalSec=30
+StartLimitBurst=3
+
+[Service]
+Type=simple
+[민감 정보 의심 줄 제외]
+Restart=on-failure
+RestartSec=2
+
+=== 사용자 서비스 로그 ===
+[종료 코드 0]
+Oct 23 13:33:43 <HOST> systemd[1022]: Started Shittim input method.
+Oct 23 13:33:43 <HOST> systemd[1022]: Started Shittim authentication agent.
+Oct 23 13:33:43 <HOST> systemd[1022]: Started Shittim desktop shell.
+Oct 23 13:33:43 <HOST> polkit-kde-authentication-agent-1[1144]: New PolkitAgentListener  0x5614f6746fe0
+Oct 23 13:33:43 <HOST> polkit-kde-authentication-agent-1[1144]: Adding new listener  PolkitQt1::Agent::Listener(0x5614f6746c70) for  0x5614f6746fe0
+Oct 23 13:33:43 <HOST> polkit-kde-authentication-agent-1[1144]: Listener online
+Oct 23 13:33:43 <HOST> polkit-kde-authentication-agent-1[1144]: Authentication agent result: true
+[민감 정보 의심 줄 제외]
+Oct 23 13:33:43 <HOST> bash[1145]:   INFO: Shell ID: "9eb42cb46c47fc06b73f0cbee12bf779" Path ID "9eb42cb46c47fc06b73f0cbee12bf779"
+[민감 정보 의심 줄 제외]
+Oct 23 13:33:44 <HOST> bash[1145]:   INFO: Configuration Loaded
+Oct 23 13:33:44 <HOST> polkit-kde-authentication-agent-1[1144]: Failed to register with host portal QDBusError("org.freedesktop.portal.Error.Failed", "Could not register app ID: Unable to open /proc/1144/root")
+Oct 23 13:33:44 <HOST> polkit-kde-authentication-agent-1[1144]: Failed to register with host portal QDBusError("org.freedesktop.portal.Error.Failed", "Could not register app ID: Unable to open /proc/1144/root")
+Oct 23 13:33:44 <HOST> bash[1145]:   WARN qt.qpa.services: Failed to register with host portal QDBusError("org.freedesktop.portal.Error.Failed", "Could not register app ID: Connection already associated with an application ID")
+
+=== tty1 로그인 서비스 로그 ===
+[종료 코드 0]
+Oct 23 13:12:58 <HOST> systemd[1]: Started Getty on tty1.
+Oct 23 13:13:36 <HOST> login[598]: pam_unix(login:session): session opened for user yongil(uid=1000) by yongil(uid=0)
+Oct 23 13:13:36 <HOST> systemd[1]: getty@tty1.service: Deactivated successfully.
+Oct 23 13:13:36 <HOST> systemd[1]: getty@tty1.service: Scheduled restart job, restart counter is at 1.
+Oct 23 13:13:36 <HOST> systemd[1]: Started Getty on tty1.
+Oct 23 13:13:43 <HOST> login[675]: pam_unix(login:session): session opened for user yongil(uid=1000) by yongil(uid=0)
+Oct 23 13:13:43 <HOST> systemd[1]: getty@tty1.service: Deactivated successfully.
+Oct 23 13:13:43 <HOST> systemd[1]: getty@tty1.service: Scheduled restart job, restart counter is at 2.
+Oct 23 13:13:43 <HOST> systemd[1]: Started Getty on tty1.
+Oct 23 13:13:51 <HOST> login[716]: pam_unix(login:session): session opened for user yongil(uid=1000) by yongil(uid=0)
+Oct 23 13:13:51 <HOST> systemd[1]: getty@tty1.service: Deactivated successfully.
+Oct 23 13:13:51 <HOST> systemd[1]: getty@tty1.service: Scheduled restart job, restart counter is at 3.
+Oct 23 13:13:51 <HOST> systemd[1]: Started Getty on tty1.
+Oct 23 13:13:57 <HOST> login[756]: pam_unix(login:session): session opened for user yongil(uid=1000) by yongil(uid=0)
+Oct 23 13:13:57 <HOST> systemd[1]: getty@tty1.service: Deactivated successfully.
+Oct 23 13:13:57 <HOST> systemd[1]: getty@tty1.service: Scheduled restart job, restart counter is at 4.
+Oct 23 13:13:57 <HOST> systemd[1]: Started Getty on tty1.
+Oct 23 13:14:01 <HOST> login[789]: pam_unix(login:session): session opened for user yongil(uid=1000) by yongil(uid=0)
+Oct 23 13:14:01 <HOST> systemd[1]: getty@tty1.service: Deactivated successfully.
+Oct 23 13:14:02 <HOST> systemd[1]: getty@tty1.service: Scheduled restart job, restart counter is at 5.
+Oct 23 13:14:02 <HOST> systemd[1]: Started Getty on tty1.
+Oct 23 13:14:25 <HOST> login[824]: pam_unix(login:session): session opened for user yongil(uid=1000) by yongil(uid=0)
+Oct 23 13:14:25 <HOST> systemd[1]: getty@tty1.service: Deactivated successfully.
+Oct 23 13:14:25 <HOST> systemd[1]: getty@tty1.service: Scheduled restart job, restart counter is at 6.
+Oct 23 13:14:25 <HOST> systemd[1]: Started Getty on tty1.
+
+=== 현재 사용자 Hyprland journal ===
+[종료 코드 0]
+-- No entries --
+
+=== 수동 실행 로그 ===
+[파일 없음]
+
+=== Hyprland 실행 로그 1 ===
+x600@60.03Hz 
+DEBUG from aquamarine ]: drm: Mode 8: 640x480@60.03Hz 
+DEBUG from aquamarine ]: drm: Physical size [Vector2D: x: 340, y: 190] (mm)
+DEBUG from aquamarine ]: drm: Description Lenovo Group Limited 0x9052  (eDP-1)
+DEBUG from aquamarine ]: drm: connector eDP-1 crtc is capable of vrr: props.vrr_capable -> 123, crtc->props.vrr_enabled -> 25
+DEBUG from aquamarine ]: drm: Explicit sync supported
+DEBUG from aquamarine ]: drm: connector eDP-1 crtc supports CTM
+DEBUG from aquamarine ]: drm: connector eDP-1 crtc supports HDR (8)
+DEBUG from aquamarine ]: drm: connector eDP-1 crtc supports Colorspace (122)
+DEBUG from aquamarine ]: drm: gpu /dev/dri/card1 becomes primary drm
+DEBUG from aquamarine ]: DRM Dumb: created a dumb allocator
+DEBUG from aquamarine ]: Starting the Aquamarine backend!
+DEBUG from aquamarine ]: Starting the Wayland backend!
+ERR from aquamarine ]: Wayland backend cannot start: wl_display_connect failed (is a wayland compositor running?)
+ERR from aquamarine ]: Requested backend (wayland) could not start, enabling fallbacks
+ERR from aquamarine ]: Implementation wayland failed, erasing.
+DEBUG from aquamarine ]: Created a GBM allocator with drm fd 33
+DEBUG from aquamarine ]: drm: Connectors size2 3
+DEBUG from aquamarine ]: Created a GBM allocator with drm fd 36
+DEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless
+DEBUG from aquamarine ]: CDRMRenderer(drm): Using device /dev/dri/card1
+DEBUG from aquamarine ]: CDRMRenderer: IMG_context_priority supported, requesting high
+DEBUG from aquamarine ]: CDRMRenderer: EXT_create_context_robustness supported, requesting lose on reset
+DEBUG from aquamarine ]: CDRMRenderer: Using KHR_context_flush_control
+DEBUG from aquamarine ]: CDRMRenderer: Got a high priority context
+DEBUG from aquamarine ]: Creating CDRMRenderer on gpu /dev/dri/renderD128
+DEBUG from aquamarine ]: Using: OpenGL ES 3.2 Mesa 26.2.5-arch1.1
+DEBUG from aquamarine ]: Vendor: AMD
+DEBUG from aquamarine ]: Renderer: AMD Radeon Graphics (radeonsi, renoir, ACO, DRM 3.64, 7.2.11-arch1-1)
+[민감 정보 의심 줄 제외]
+DEBUG from aquamarine ]: drm: onReady: connector 120
+DEBUG from aquamarine ]: drm: onReady: connector 120 has output name eDP-1
+DEBUG from aquamarine ]: Swapchain: Clearing
+DEBUG from aquamarine ]: drm: onReady: connector 128
+DEBUG from aquamarine ]: drm: onReady: connector 135
+DEBUG from aquamarine ]: Supported EGL client extensions: (16) EGL_EXT_device_base EGL_EXT_device_enumeration EGL_EXT_device_query EGL_EXT_platform_base EGL_KHR_client_get_all_proc_addresses EGL_EXT_client_extensions EGL_KHR_debug EGL_EXT_platform_device EGL_EXT_explicit_device EGL_EXT_platform_wayland EGL_KHR_platform_wayland EGL_EXT_platform_x11 EGL_KHR_platform_x11 EGL_EXT_platform_xcb EGL_MESA_platform_gbm EGL_KHR_platform_gbm EGL_MESA_platform_surfaceless
+DEBUG from aquamarine ]: CDRMRenderer(drm): Using device /dev/dri/card1
+DEBUG from aquamarine ]: CDRMRenderer: IMG_context_priority supported, requesting high
+DEBUG from aquamarine ]: CDRMRenderer: EXT_create_context_robustness supported, requesting lose on reset
+DEBUG from aquamarine ]: CDRMRenderer: Using KHR_context_flush_control
+DEBUG from aquamarine ]: CDRMRenderer: Got a high priority context
+DEBUG from aquamarine ]: Creating CDRMRenderer on gpu /dev/dri/renderD128
+DEBUG from aquamarine ]: Using: OpenGL ES 3.2 Mesa 26.2.5-arch1.1
+DEBUG from aquamarine ]: Vendor: AMD
+DEBUG from aquamarine ]: Renderer: AMD Radeon Graphics (radeonsi, renoir, ACO, DRM 3.64, 7.2.11-arch1-1)
+[민감 정보 의심 줄 제외]
+DEBUG from aquamarine ]: GBM: Allocated a new buffer with size [Vector2D: x: 1920, y: 1080] and format XR24 with modifier 0x200000440517901 : GFX9,64KB_S_X,PIPE_XOR_BITS=2,BANK_XOR_BITS=0,RB=1,PIPE=2,DCC,DCC_MAX_COMPRESSED_BLOCK=64B,DCC_INDEPENDENT_64B,DCC_CONSTANT_ENCODE,DCC_RETILE
+DEBUG from aquamarine ]: GBM: Allocated a new buffer with size [Vector2D: x: 1920, y: 1080] and format XR24 with modifier 0x200000440517901 : GFX9,64KB_S_X,PIPE_XOR_BITS=2,BANK_XOR_BITS=0,RB=1,PIPE=2,DCC,DCC_MAX_COMPRESSED_BLOCK=64B,DCC_INDEPENDENT_64B,DCC_CONSTANT_ENCODE,DCC_RETILE
+DEBUG from aquamarine ]: GBM: Allocated a new buffer with size [Vector2D: x: 1920, y: 1080] and format XR24 with modifier 0x200000440517901 : GFX9,64KB_S_X,PIPE_XOR_BITS=2,BANK_XOR_BITS=0,RB=1,PIPE=2,DCC,DCC_MAX_COMPRESSED_BLOCK=64B,DCC_INDEPENDENT_64B,DCC_CONSTANT_ENCODE,DCC_RETILE
+DEBUG from aquamarine ]: Swapchain: Reconfigured a swapchain to [Vector2D: x: 1920, y: 1080] XR24 of length 3
+DEBUG from aquamarine ]: drm: Modesetting eDP-1 with 1920x1080@60.03Hz
+DEBUG from aquamarine ]: GBM: Automatically selected format AR24 for new GBM buffer
+DEBUG from aquamarine ]: GBM: Allocated a new buffer with size [Vector2D: x: 256, y: 256] and format AR24 with modifier 0x0 : LINEAR
+DEBUG from aquamarine ]: GBM: Automatically selected format AR24 for new GBM buffer
+DEBUG from aquamarine ]: GBM: Allocated a new buffer with size [Vector2D: x: 256, y: 256] and format AR24 with modifier 0x0 : LINEAR
+DEBUG from aquamarine ]: Swapchain: Reconfigured a swapchain to [Vector2D: x: 256, y: 256] AR24 of length 2
+DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 148
+ERR from aquamarine ]: drm: Cannot commit when a page-flip is awaiting
+ERR from aquamarine ]: drm: Cannot commit when a page-flip is awaiting
+DEBUG from aquamarine ]: backend: poll fd 13 for implementation headless
+DEBUG from aquamarine ]: backend: poll fd 30 for implementation drm
+DEBUG from aquamarine ]: backend: poll fd 31 for implementation drm
+DEBUG from aquamarine ]: backend: poll fd 14 for session
+DEBUG from aquamarine ]: backend: poll fd 16 for session
+DEBUG from aquamarine ]: backend: poll fd 17 for session
+DEBUG from aquamarine ]: backend: poll fd 32 for idle
+DEBUG from aquamarine ]: udev: new udev change event for card1
+DEBUG from aquamarine ]: udev: DRM device card1 changed
+DEBUG from aquamarine ]: drm: Got a lease event for /dev/dri/card1
+DEBUG from aquamarine ]: libinput: New device HD-Audio Generic Headphone: 0-0
+DEBUG from aquamarine ]: libinput: New device Video Bus: 0-6
+DEBUG from aquamarine ]: libinput: New device Ideapad extra buttons: 0-0
+DEBUG from aquamarine ]: libinput: New device SYNA2BA6:00 06CB:CE2D Mouse: 1739-52781
+DEBUG from aquamarine ]: libinput: New device SYNA2BA6:00 06CB:CE2D Touchpad: 1739-52781
+DEBUG from aquamarine ]: libinput: New device Power Button: 0-1
+DEBUG from aquamarine ]: libinput: New device Power Button: 0-1
+DEBUG from aquamarine ]: libinput: New device Lid Switch: 0-5
+DEBUG from aquamarine ]: libinput: New device AT Translated Set 2 keyboard: 1-1
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_NONE    event BUTTON_EVENT_IN_AREA     to BUTTON_STATE_AREA   
+DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_BEGIN), tap state TAP_STATE_IDLE → TAP_EVENT_TOUCH → TAP_STATE_TOUCH
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_NONE → GESTURE_EVENT_FINGER_DETECTED → GESTURE_STATE_UNKNOWN
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] state GESTURE_STATE_NONE → GESTURE_STATE_UNKNOWN
+DEBUG from aquamarine ]: [libinput] event8  - button state: touch 1 from BUTTON_STATE_NONE    event BUTTON_EVENT_IN_AREA     to BUTTON_STATE_AREA   
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [2fg] event GESTURE_STATE_UNKNOWN → GESTURE_EVENT_RESET → GESTURE_STATE_NONE
+DEBUG from aquamarine ]: [libinput] event8  - tap: touch 1 (TOUCH_BEGIN), tap state TAP_STATE_TOUCH → TAP_EVENT_TOUCH → TAP_STATE_TOUCH_2
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [2fg] event GESTURE_STATE_NONE → GESTURE_EVENT_FINGER_DETECTED → GESTURE_STATE_UNKNOWN
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [2fg] state GESTURE_STATE_NONE → GESTURE_STATE_UNKNOWN
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [2fg] event GESTURE_STATE_UNKNOWN → GESTURE_EVENT_HOLD_TIMEOUT → GESTURE_STATE_HOLD
+DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_AREA    event BUTTON_EVENT_UP          to BUTTON_STATE_NONE   
+DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_END), tap state TAP_STATE_TOUCH_2 → TAP_EVENT_RELEASE → TAP_STATE_TOUCH_2_RELEASE
+DEBUG from aquamarine ]: [libinput] event8  - button state: touch 1 from BUTTON_STATE_AREA    event BUTTON_EVENT_UP          to BUTTON_STATE_NONE   
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [2fg] event GESTURE_STATE_HOLD → GESTURE_EVENT_END → GESTURE_STATE_NONE
+DEBUG from aquamarine ]: [libinput] event8  - tap: touch 1 (TOUCH_END), tap state TAP_STATE_TOUCH_2_RELEASE → TAP_EVENT_RELEASE → TAP_STATE_2FGTAP_TAPPED
+DEBUG from aquamarine ]: [libinput] event8  - tap: touch -1 (), tap state TAP_STATE_2FGTAP_TAPPED → TAP_EVENT_TIMEOUT → TAP_STATE_IDLE
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: touch 0 (TOUCH_BEGIN), palm detected (typing)
+DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_NONE    event BUTTON_EVENT_IN_AREA     to BUTTON_STATE_AREA   
+DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_AREA    event BUTTON_EVENT_UP          to BUTTON_STATE_NONE   
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_NONE    event BUTTON_EVENT_IN_AREA     to BUTTON_STATE_AREA   
+DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_BEGIN), tap state TAP_STATE_IDLE → TAP_EVENT_TOUCH → TAP_STATE_TOUCH
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_NONE → GESTURE_EVENT_FINGER_DETECTED → GESTURE_STATE_UNKNOWN
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] state GESTURE_STATE_NONE → GESTURE_STATE_UNKNOWN
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_UNKNOWN → GESTURE_EVENT_RESET → GESTURE_STATE_NONE
+DEBUG from aquamarine ]: [libinput] event8  - palm: touch 0 (TOUCH_UPDATE), palm detected (tool-palm)
+DEBUG from aquamarine ]: [libinput] event8  - palm: touch 0 (TOUCH_UPDATE), palm detected (tool-palm)
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_NONE → GESTURE_EVENT_FINGER_DETECTED → GESTURE_STATE_UNKNOWN
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] state GESTURE_STATE_NONE → GESTURE_STATE_UNKNOWN
+DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_AREA    event BUTTON_EVENT_UP          to BUTTON_STATE_NONE   
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_UNKNOWN → GESTURE_EVENT_RESET → GESTURE_STATE_NONE
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_NONE    event BUTTON_EVENT_IN_AREA     to BUTTON_STATE_AREA   
+DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_BEGIN), tap state TAP_STATE_IDLE → TAP_EVENT_TOUCH → TAP_STATE_TOUCH
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_NONE → GESTURE_EVENT_FINGER_DETECTED → GESTURE_STATE_UNKNOWN
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] state GESTURE_STATE_NONE → GESTURE_STATE_UNKNOWN
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_UNKNOWN → GESTURE_EVENT_HOLD_TIMEOUT → GESTURE_STATE_HOLD
+DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_UPDATE), tap state TAP_STATE_TOUCH → TAP_EVENT_MOTION → TAP_STATE_DEAD
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_HOLD → GESTURE_EVENT_CANCEL → GESTURE_STATE_NONE
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_HOLD → GESTURE_EVENT_POINTER_MOTION_START → GESTURE_STATE_POINTER_MOTION
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] state GESTURE_STATE_HOLD → GESTURE_STATE_POINTER_MOTION
+DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 155
+DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_AREA    event BUTTON_EVENT_UP          to BUTTON_STATE_NONE   
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_POINTER_MOTION → GESTURE_EVENT_END → GESTURE_STATE_NONE
