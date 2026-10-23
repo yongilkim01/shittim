@@ -2,7 +2,7 @@
 
 ## 디자인 토큰
 
-`ui/Theme.qml`에서 색상·폰트·간격·크기·애니메이션을 관리한다.
+`shell/ui/Theme.qml`에서 색상·폰트·간격·크기·애니메이션을 관리한다.
 
 | 역할 | 토큰 |
 | --- | --- |
@@ -21,9 +21,9 @@
 
 ## 모듈과 사용법
 
-일반 Qt Quick 디렉터리 import와 `qmldir`를 사용한다. `Theme.qml`의 `pragma Singleton`과 `qmldir`의 `singleton Theme` 등록이 한 쌍이다. 시스템의 import 경로 설정이나 빌드 과정 없이 기존 `shell.qml`에서 컴포넌트를 불러온다.
+일반 Qt Quick 디렉터리 import와 `qmldir`를 사용한다. `shell/ui/Theme.qml`의 `pragma Singleton`과 `shell/ui/qmldir`의 `singleton Theme` 등록이 한 쌍이다. 시스템의 import 경로 설정이나 빌드 과정 없이 `shell/shell.qml`에서 컴포넌트를 불러온다.
 
-`components/`의 파일에서는 다음과 같이 사용한다.
+`shell/components/`의 파일에서는 다음과 같이 사용한다. `../ui` 상대 import는 이동 전과 같다.
 
 ```qml
 import QtQuick
@@ -53,7 +53,7 @@ HudPanel {
 
 `HudText`는 한글이 있으면 D2Coding을 선택한다. 혼합 문자열의 아이콘은 `HudIcon`으로 분리한다. 영문과 아이콘은 Hack Nerd Font Mono를 사용한다. 두 폰트는 대상 Arch 환경에 설치되어 있어야 한다. 텍스트의 고정 높이를 지정하지 않고 실제 폰트의 implicitHeight를 사용한다.
 
-상태 조회는 기존 기능 컴포넌트, 시각 규칙은 `ui/`가 담당한다. `ui/`는 Hyprland·UPower·NetworkManager·PipeWire를 import하지 않는다. 새 기능도 먼저 공통 토큰과 기본 요소를 재사용한다.
+상태 조회는 기존 기능 컴포넌트, 시각 규칙은 `shell/ui/`가 담당한다. `shell/ui/`는 Hyprland·UPower·NetworkManager·PipeWire를 import하지 않는다. 새 기능도 먼저 공통 토큰과 기본 요소를 재사용한다.
 
 ## 상단 바
 
@@ -69,16 +69,16 @@ HudPanel {
 
 ## 검증
 
-Qt Quick 기본 요소는 `qmltestrunner -input tests`로 검사할 수 있다. 이 검사는 실제 Quickshell 시스템 모듈이나 Linux 장치를 검증하지 않는다.
+Qt Quick 기본 요소는 저장소 루트에서 `qmltestrunner -input shell/tests`로 검사할 수 있다. 이 검사는 실제 Quickshell 시스템 모듈이나 Linux 장치를 검증하지 않는다.
 
-Arch에서는 변경분을 반영한 후 실행 중인 셸의 자동 재로딩을 확인한다. 새로 실행해야 한다면 기존 인스턴스를 종료한 뒤 한 번만 실행한다.
+이번 디렉터리 이동을 적용할 때는 이전 `shell.qml`로 실행한 인스턴스를 종료한 뒤 새 진입 파일로 한 번만 실행한다. 이후 같은 경로의 파일 수정에는 자동 재로딩을 사용할 수 있다. Hyprland의 자동 실행 명령도 이전 경로를 사용 중이면 새 경로로 직접 수정한다.
 
 ```sh
 cd /home/yongil/projects/shittim
 quickshell --version
 fc-match "Hack Nerd Font Mono"
 fc-match D2Coding
-quickshell --path /home/yongil/projects/shittim/shell.qml
+quickshell --path /home/yongil/projects/shittim/shell/shell.qml
 ```
 
 1366px·1920px 화면에서 바 높이·구분선·글자 잘림을 확인한다. 한글과 긴 SSID, 다수 워크스페이스, 네트워크·볼륨·배터리 각 상태에서도 확인한다. 워크스페이스 전환, 외부 상태 변경 반영, 볼륨 클릭 음소거·5% 휠·0~100% 제한, 기본 출력 장치 변경, 배터리 없는 경우의 숨김 동작을 기존과 비교한다.

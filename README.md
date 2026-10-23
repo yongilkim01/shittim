@@ -2,13 +2,40 @@
 
 Hyprland용 Quickshell 0.3.2 데스크톱 셸. SHITTIM HUD 디자인 시스템을 사용하며 왼쪽에는 워크스페이스, 오른쪽에는 네트워크·볼륨·배터리·초 단위 시계를 표시한다.
 
+## 저장소 구조
+
+```text
+shittim/
+├── shell/
+│   ├── shell.qml
+│   ├── components/
+│   ├── ui/
+│   └── tests/
+├── dotfiles/
+├── scripts/
+├── docs/
+├── README.md
+└── LICENSE
+```
+
+모노레포 전환 1단계로 Quickshell 소스와 테스트를 `shell/`에 모았다. `dotfiles/`와 `scripts/`는 `.gitkeep`만 둔 빈 디렉터리다. 향후 루트의 `install.sh`에서 Arch Linux 환경을 구성할 예정이며, 이번 단계에서는 설치 프로그램이나 실제 설정 파일을 제공하지 않는다.
+
+`shell/shell.qml`의 `import "./components"`, 컴포넌트와 테스트의 `import "../ui"`, `shell/ui/qmldir`의 싱글턴 등록은 기존 상대 관계를 유지한다. 기능과 디자인 코드는 변경하지 않았다.
+
+저장소 루트에서 실행한다. 기존 루트의 `shell.qml`로 실행한 인스턴스는 종료하고 새 경로로 한 번만 실행한다. Hyprland의 `exec-once` 등에서 이전 진입 파일 경로를 사용한다면 `shell/shell.qml` 경로로 직접 수정해야 한다. 기존 사용자 설정은 자동으로 수정하지 않는다.
+
+```sh
+cd /home/yongil/projects/shittim
+quickshell --path "$PWD/shell/shell.qml"
+```
+
 ## SHITTIM HUD 디자인 시스템
 
-`ui/Theme.qml`이 색상·폰트·크기·간격·모션의 정본이다. 기본 배경은 `#020f15`, 상단 바는 40px이다. 얇은 시안 경계, 직선 패널, 절제된 모서리와 활성·호버 강조를 사용한다.
+`shell/ui/Theme.qml`이 색상·폰트·크기·간격·모션의 정본이다. 기본 배경은 `#020f15`, 상단 바는 40px이다. 얇은 시안 경계, 직선 패널, 절제된 모서리와 활성·호버 강조를 사용한다.
 
-`ui/`의 `HudPanel`, `HudButton`, `HudText`, `HudDivider`, `HudProgress`, `HudIcon`, `HudStatus`를 재사용한다. 컴포넌트의 `import "../ui"`와 `qmldir` 싱글턴 등록을 사용하며 별도 설치나 외부 라이브러리는 필요하지 않다. 폰트는 Arch에 설치된 Hack Nerd Font Mono와 D2Coding을 사용한다.
+`shell/ui/`의 `HudPanel`, `HudButton`, `HudText`, `HudDivider`, `HudProgress`, `HudIcon`, `HudStatus`를 재사용한다. 컴포넌트의 `import "../ui"`와 `qmldir` 싱글턴 등록을 사용하며 별도 설치나 외부 라이브러리는 필요하지 않다. 폰트는 Arch에 설치된 Hack Nerd Font Mono와 D2Coding을 사용한다.
 
-사용 예·토큰·레이아웃·검증 절차는 [디자인 문서](docs/DESIGN.md)에 있다. `qmltestrunner -input tests`는 시스템 장치와 독립적인 Qt Quick 기본 요소 검사다. 실제 Quickshell·Hyprland·오디오·네트워크·배터리 검증은 Arch에서 수행한다.
+사용 예·토큰·레이아웃·검증 절차는 [디자인 문서](docs/DESIGN.md)에 있다. 저장소 루트의 `qmltestrunner -input shell/tests`는 시스템 장치와 독립적인 Qt Quick 기본 요소 검사다. 실제 Quickshell·Hyprland·오디오·네트워크·배터리 검증은 Arch에서 수행한다.
 
 ## 볼륨
 
@@ -94,11 +121,11 @@ PowerShell에서 실행한다. 소유권 경고를 피하기 위한 `-c safe.dir
 ```powershell
 Set-Location C:\Users\User\Desktop\Yongil\projects\shittim
 git -c safe.directory=C:/Users/User/Desktop/Yongil/projects/shittim diff --check
-git -c safe.directory=C:/Users/User/Desktop/Yongil/projects/shittim diff -- components/TopBar.qml README.md
-Get-Content ui/Theme.qml
-git -c safe.directory=C:/Users/User/Desktop/Yongil/projects/shittim add -- ui components docs/DESIGN.md tests/tst_hud.qml README.md
+git -c safe.directory=C:/Users/User/Desktop/Yongil/projects/shittim diff -- shell/components/TopBar.qml README.md
+Get-Content shell/ui/Theme.qml
+git -c safe.directory=C:/Users/User/Desktop/Yongil/projects/shittim add --all
 git -c safe.directory=C:/Users/User/Desktop/Yongil/projects/shittim diff --cached
-git -c safe.directory=C:/Users/User/Desktop/Yongil/projects/shittim commit -m "feat: introduce SHITTIM HUD design system"
+git -c safe.directory=C:/Users/User/Desktop/Yongil/projects/shittim commit -m "refactor: move Quickshell sources into shell directory"
 ```
 
 변경 검토 및 사용자 승인 후에만 푸시한다.
@@ -118,10 +145,10 @@ quickshell --version
 sudo pacman -S --needed upower
 sudo systemctl start upower.service
 upower -d
-quickshell -p "$PWD/shell.qml"
+quickshell -p "$PWD/shell/shell.qml"
 ```
 
-로컬 수정이 있으면 먼저 보존하고 pull한다. 이미 같은 셸이 실행 중이면 파일 자동 재로딩을 확인하거나, 기존 실행을 종료한 뒤 위 실행 명령을 사용한다. Hyprland 세션의 터미널에서 실행한다.
+로컬 수정이 있으면 먼저 보존하고 pull한다. 이번 경로 이동을 반영할 때는 기존 실행을 종료한 뒤 위 실행 명령을 사용한다. Hyprland 세션의 터미널에서 실행한다. 이후 같은 진입 파일 경로에서 소스만 수정하면 자동 재로딩을 사용할 수 있다.
 
 사용자가 확인한 장치는 `BAT0`이며 당시 sysfs 출력은 잔량 `100`, 상태 `Full`이었다. 현재 값은 하드코딩하지 않고 UPower에서 읽는다. 다음 명령으로 실제 장치와 표시용 합성 장치를 비교할 수 있다.
 
