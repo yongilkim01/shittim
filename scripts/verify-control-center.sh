@@ -16,5 +16,5 @@ if [[ -n $shittim_qmltest ]]; then
     QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software "$shittim_qmltest" -input "$SHITTIM_ROOT/shell/tests"
 else warn 'qmltestrunner가 없어 화면 단위 테스트를 건너뜁니다.'; fi
 [[ -n ${WAYLAND_DISPLAY:-} ]] || die '실제 Quickshell import 검사는 Hyprland의 Kitty에서 실행하세요.'
-timeout 15s quickshell --path "$SHITTIM_ROOT/shell/tests/integration/shell.qml"
+timeout 15s quickshell --path "$SHITTIM_ROOT/shell/verify-control-center.qml"
 info 'Control Center 코드 검사 완료. 실제 연결·페어링·슬라이더·모니터 제거는 문서의 실기 항목을 확인하세요.'

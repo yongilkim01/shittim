@@ -54,7 +54,7 @@ bash scripts/verify-control-center.sh
 
 ## 검증
 
-`verify-control-center.sh`는 Bash 문법·Python 테스트·Qt 화면 테스트를 실행하고, 마지막으로 **실제 Quickshell**에서 모든 컴포넌트를 숨긴 채 생성해 import 검사를 한다. 두 번째 바를 표시하지 않고 1.2초 후 종료한다. 실제 Hyprland의 Kitty에서 실행한다. 코드 검사에서 시스템 설정을 변경하지 않는다.
+`verify-control-center.sh`는 Bash 문법·Python 테스트·Qt 화면 테스트를 실행하고, 마지막으로 **실제 Quickshell**에서 모든 컴포넌트를 숨긴 채 생성해 import 검사를 한다. 검증 진입점 `shell/verify-control-center.qml`은 실제 `shell.qml`과 같은 설정 루트를 사용한다. Quickshell 0.3.2는 이 루트 밖으로 향하는 상대 import를 차단하므로 진입점을 `shell/tests/` 아래로 옮기지 않는다. 두 번째 바를 표시하지 않고 1.2초 후 종료한다. 실제 Hyprland의 Kitty에서 실행한다. 코드 검사에서 시스템 설정을 변경하지 않는다.
 
 실기에서는 다음을 확인한다.
 
@@ -74,4 +74,4 @@ Windows Qt 화면 테스트는 화면·입력·바인딩만 확인한다. Arch W
 - 패널·상세 화면: 신규 `shell/components/control/ControlFrame.qml`, `QuickTile.qml`, `ControlOverview.qml`, `ControlContent.qml`, `LevelControl.qml`, `WifiPage.qml`, `BluetoothPage.qml`, `AudioPage.qml`, `BrightnessPage.qml`, `PowerPage.qml`, `SettingsPage.qml`.
 - 공통 UI: 신규 `shell/ui/HudSlider.qml`, `HudInput.qml`, 토큰·등록 수정 `Theme.qml`, `qmldir`.
 - 보조 서비스·설치: 신규 `scripts/control-service.py`, `scripts/verify-control-center.sh`, 수정 `install.sh`, `scripts/common.sh`, `install-packages.sh`, `packages.txt`, `verify.sh`.
-- 검사·문서: 신규 `shell/tests/tst_control.qml`, `shell/tests/integration/shell.qml`, `tests/test_control_service.py`, `docs/control-center.md`, `docs/control-center-comparison.png`, 수정 `README.md`.
+- 검사·문서: 신규 `shell/tests/tst_control.qml`, `shell/verify-control-center.qml`, `tests/test_control_service.py`, `tests/test_qml_imports.py`, `docs/control-center.md`, `docs/control-center-comparison.png`, 수정 `README.md`.
