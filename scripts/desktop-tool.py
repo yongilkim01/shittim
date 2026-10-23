@@ -65,8 +65,9 @@ class Desktop:
 
     def installed(self):
         launcher = module('shittim_launcher', 'launcher-service.py')
-        _, _, desktop = launcher.load_gio()
-        return {app_id for app_id in APPLICATIONS if (app := desktop.new(app_id)) is not None and app.should_show() and not app.get_is_hidden()}
+        gio, _, desktop = launcher.load_gio()
+        return {app.get_id() for app in gio.AppInfo.get_all() if isinstance(app, desktop)
+                and app.get_id() in APPLICATIONS and app.should_show() and not app.get_is_hidden()}
 
     def bindings(self, replace=False):
         commands = self.commands()

@@ -147,6 +147,18 @@ class GioIntegration(unittest.TestCase):
                 '(g.AppInfo.get_default_for_type(key,False)) for key,value in expected.items()]')
         self.run_code(code)
 
+    def test_desktop_setup_with_missing_and_hidden_apps_uses_only_installed_entries(self):
+        self.desktop(self.user, 'nemo.desktop', 'Name=Installed file manager\n')
+        self.desktop(self.user, 'vlc.desktop', 'Hidden=true\n')
+        self.desktop(self.user, 'swayimg.desktop', 'TryExec=shittim-nonexistent-image-viewer\n')
+        self.environment['HOME'] = str(self.base / 'home'); Path(self.environment['HOME']).mkdir()
+        self.environment['XDG_STATE_HOME'] = str(self.base / 'state')
+        code = ('import importlib.util,json; s=importlib.util.spec_from_file_location("desktop",'
+                + repr(str(ROOT / 'scripts/desktop-tool.py')) + '); m=importlib.util.module_from_spec(s); s.loader.exec_module(m); '
+                'd=m.Desktop(); assert d.installed()=={"nemo.desktop"}; d.setup(); '
+                'data=json.loads(d.manifest.read_text()); assert data["defaults"]=={"inode/directory":"nemo.desktop"}')
+        self.run_code(code)
+
     def test_service_watches_app_changes_and_keeps_child_output_out_of_protocol(self):
         output = self.base / 'child-finished'
         recorder = self.base / 'noisy.py'

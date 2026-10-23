@@ -21,7 +21,8 @@ if [[ ${SHITTIM_WITH_POWER_PROFILES:-0} == 1 ]]; then
 fi
 sudo pacman -Syu
 for shittim_package in "${SHITTIM_PACKAGES[@]}"; do
-    shittim_repo=$(LC_ALL=C pacman -Si -- "$shittim_package" | awk '/^Repository[[:space:]]*:/ {print $3; exit}')
+    # Read all metadata so pacman cannot fail with SIGPIPE under pipefail.
+    shittim_repo=$(LC_ALL=C pacman -Si -- "$shittim_package" | awk '/^Repository[[:space:]]*:/ && !found {print $3; found=1}')
     [[ $shittim_repo == core || $shittim_repo == extra || $shittim_repo == multilib ]] || die "공식 패키지를 찾지 못했습니다: $shittim_package. AUR로 자동 전환하지 않습니다."
 done
 sudo pacman -S --needed -- "${SHITTIM_PACKAGES[@]}"
