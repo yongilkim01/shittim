@@ -16,6 +16,7 @@ Scope {
     property var recentWindows: []
     property string error: ""
     property string pendingApp: ""
+    property string artworkState: "unloaded"
     readonly property var apps: LauncherState.dockFavorites.map(id => LauncherState.model.applications.find(app => app.id === id)).filter(app => app !== undefined)
     readonly property var windows: Hyprland.toplevels.values.map(window => ({
         handle: window, address: window.address, activated: window.activated,
@@ -87,6 +88,23 @@ Scope {
         function show(): void { root.show(null) }
         function hide(): void { root.close() }
         function reload(): void { LauncherState.refresh() }
+        function launch(appId: string): string {
+            if (!LauncherState.ready || LauncherState.launching) return "busy"
+            const app = LauncherState.model.applications.find(candidate => candidate.id === appId)
+            if (!app) return "missing"
+            ControlState.close(); NotificationState.close(); LauncherState.close(); DashboardState.close()
+            root.activate(app)
+            return root.error ? "error" : "requested"
+        }
+        function diagnostics(): string {
+            return JSON.stringify({opened: root.opened, artworkState: root.artworkState,
+                selected: playback.player ? playback.player.dbusName : "", title: playback.title, artist: playback.artist,
+                artAllowed: playback.art.length > 0, playing: playback.playing, position: playback.position, duration: playback.duration,
+                players: playback.players.map(player => ({name: player.dbusName, title: Data.text(player.trackTitle), artist: Data.text(player.trackArtist),
+                    canControl: player.canControl, canToggle: player.canTogglePlaying, canNext: player.canGoNext,
+                    canPrevious: player.canGoPrevious, canSeek: player.canSeek, positionSupported: player.positionSupported,
+                    lengthSupported: player.lengthSupported}))})
+        }
         function status(): string { return JSON.stringify({opened: root.opened, players: playback.players.length, playing: playback.playing,
             seekable: playback.seekable, favorites: root.apps.length, ready: LauncherState.ready}) }
     }

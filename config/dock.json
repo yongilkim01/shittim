@@ -1,11 +1,11 @@
 {
   "favorites": [
-    "org.kde.dolphin.desktop",
+    "nemo.desktop",
     "kitty.desktop",
     "google-chrome.desktop",
-    "code.desktop",
-    "steam.desktop",
-    "discord.desktop"
+    "vlc.desktop",
+    "swayimg.desktop",
+    "org.pwmt.zathura.desktop"
   ],
   "windowClasses": {}
 }

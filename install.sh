@@ -4,11 +4,12 @@ source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)/scripts/common.sh
 shittim_remaining=()
 for shittim_arg in "${SHITTIM_ARGS[@]}"; do
     if [[ $shittim_arg == --with-power-profiles ]]; then export SHITTIM_WITH_POWER_PROFILES=1
+    elif [[ $shittim_arg == --with-chrome ]]; then export SHITTIM_WITH_CHROME=1
     else shittim_remaining+=("$shittim_arg"); fi
 done
 SHITTIM_ARGS=("${shittim_remaining[@]}")
 if [[ ${SHITTIM_ARGS[0]:-} == --help ]]; then
-    printf '사용법: ./install.sh [--dry-run] [--with-power-profiles]\n일반 사용자로 실행합니다. pacman 작업만 sudo를 사용합니다.\n'; exit 0
+    printf '사용법: ./install.sh [--dry-run] [--with-power-profiles] [--with-chrome]\n일반 사용자로 실행합니다. Chrome AUR 설치는 추가 확인 후 실행합니다.\n'; exit 0
 fi
 no_extra_args
 require_user
@@ -30,7 +31,11 @@ shittim_stage=preflight
 trap 'shittim_status=$?; printf "[Shittim:실패] 단계=%s, 종료 코드=%s. 원인을 해결한 뒤 재실행하세요.\n" "$shittim_stage" "$shittim_status" >&2; exit "$shittim_status"' ERR
 shittim_flags=()
 (( SHITTIM_DRY_RUN == 0 )) || shittim_flags+=(--dry-run)
-for shittim_stage in install-packages link-dotfiles setup-autostart verify; do
+for shittim_stage in install-packages install-chrome link-dotfiles setup-autostart setup-desktop verify; do
+    if [[ $shittim_stage == install-chrome && ${SHITTIM_WITH_CHROME:-0} != 1 ]]; then
+        info 'Chrome AUR 설치는 선택 사항입니다. 원하면 ./install.sh --with-chrome 또는 bash scripts/install-chrome.sh를 실행하세요.'
+        continue
+    fi
     info "단계: $shittim_stage"
     bash "$SHITTIM_ROOT/scripts/$shittim_stage.sh" "${shittim_flags[@]}"
 done

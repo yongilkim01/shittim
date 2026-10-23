@@ -44,7 +44,7 @@ def allowed(relative):
         return False
     group = relative.parts[0]
     if group == 'hypr':
-        return relative.suffix in ('.lua', '.conf') and relative.name != 'shittim-base.lua'
+        return relative.suffix in ('.lua', '.conf') and relative.name not in ('shittim-base.lua', 'shittim-desktop.lua')
     if group == 'kitty':
         return relative.suffix == '.conf'
     if group == 'fcitx5':
@@ -318,7 +318,10 @@ class Config:
                 'local launcher_key = io.open(' + json.dumps(str(launcher_key), ensure_ascii=False) + ', "r")\n'
                 'if launcher_key then\n    local key = launcher_key:read("*l")\n    launcher_key:close()\n'
                 '    if key == "SUPER + R" then\n        hl.unbind("SUPER + R")\n'
-                '        hl.bind("SUPER + R", hl.dsp.exec_cmd(' + json.dumps(launcher, ensure_ascii=False) + '))\n    end\nend\n')
+                '        hl.bind("SUPER + R", hl.dsp.exec_cmd(' + json.dumps(launcher, ensure_ascii=False) + '))\n    end\nend\n'
+                'local desktop_path = ' + json.dumps(str(self.config / 'hypr/shittim-desktop.lua'), ensure_ascii=False) + '\n'
+                'local desktop_file = io.open(desktop_path, "r")\n'
+                'if desktop_file then desktop_file:close(); dofile(desktop_path) end\n')
 
     def launcher_key(self, replace=False):
         self.write(self.config / 'shittim/launcher-key', 'SUPER + R\n' if replace else 'SUPER + SPACE\n')

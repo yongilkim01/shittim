@@ -35,5 +35,6 @@ PanelWindow {
         onAppRequested: app => MediaState.activate(app)
         onCloseRequested: MediaState.close()
         onRefreshRequested: LauncherState.refresh()
+        onArtworkStateChanged: MediaState.artworkState = artworkState
     }
 }

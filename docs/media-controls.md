@@ -42,7 +42,7 @@ Quickshell 0.3.2의 `Quickshell.Services.Mpris`를 사용한다. 별도의 playe
 
 ## 즐겨찾기
 
-저장소 기본값은 `config/dock.json`이다. 파일 관리자·Kitty·Chrome·Code·Steam·Discord의 Desktop Entry ID를 우선순위대로 지정했으며 **실제 GIO 목록에 있는 앱만** 표시한다. 이 앱들을 추가 설치하거나 존재하지 않는 바로가기를 표시하지 않는다.
+저장소 기본값은 `config/dock.json`이다. Desktop Essentials 구성의 Nemo·Kitty·Chrome·VLC·Swayimg·Zathura Desktop Entry ID를 지정하며 **실제 GIO 목록에 있는 앱만** 표시한다. 앱 바 자체가 앱을 추가 설치하거나 존재하지 않는 바로가기를 표시하지 않는다. Chrome AUR 설치와 기본 앱 패키지는 [Desktop Essentials](desktop-essentials.md)에서 관리한다.
 
 개인 설정은 `$XDG_CONFIG_HOME/shittim/dock.json`, 기본값은 `~/.config/shittim/dock.json`이다. 개인 파일이 있으면 기본 파일 전체를 대체한다. 설치 프로그램은 개인 파일을 생성·덮어쓰기·수집하지 않는다. 빈 `favorites`는 의도적인 빈 목록이다. 잘못된 설정은 기본값으로 몰래 되돌리지 않고 앱 바를 비우고 오류를 표시한다.
 

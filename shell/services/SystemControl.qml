@@ -160,7 +160,7 @@ Scope {
 	Process {
 		id: screenshot
 		command: ["python3", "-u", root.helperPath, "--screenshot"]
-		onExited: (code, status) => { if (code !== 0) { root.screenshotError = "스크린샷을 저장하지 못했습니다."; root.error = root.screenshotError } }
+		onExited: (code, status) => { if (code !== 0) { root.screenshotError = code === 2 ? "캡처는 저장했지만 클립보드 복사에 실패했습니다." : "스크린샷을 저장하지 못했습니다."; root.error = root.screenshotError } }
 	}
 	function takeScreenshot() {
 		if (!screenshotAvailable || screenshot.running) return

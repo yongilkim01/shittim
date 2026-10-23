@@ -168,6 +168,31 @@ class Protocol(unittest.IsolatedAsyncioTestCase):
             arguments = spawn.call_args.args
             self.assertEqual(arguments[0], 'grim')
             self.assertEqual(Path(arguments[1]).parent, Path(directory) / 'Pictures/Screenshots')
+
+    async def test_region_cancel_and_untrusted_geometry_do_not_capture(self):
+        for returncode, geometry in [(1, b''), (0, b'0,0 1x1; evil')]:
+            selector = Mock(returncode=returncode)
+            selector.communicate = AsyncMock(return_value=(geometry, b''))
+            with patch.object(TOOL.os, 'umask'), patch.object(TOOL.asyncio, 'sleep', new=AsyncMock()), \
+                    patch.object(TOOL.asyncio, 'create_subprocess_exec', new=AsyncMock(return_value=selector)) as spawn:
+                self.assertEqual(await TOOL.screenshot('region'), 0 if returncode else 1)
+                self.assertEqual(spawn.call_count, 1)
+
+    async def test_region_capture_and_copy_use_separate_argument_lists(self):
+        with tempfile.TemporaryDirectory() as directory:
+            selector = Mock(returncode=0); selector.communicate = AsyncMock(return_value=(b'-20,10 100x200\n', b''))
+            process = Mock(); process.wait = AsyncMock(return_value=0)
+            async def capture(*args, **kwargs):
+                if args[0] == 'slurp': return selector
+                if args[0] == 'grim': Path(args[-1]).write_bytes(b'fixture image')
+                return process
+            with patch.object(TOOL.Path, 'home', return_value=Path(directory)), patch.object(TOOL.os, 'umask'), \
+                    patch.object(TOOL.shutil, 'which', side_effect=lambda name: '/usr/bin/wl-copy' if name == 'wl-copy' else None), \
+                    patch.object(TOOL.asyncio, 'sleep', new=AsyncMock()), \
+                    patch.object(TOOL.asyncio, 'create_subprocess_exec', new=AsyncMock(side_effect=capture)) as spawn:
+                self.assertEqual(await TOOL.screenshot('region'), 0)
+                self.assertEqual(spawn.call_args_list[1].args[:3], ('grim', '-g', '-20,10 100x200'))
+                self.assertEqual(spawn.call_args_list[2].args, ('wl-copy', '--type', 'image/png'))
             self.assertNotIn('shell', spawn.call_args.kwargs)
 
     async def test_agent_signatures_and_explicit_user_confirmation(self):

@@ -372,10 +372,22 @@ async def main():
         transport.close()
 
 
-async def screenshot():
+async def screenshot(mode='all'):
     os.umask(0o077)
     # Give the compositor time to unmap the Control Center before capture.
     await asyncio.sleep(0.3)
+    geometry = None
+    if mode == 'region':
+        selector = await asyncio.create_subprocess_exec('slurp', stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.DEVNULL)
+        try:
+            output, _ = await asyncio.wait_for(selector.communicate(), 120)
+        except asyncio.TimeoutError:
+            selector.kill(); await selector.wait(); return 1
+        if selector.returncode != 0:
+            return 0  # Escape cancels without a file or clipboard change.
+        geometry = output.decode().strip()
+        if not re.fullmatch(r'-?\d+,-?\d+ [1-9]\d*x[1-9]\d*', geometry):
+            return 1
     pictures = Path.home() / 'Pictures'
     if shutil.which('xdg-user-dir'):
         process = await asyncio.create_subprocess_exec('xdg-user-dir', 'PICTURES', stdout=asyncio.subprocess.PIPE,
@@ -387,7 +399,8 @@ async def screenshot():
     directory = pictures / 'Screenshots'
     directory.mkdir(parents=True, exist_ok=True)
     destination = directory / ('shittim-' + datetime.now().strftime('%Y%m%d-%H%M%S-%f') + '.png')
-    process = await asyncio.create_subprocess_exec('grim', str(destination), stdout=asyncio.subprocess.DEVNULL,
+    command = ['grim'] + (['-g', geometry] if geometry else []) + [str(destination)]
+    process = await asyncio.create_subprocess_exec(*command, stdout=asyncio.subprocess.DEVNULL,
                                                    stderr=asyncio.subprocess.DEVNULL)
     try:
         result = await asyncio.wait_for(process.wait(), 10)
@@ -395,6 +408,15 @@ async def screenshot():
         process.kill()
         await process.wait()
         return 1
+    if result == 0 and shutil.which('wl-copy'):
+        with destination.open('rb') as image:
+            copy = await asyncio.create_subprocess_exec('wl-copy', '--type', 'image/png', stdin=image,
+                stdout=asyncio.subprocess.DEVNULL, stderr=asyncio.subprocess.DEVNULL)
+            try:
+                if await asyncio.wait_for(copy.wait(), 5) != 0:
+                    return 2
+            except asyncio.TimeoutError:
+                copy.kill(); await copy.wait(); return 2
     return result
 
 
@@ -403,6 +425,8 @@ if __name__ == '__main__':
     try:
         if sys.argv[1:] == ['--screenshot']:
             sys.exit(asyncio.run(screenshot()))
+        elif sys.argv[1:] == ['--screenshot-region']:
+            sys.exit(asyncio.run(screenshot('region')))
         elif not sys.argv[1:]:
             asyncio.run(main())
         else:

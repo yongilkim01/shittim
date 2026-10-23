@@ -18,6 +18,7 @@ FocusScope {
     signal refreshRequested()
     signal closeRequested()
     readonly property real contentScale: Math.min(width / Theme.mediaWidth, height / Theme.mediaHeight)
+    readonly property string artworkState: cover.status === Image.Ready ? "ready" : cover.status === Image.Loading ? "loading" : cover.status === Image.Error ? "error" : "unloaded"
     Keys.onEscapePressed: closeRequested()
     Keys.onPressed: event => { if (event.key === Qt.Key_F5) { refreshRequested(); event.accepted = true } }
     Item {

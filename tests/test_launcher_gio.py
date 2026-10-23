@@ -133,6 +133,20 @@ class GioIntegration(unittest.TestCase):
         process.stdin.write(b'{"action":"refresh"}\n')
         receive(lambda message: message.get('event') == 'dock' and not message.get('error') and 'kitty.desktop' in message.get('favorites', []))
 
+    def test_desktop_defaults_are_resolved_by_real_gio(self):
+        for name in ['google-chrome.desktop', 'nemo.desktop', 'swayimg.desktop', 'vlc.desktop', 'org.pwmt.zathura.desktop']:
+            self.desktop(self.user, name, 'Name=Desktop association fixture\n')
+        self.environment['HOME'] = str(self.base / 'home'); Path(self.environment['HOME']).mkdir()
+        self.environment['XDG_STATE_HOME'] = str(self.base / 'state')
+        code = ('import importlib.util; from pathlib import Path; s=importlib.util.spec_from_file_location("desktop",'
+                + repr(str(ROOT / 'scripts/desktop-tool.py')) + '); m=importlib.util.module_from_spec(s); s.loader.exec_module(m); '
+                'd=m.Desktop(); d.setup(); g,l,a=m.module("launcher","launcher-service.py").load_gio(); '
+                'expected={"inode/directory":"nemo.desktop","x-scheme-handler/https":"google-chrome.desktop",'
+                '"image/webp":"swayimg.desktop","application/pdf":"org.pwmt.zathura.desktop","audio/flac":"vlc.desktop"}; '
+                '[(lambda app: (app is not None and app.get_id()==value) or (_ for _ in ()).throw(AssertionError(key)))'
+                '(g.AppInfo.get_default_for_type(key,False)) for key,value in expected.items()]')
+        self.run_code(code)
+
     def test_service_watches_app_changes_and_keeps_child_output_out_of_protocol(self):
         output = self.base / 'child-finished'
         recorder = self.base / 'noisy.py'

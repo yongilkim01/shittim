@@ -12,6 +12,8 @@ Arch Linux + Hyprland + Quickshell 기반 데스크톱 환경. SHITTIM HUD 디�
 
 상단 바의 **음악 아이콘**은 원본 시안 6번의 App / Media Controls를 오른쪽 하단에 연다. 실제 MPRIS 재생·탐색·플레이어 전환과 설치된 즐겨찾기 앱 실행·기존 창 활성화를 지원한다. [미디어 사용법·즐겨찾기 설정·실기 검사](docs/media-controls.md)를 참고한다.
 
+기본 데스크톱 앱은 **Nemo / Swayimg / Zathura / VLC**다. Chrome은 AUR 설치를 명시적으로 선택한다. 기본 파일 연결·포털·캡처·잠금·선택적 클립보드 기록과 진단은 [Desktop Essentials](docs/desktop-essentials.md)에 정리되어 있다.
+
 ## 새 Arch Linux 환경 설치
 
 설치된 Arch Linux x86_64에서 네트워크 연결과 일반 사용자 계정, `git`, `sudo` 및 해당 사용자의 sudo 권한을 먼저 준비한다. Arch 설치 ISO/chroot나 root 계정에서 실행하지 않는다. TTY 로그인 비밀번호는 유지하며 디스플레이 매니저와 자동 로그인은 설치하지 않는다.
@@ -24,16 +26,79 @@ cd shittim
 ./scripts/verify.sh
 ```
 
+Chrome까지 설치하려면 `./install.sh --with-chrome`을 사용한다. AUR 빌드 코드 실행 전 터미널에서 별도 확인을 받으며, 기존 `yay`가 있으면 활용한다. `yay`가 없으면 AUR 소스를 내려받아 검토한 뒤 일반 사용자로 `makepkg -si`를 실행한다. Chrome 프로필과 기존 브라우저 데이터는 변경하지 않는다.
+
 `--dry-run`은 파일·패키지·서비스를 변경하지 않는다. Python이 없는 최소 설치에서는 설정 파일의 상세 검사가 Python 설치 뒤 수행됨을 알린다. 실제 설치는 다음 순서로 진행한다.
 
 1. `install-packages.sh`: `pacman -Syu`로 전체 업그레이드하고 공식 저장소의 패키지를 `--needed`로 설치한다. pacman의 확인 질문은 유지한다.
 2. `link-dotfiles.sh`: 수집본을 검사한 뒤 파일별로 백업하고 사용자 설정에 심볼릭 링크한다.
 3. `setup-autostart.sh`: 원본 Lua 설정을 보존하고 Hyprland 진입 파일·사용자 서비스·로그인 프로필을 구성한다.
-4. `verify.sh`: 패키지, 링크, 자동 실행, 진입점, 서비스 상태를 검사한다.
+4. `setup-desktop.sh`: 설치된 앱의 MIME 연결, Hyprland 전용 포털 선택, 충돌을 검사한 단축키를 백업하며 구성한다.
+5. `verify.sh`: 패키지, 링크, 자동 실행, 기본 앱, 진입점, 서비스 상태를 검사한다. `--with-chrome`이면 공식 패키지 단계 뒤 AUR Chrome 설치를 별도로 수행한다.
 
 설치 전체를 `sudo`로 실행하지 않는다. pacman과 시스템 서비스 구성에만 sudo를 사용한다. 이미 활성화된 네트워크·오디오·데스크톱을 강제로 restart하지 않는다. 다른 네트워크 관리자와 충돌하면 연결을 끊는 대신 원인을 출력하고 중단한다. 실패 단계와 종료 코드를 확인해 원인을 해결한 뒤 `./install.sh`를 재실행한다. 패키지 업그레이드는 자동으로 되돌리지 않는다.
 
 설치 후 작업을 저장하고 직접 로그아웃한 다음 **tty1에서 비밀번호로 로그인**하면 `start-hyprland` → Shittim 순서로 실행된다. 커널·그래픽 드라이버가 갱신되었다면 직접 재부팅한다. 설치 프로그램은 재부팅·로그아웃하지 않는다. 장치별 NVIDIA 설정 등은 [Hyprland 설치 안내](https://wiki.hypr.land/Getting-Started/Master-Tutorial/)를 확인한다.
+
+## 기본 데스크톱과 미디어 테스트
+
+기존 노트북에서 이번 구성을 적용할 때:
+
+```bash
+cd ~/projects/shittim
+./install.sh --dry-run --with-chrome
+./install.sh --with-chrome
+hyprctl reload
+systemctl --user restart shittim.service
+bash scripts/verify-desktop.sh
+```
+
+포털 설정은 현재 화면 공유를 끊지 않도록 자동 restart하지 않는다. 작업 저장 후 한 번 로그아웃·로그인하면 새 선택이 적용된다.
+
+| 단축키 | 기능 |
+|---|---|
+| Super+B | Chrome 실행 또는 기존 창 활성화 |
+| Super+E | 기본 파일 관리자 Nemo로 홈 폴더 열기 |
+| Super+L | Shittim HUD Hyprlock으로 수동 잠금 |
+| Print / Shift+Print | 전체 / 영역 캡처, 파일 저장과 클립보드 복사 |
+| Super+Shift+V | 선택적으로 켠 클립보드 기록 보기 |
+
+충돌한 사용자 단축키는 유지하고 설치 출력에 표시한다. 의도적으로 교체할 때만 `bash scripts/setup-desktop.sh --replace-bindings` 후 `hyprctl reload`를 실행한다. 자동 잠금·절전·클립보드 수집은 기본으로 켜지 않는다.
+
+**A. 브라우저**: Super+B, 런처의 Chrome 검색, 앱 바 Chrome 아이콘을 각각 확인한다. 아래 명령의 연결 결과는 `google-chrome.desktop`이어야 한다.
+
+```bash
+xdg-mime query default x-scheme-handler/http
+xdg-mime query default x-scheme-handler/https
+xdg-settings get default-web-browser
+xdg-open https://www.youtube.com
+```
+
+**B. 파일 관리자**: Super+E로 홈 폴더를 열고 실제 PNG/JPEG/WebP/GIF·PDF·MP4/MKV·MP3/FLAC 파일을 Nemo에서 연다. 이미지=Swayimg, PDF=Zathura, 영상·음악=VLC여야 한다. 실제 파일 경로를 따옴표로 감싸 `xdg-open "경로"`로도 확인한다.
+
+**C. 시스템**: Print / Shift+Print와 Control Center Screenshot을 확인한다. 캡처는 `$(xdg-user-dir PICTURES)/Screenshots`에 저장되고 이미지 붙여넣기가 가능해야 한다. `printf 'Shittim clipboard test' | wl-copy` 후 `wl-paste`로 텍스트 복사를 확인한다. Super+L은 현재 사용자 비밀번호로 잠금 해제되어야 한다. Chrome의 파일 업로드·저장 대화상자와 화면 공유 선택도 확인한다. 설치 검사가 실제 잠금이나 화면 공유를 대신 검증하지 않는다.
+
+**D. 미디어**: Chrome에서 YouTube 음악을 재생한 뒤 아래를 실행한다. `playerctl metadata`는 곡·URL 정보를 포함할 수 있으므로 출력을 그대로 Git에 올리지 않는다.
+
+```bash
+playerctl -l
+playerctl metadata
+playerctl status
+python3 scripts/diagnose-media.py
+bash scripts/verify-media.sh
+```
+
+상단 음악 아이콘에서 곡·아트·재생/일시정지와 지원되는 이전/다음·Seek를 확인한다. Chrome을 종료하면 플레이어 목록이 갱신되어야 한다. Chrome과 별개인 로컬 MPRIS 검사는 다음 실제 WAV 파일로 진행한다. 이미 파일이 있으면 생성기는 덮어쓰지 않고 중단한다.
+
+```bash
+python3 scripts/make-test-media.py
+vlc --extraintf=dbus "$HOME/Music/shittim-test.wav"
+playerctl -l
+playerctl --player=vlc status
+python3 scripts/diagnose-media.py
+```
+
+여러 VLC 인스턴스가 있으면 `playerctl -l`에 표시된 실제 이름을 `--player=`에 지정한다. WAV에는 아티스트·아트가 없으므로 빈 아티스트와 기본 아이콘이 정상이다. 개인 음악 파일로 아티스트·앨범 아트와 긴 곡 Seek를 추가 검사한다. Chrome에 MPRIS가 등록되지 않아도 VLC가 정상이라면 브라우저 쪽 설정·지원 문제를 구분할 수 있다.
 
 ## 기존 Arch Linux 설정 수집
 
