@@ -168,4 +168,40 @@ TestCase {
         mouseClick(current, current.width - 20, 15)
         compare(model.history.length, 0)
     }
+    function test_timeAndCloseNeverOverlap_data() {
+        return [{tag: "popup", popup: true, width: 360}, {tag: "center", popup: false, width: 358},
+            {tag: "narrow-popup", popup: true, width: 280}]
+    }
+    function test_timeAndCloseNeverOverlap(data) {
+        const model = makeModel(); model.receive(fixtureData(1, {summary: "긴 알림 제목 ".repeat(20)}))
+        const row = createTemporaryObject(rowFactory, testCase, {entry: model.get(1), popup: data.popup, width: data.width})
+        const time = findChild(row, "notificationTime")
+        const close = findChild(row, "notificationClose")
+        const summary = findChild(row, "notificationSummary")
+        mouseMove(row, 90, 15)
+        compare(time.visible, true); compare(close.visible, true)
+        verify(summary.x + summary.width < time.x)
+        verify(time.x + time.width < close.x)
+        mouseMove(close, close.width / 2, close.height / 2)
+        compare(time.visible, true); compare(close.visible, true)
+        verify(time.x + time.width < close.x)
+    }
+    function test_hoverStaysInsideNotification_data() {
+        return [{tag: "popup", popup: true, width: 360, expanded: false},
+            {tag: "narrow-popup", popup: true, width: 280, expanded: false},
+            {tag: "details", popup: false, width: 358, expanded: true}]
+    }
+    function test_hoverStaysInsideNotification(data) {
+        const model = makeModel(); model.receive(fixtureData(1, {body: "긴 본문 ".repeat(100)}))
+        const row = createTemporaryObject(rowFactory, testCase, {entry: model.get(1), popup: data.popup, width: data.width, expanded: data.expanded})
+        const hover = findChild(row, "notificationHover")
+        mouseMove(row, 90, 15)
+        verify(hover.opacity > 0); compare(row.clip, true)
+        verify(hover.x > 0 && hover.y > 0)
+        verify(hover.x + hover.width < row.width)
+        verify(hover.y + hover.height < row.height)
+        const close = findChild(row, "notificationClose")
+        mouseMove(close, close.width / 2, close.height / 2)
+        verify(hover.opacity > 0)
+    }
 }

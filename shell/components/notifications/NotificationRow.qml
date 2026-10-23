@@ -8,12 +8,18 @@ FocusScope {
     property real now: Date.now()
     property bool expanded: false
     property bool popup: false
+    readonly property bool hovered: mouse.containsMouse || closeMouse.containsMouse
     signal activated()
     signal dismissed()
     signal actionRequested(string actionId)
     implicitHeight: expanded ? 62 + detail.implicitHeight : 50
     activeFocusOnTab: true
-    Rectangle { anchors.fill: parent; color: Theme.surfaceElevated; opacity: mouse.containsMouse || root.activeFocus ? 0.6 : 0 }
+    clip: true
+    Rectangle {
+        objectName: "notificationHover"
+        x: 8; y: 2; width: Math.max(0, root.width - 16); height: Math.max(0, root.height - 4)
+        color: Theme.surfaceElevated; opacity: root.hovered || root.activeFocus ? 0.6 : 0
+    }
     MouseArea {
         id: mouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
         onClicked: { root.forceActiveFocus(); root.activated() }
@@ -27,12 +33,13 @@ FocusScope {
     }
     HudIcon { x: 28; y: 12; width: 21; height: 21; font.pixelSize: 22; text: root.entry.category === "system" ? "\uf108" : "\uf0f3"; visible: appIcon.status !== Image.Ready; color: root.entry.urgency === 2 ? Theme.warning : Theme.accentBright }
     Rectangle { x: 15; y: 21; width: 3; height: 3; visible: !root.entry.read; color: Theme.accent }
-    HudText { x: 68; y: 5; width: Math.max(0, root.width - x - 82); height: 18; text: root.entry.summary; font.pixelSize: 11; color: Theme.textPrimary }
+    HudText { objectName: "notificationSummary"; x: 68; y: 5; width: Math.max(0, root.width - x - 106); height: 18; text: root.entry.summary; font.pixelSize: 11; color: Theme.textPrimary }
     HudText { x: 68; y: 23; width: Math.max(0, root.width - x - 20); height: 17; text: root.entry.body; font.pixelSize: 10; color: Theme.accentDim }
-    HudText { x: root.width - 79; y: 6; width: 60; height: 17; horizontalAlignment: Text.AlignRight; text: Data.relative(root.entry.received, root.now); font.pixelSize: 9; color: Theme.accentDim; visible: !mouse.containsMouse && !root.activeFocus }
+    HudText { objectName: "notificationTime"; x: root.width - 98; y: 6; width: 60; height: 17; horizontalAlignment: Text.AlignRight; text: Data.relative(root.entry.received, root.now); font.pixelSize: 9; color: Theme.accentDim }
     HudText {
+        objectName: "notificationClose"
         x: root.width - 28; y: 5; width: 20; height: 20; text: "×"; color: Theme.textSecondary; font.pixelSize: 14
-        visible: mouse.containsMouse || closeMouse.containsMouse || root.activeFocus || root.popup
+        visible: root.hovered || root.activeFocus || root.popup
         MouseArea { id: closeMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: root.dismissed() }
     }
     Column {
