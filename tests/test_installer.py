@@ -2,6 +2,7 @@
 import importlib.util
 import os
 from pathlib import Path
+import subprocess
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -138,6 +139,68 @@ class InstallerFiles(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.config.profile()
         self.assertEqual(path.read_text(), original)
+
+    def test_misspelled_launcher_is_rejected_instead_of_verified(self):
+        original = 'if [[ "$(tty)" == /dev/tty1 ]]; then\n    exec start-hypland\nfi\n'
+        path = self.file(self.home, '.bash_profile', original)
+        with self.assertRaisesRegex(ValueError, 'start-hypland'):
+            self.config.profile()
+        with self.assertRaisesRegex(ValueError, 'start-hypland'):
+            self.config.verify(preflight=True)
+        self.assertEqual(path.read_text(), original)
+
+    def test_repair_login_backs_up_typo_and_reenables_managed_autostart(self):
+        original = ('export EDITOR=vim\n'
+                    'if [[ -z "$WAYLAND_DISPLAY" && -z "$DISPLAY" && "$(tty)" == /dev/tty1 ]]; then\n'
+                    '\texec start-hypland\nfi\n')
+        path = self.file(self.home, '.bash_profile', original)
+        disabled = self.file(self.config.config, 'shittim/disable-autostart', '')
+        self.config.repair_login()
+        repaired = path.read_text()
+        self.assertIn(': # Shittim: disabled misspelled launcher: exec start-hypland', repaired)
+        self.assertTrue(repaired.startswith('export EDITOR=vim\n'))
+        self.assertEqual(repaired.count(TOOL.BEGIN), 1)
+        self.assertEqual(self.config.profile()[1], repaired)
+        self.assertFalse(disabled.exists())
+        self.assertEqual(next(self.config.backups.rglob('.bash_profile')).read_text(), original)
+        self.assertEqual(len(list(self.config.backups.rglob('disable-autostart'))), 1)
+        backups = sorted(str(p) for p in self.config.backups.rglob('*'))
+        self.config.repair_login()
+        self.assertEqual(path.read_text(), repaired)
+        self.assertEqual(sorted(str(p) for p in self.config.backups.rglob('*')), backups)
+
+    def test_complex_typo_is_not_repaired_and_dry_run_preserves_files(self):
+        path = self.file(self.home, '.bash_profile', 'exec start-hypland --config custom.lua\n')
+        with self.assertRaises(ValueError):
+            self.config.repair_login()
+        self.assertEqual(path.read_text(), 'exec start-hypland --config custom.lua\n')
+        path.write_text('if true; then\nexec start-hypland\nfi\n')
+        disabled = self.file(self.config.config, 'shittim/disable-autostart', '')
+        dry = TOOL.Config(self.root, self.home, dry=True)
+        dry.repair_login()
+        self.assertEqual(path.read_text(), 'if true; then\nexec start-hypland\nfi\n')
+        self.assertTrue(disabled.is_file())
+        self.assertFalse(dry.backups.exists())
+
+    @unittest.skipIf(os.name == 'nt', '실제 Bash 로그인 시작 검증은 Linux에서 실행')
+    def test_login_startup_typo_exits_and_repair_reaches_managed_launcher(self):
+        original = ('tty() { printf /dev/tty1; }\n'
+                    'if [[ -z "$WAYLAND_DISPLAY" && -z "$DISPLAY" && "$(tty)" == /dev/tty1 ]]; then\n'
+                    'exec start-hypland\nfi\n')
+        self.file(self.home, '.bash_profile', original)
+        self.file(self.root, 'scripts/start-session.sh', '#!/bin/bash\nprintf MANAGED_LAUNCH_REACHED\n')
+        environment = dict(os.environ, DISPLAY='', WAYLAND_DISPLAY='', SSH_CONNECTION='', SSH_TTY='')
+        args = ['/usr/bin/bash', '--login', '-i', '-c', 'printf PROFILE_RETURNED']
+        before = subprocess.run(args, env=environment, stdin=subprocess.DEVNULL,
+                                capture_output=True, text=True, timeout=5)
+        self.assertEqual(before.returncode, 127)
+        self.assertNotIn('PROFILE_RETURNED', before.stdout)
+        self.config.repair_login()
+        after = subprocess.run(args, env=environment, stdin=subprocess.DEVNULL,
+                               capture_output=True, text=True, timeout=5)
+        self.assertEqual(after.returncode, 0, after.stderr)
+        self.assertIn('MANAGED_LAUNCH_REACHED', after.stdout)
+        self.assertNotIn('PROFILE_RETURNED', after.stdout)
 
     def test_capture_managed_main_collects_original(self):
         self.file(self.config.config, 'hypr/hyprland.lua', '-- Managed by Shittim\ndofile("base")\n')

@@ -114,6 +114,17 @@ git pull --ff-only
 
 `--publish`는 main 브랜치와 Shittim origin을 확인한다. 이미 스테이징한 변경이나 미전송된 다른 파일의 커밋이 있으면 중단하며, 다른 변경을 함께 커밋하지 않는다. Git 인증·사용자 이름·이메일은 기존 설정을 사용한다. 푸시가 실패해도 진단 파일과 생성한 커밋은 남으며 강제 푸시·자동 병합을 하지 않는다. 인증 문제를 해결한 뒤 `git push origin main`으로 다시 전송할 수 있다.
 
+### `start-hypland` 오타 복구
+
+진단에서 `.bash_profile`의 `exec start-hypland` 오타가 확인된 경우 다음을 실행한다.
+
+```bash
+git pull --ff-only
+./scripts/repair-login.sh
+```
+
+오타가 있는 단순 실행 줄을 원문 주석이 붙은 `:` 명령으로 바꾸고, Shittim의 정상 tty1 자동 실행 블록을 유지·구성한다. 비어 있는 `if` 본문이 생기지 않도록 하며 Bash 문법 검사 후에만 적용한다. 원래 프로필과 `disable-autostart` 파일은 저장소 밖 설치기 백업 경로로 이동·보존한다. 중지 파일을 해제하므로 다음 tty1 로그인에서 정상 자동 실행이 적용된다. 현재 세션은 종료하지 않는다. 작업을 저장한 뒤 SUPER+M으로 로그아웃하고 Ctrl+Alt+F1의 tty1에서 로그인한다. `./scripts/repair-login.sh --dry-run`으로 변경 없이 확인할 수도 있다. 복잡한 인자가 붙은 오타 명령은 자동으로 수정하지 않는다.
+
 ## 패키지
 
 전체 목록은 `scripts/packages.txt`에 있다. 작성 시 Arch 공식 저장소에서 이름을 확인했고 실제 설치에서도 `pacman -Si`로 공식 저장소 소속을 다시 검사한다. AUR이 필요한 항목이 추가되면 별도 안내와 명시적 동의가 필요하며 현재 설치기는 AUR을 사용하지 않는다.

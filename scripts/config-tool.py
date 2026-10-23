@@ -246,7 +246,7 @@ class Config:
         if not files:
             say('아직 수집된 dotfiles가 없습니다. 기존 설정을 보존하며 새 환경에는 공식 기본 설정을 사용합니다.')
 
-    def profile(self):
+    def profile(self, repair_typo=False):
         shell = Path(os.environ.get('SHELL', '/bin/bash')).name
         if shell == 'bash':
             path = next((self.home / name for name in ('.bash_profile', '.bash_login', '.profile') if (self.home / name).exists()), self.home / '.bash_profile')
@@ -259,6 +259,17 @@ class Config:
         text = path.read_text(encoding='utf-8') if path.is_file() else ''
         if text.count(BEGIN) != text.count(END) or text.count(BEGIN) > 1:
             raise ValueError('로그인 프로필의 Shittim 관리 블록이 손상되었습니다: ' + str(path))
+        def has_typo(value):
+            return any(re.search(r'\bstart-hypland\b', line.split('#', 1)[0]) for line in value.splitlines())
+        if has_typo(text):
+            if not repair_typo:
+                raise ValueError('로그인 프로필에 start-hypland 오타가 있습니다. ./scripts/repair-login.sh로 복구하세요: ' + str(path))
+            # Keep the original command as a comment and retain a valid body
+            # when it was the only command inside the user's if statement.
+            text = re.sub(r'(?m)^([ \t]*)(exec[ \t]+(?:/usr/bin/)?start-hypland[ \t]*;?[ \t]*(?:#[^\n]*)?)$',
+                          lambda match: match[1] + ': # Shittim: disabled misspelled launcher: ' + match[2], text)
+            if has_typo(text):
+                raise ValueError('복잡한 start-hypland 명령은 자동 수정하지 않습니다. 원본은 보존했습니다: ' + str(path))
         clean = re.sub(re.escape(BEGIN) + '.*?' + re.escape(END) + r'\n?', '', text, flags=re.S)
         commands = '\n'.join(line for line in clean.splitlines() if not line.lstrip().startswith('#'))
         launch_lines = [line.strip() for line in commands.splitlines() if re.search(r'\b(start-hyprland|Hyprland|uwsm)\b', line)]
@@ -276,6 +287,19 @@ class Config:
                  '   [ ! -e ' + disabled + ' ]; then\n'
                  '    exec /usr/bin/bash ' + launch + '\nfi\n' + END + '\n')
         return path, clean.rstrip('\n') + block
+
+    def repair_login(self):
+        if Path(os.environ.get('SHELL', '/bin/bash')).name != 'bash':
+            raise ValueError('이 복구는 진단에서 확인된 Bash 로그인 프로필만 지원합니다.')
+        path, text = self.profile(repair_typo=True)
+        disabled = self.config / 'shittim/disable-autostart'
+        if disabled.is_dir():
+            raise ValueError('자동 실행 중지 경로가 디렉터리입니다. 수정하지 않았습니다.')
+        subprocess.run(['bash', '-n'], input=text, text=True, check=True)
+        self.write(path, text)
+        self.backup(disabled)
+        say('TTY 로그인 복구' + (' 계획 완료.' if self.dry else ' 완료. 다음 tty1 로그인부터 적용됩니다.'))
+        say('현재 그래픽 세션은 유지합니다. 작업 저장 후 로그아웃하고 tty1에서 로그인하세요.')
 
     def lua(self):
         base = self.config / 'hypr/shittim-base.lua'
@@ -407,7 +431,7 @@ class Config:
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', choices=['capture', 'link', 'autostart', 'verify', 'scan', 'shell-running'])
+    parser.add_argument('action', choices=['capture', 'link', 'autostart', 'verify', 'scan', 'shell-running', 'repair-login'])
     parser.add_argument('--dry-run', action='store_true')
     parser.add_argument('--update', action='store_true')
     args = parser.parse_args()
@@ -422,6 +446,8 @@ def main():
         config.autostart()
     elif args.action == 'scan':
         say('수집본 검사 통과: {}개 파일'.format(len(config.inventory())))
+    elif args.action == 'repair-login':
+        config.repair_login()
     else:
         config.verify(preflight=args.dry_run)
     return 0
