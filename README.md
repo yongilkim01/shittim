@@ -99,6 +99,21 @@ journalctl --user -u shittim.service -b --no-pager
 
 TTY에서는 아직 그래픽 프로세스가 없어도 설치 상태를 검사한다. 새 설정 적용 전의 기존 Hyprland 세션에서 Shittim 서비스가 비활성이면 다음 로그인 안내를 표시한다.
 
+### 로그인 실패 진단 파일 전달
+
+tty2 또는 수동으로 실행한 Hyprland의 Kitty에서 저장소 디렉터리로 이동한 뒤 실행한다. 재부팅이나 데스크톱 종료는 필요 없다.
+
+```bash
+git pull --ff-only
+./scripts/diagnose.sh --publish
+```
+
+로그인 프로필의 실행 조건, 설치 검사 결과, 관련 서비스 상태·현재 부팅 journal, 최근 Hyprland 로그, `~/shittim-start.log`를 `diagnostics/latest.txt` 하나에 모으고 해당 파일만 커밋·푸시한다. 기존 설정·서비스는 변경하지 않으며 프로필을 실행하지 않는다. 없는 명령·접근 권한·시간 초과도 보고서에 기록하고 다른 수집을 계속한다. journal 접근에 sudo를 요구하지 않는다.
+
+비밀 정보 의심 줄과 긴 인증 값은 제외하고 홈 경로·호스트 이름·IPv4·MAC 주소를 가린다. 전체 환경 변수, Wi-Fi 설정, SSH 파일, 셸 기록은 수집하지 않는다. 임의 애플리케이션이 로그에 출력한 모든 개인 정보를 자동으로 판별할 수는 없다. 업로드 전에 직접 검토하려면 `./scripts/diagnose.sh`로 수집만 하고 `diagnostics/latest.txt`를 읽는다. 원본 로그는 Git에 복사하지 않는다.
+
+`--publish`는 main 브랜치와 Shittim origin을 확인한다. 이미 스테이징한 변경이나 미전송된 다른 파일의 커밋이 있으면 중단하며, 다른 변경을 함께 커밋하지 않는다. Git 인증·사용자 이름·이메일은 기존 설정을 사용한다. 푸시가 실패해도 진단 파일과 생성한 커밋은 남으며 강제 푸시·자동 병합을 하지 않는다. 인증 문제를 해결한 뒤 `git push origin main`으로 다시 전송할 수 있다.
+
 ## 패키지
 
 전체 목록은 `scripts/packages.txt`에 있다. 작성 시 Arch 공식 저장소에서 이름을 확인했고 실제 설치에서도 `pacman -Si`로 공식 저장소 소속을 다시 검사한다. AUR이 필요한 항목이 추가되면 별도 안내와 명시적 동의가 필요하며 현재 설치기는 AUR을 사용하지 않는다.
