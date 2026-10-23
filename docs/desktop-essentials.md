@@ -46,7 +46,7 @@ Chrome이 없거나 사용자가 AUR 설치를 거절하면 Chrome 연결을 새
 
 ## 기본 앱·백업
 
-설치된 GIO Desktop Entry만 MIME에 등록한다. `~/.config/mimeapps.list`와 Hyprland 전용 `hyprland-mimeapps.list`의 해당 기본값만 갱신하고 다른 MIME·섹션 값은 유지한다. INI 정규화로 주석·공백이 달라질 수 있지만 원본 전체는 저장소 밖 `~/.local/state/shittim/backups/`에 백업한다. 재실행해 내용이 같으면 추가 백업하지 않는다. XDG_CONFIG_HOME/XDG_STATE_HOME을 사용하면 그 경로를 따른다.
+설치된 GIO Desktop Entry만 MIME에 등록한다. Swayimg처럼 `NoDisplay=true`인 앱도 파일 연결에는 사용할 수 있으므로 설치된 앱으로 인정하며, 런처 목록의 숨김 정책은 유지한다. `Hidden=true`인 항목은 제외한다. `~/.config/mimeapps.list`와 Hyprland 전용 `hyprland-mimeapps.list`의 해당 기본값만 갱신하고 다른 MIME·섹션 값은 유지한다. INI 정규화로 주석·공백이 달라질 수 있지만 원본 전체는 저장소 밖 `~/.local/state/shittim/backups/`에 백업한다. 재실행해 내용이 같으면 추가 백업하지 않는다. XDG_CONFIG_HOME/XDG_STATE_HOME을 사용하면 그 경로를 따른다.
 
 HTTP·HTTPS·HTML·XHTML=Chrome, 폴더=Nemo, 이미지 4종=Swayimg, PDF=Zathura, MP4·Matroska·MP3·FLAC=VLC다. `desktop-tool.py verify`는 GIO 설치 여부와 실제 `xdg-mime query default` 결과를 검사한다. 별도 데스크톱의 사용자 정책이나 `BROWSER` 환경 변수가 xdg-open에 영향을 주면 실제 실행도 확인해야 한다.
 

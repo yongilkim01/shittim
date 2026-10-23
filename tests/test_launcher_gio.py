@@ -159,6 +159,20 @@ class GioIntegration(unittest.TestCase):
                 'data=json.loads(d.manifest.read_text()); assert data["defaults"]=={"inode/directory":"nemo.desktop"}')
         self.run_code(code)
 
+    def test_nodisplay_viewer_is_a_mime_default_but_stays_out_of_launcher(self):
+        self.desktop(self.user, 'swayimg.desktop', 'NoDisplay=true\nMimeType=image/png;image/webp;\n')
+        self.environment['HOME'] = str(self.base / 'home'); Path(self.environment['HOME']).mkdir()
+        self.environment['XDG_STATE_HOME'] = str(self.base / 'state')
+        code = ('import importlib.util,json; s=importlib.util.spec_from_file_location("desktop",'
+                + repr(str(ROOT / 'scripts/desktop-tool.py')) + '); m=importlib.util.module_from_spec(s); s.loader.exec_module(m); '
+                'd=m.Desktop(); assert d.installed()=={"swayimg.desktop"}; d.setup(); '
+                'data=json.loads(d.manifest.read_text()); assert data["defaults"]["image/png"]=="swayimg.desktop"; '
+                'launcher=m.module("launcher","launcher-service.py"); g,l,a=launcher.load_gio(); '
+                'assert g.AppInfo.get_default_for_type("image/png",False).get_id()=="swayimg.desktop"; '
+                'messages=[]; launcher.Catalogue(g,a,messages.append).refresh(); '
+                'assert not any(app["id"]=="swayimg.desktop" for app in messages[0]["applications"])')
+        self.run_code(code)
+
     def test_service_watches_app_changes_and_keeps_child_output_out_of_protocol(self):
         output = self.base / 'child-finished'
         recorder = self.base / 'noisy.py'

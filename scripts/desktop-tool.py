@@ -66,8 +66,9 @@ class Desktop:
     def installed(self):
         launcher = module('shittim_launcher', 'launcher-service.py')
         gio, _, desktop = launcher.load_gio()
+        # NoDisplay apps remain valid file handlers; Hidden entries do not.
         return {app.get_id() for app in gio.AppInfo.get_all() if isinstance(app, desktop)
-                and app.get_id() in APPLICATIONS and app.should_show() and not app.get_is_hidden()}
+                and app.get_id() in APPLICATIONS and not app.get_is_hidden()}
 
     def bindings(self, replace=False):
         commands = self.commands()
