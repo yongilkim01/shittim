@@ -1,0 +1,11 @@
+{
+  "favorites": [
+    "org.kde.dolphin.desktop",
+    "kitty.desktop",
+    "google-chrome.desktop",
+    "code.desktop",
+    "steam.desktop",
+    "discord.desktop"
+  ],
+  "windowClasses": {}
+}

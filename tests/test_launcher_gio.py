@@ -88,6 +88,51 @@ class GioIntegration(unittest.TestCase):
                 self.assertEqual(data['args'], ['two words', '한글 앱', str(app), '--icon', 'fixture-icon', '%'])
         self.assertTrue((self.base / 'terminal-called').exists())
 
+    def test_shared_catalogue_startup_class_and_live_personal_dock_preferences(self):
+        self.desktop(self.user, 'dock.desktop', 'Name=Dock Fixture\nStartupWMClass=ExactFixtureClass\n')
+        process = subprocess.Popen([sys.executable, str(ROOT / 'scripts/launcher-service.py')], env=self.environment,
+                                   stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=0)
+        def cleanup():
+            if process.poll() is None:
+                process.stdin.close()
+                try:
+                    process.wait(timeout=3)
+                except subprocess.TimeoutExpired:
+                    process.kill(); process.wait(timeout=3)
+            process.stdout.close(); process.stderr.close()
+        self.addCleanup(cleanup)
+        selector = selectors.DefaultSelector(); selector.register(process.stdout, selectors.EVENT_READ)
+        self.addCleanup(selector.close)
+        pending = bytearray()
+        def receive(predicate):
+            deadline = time.monotonic() + 8
+            while time.monotonic() < deadline:
+                while b'\n' in pending:
+                    line, _, tail = pending.partition(b'\n'); pending[:] = tail
+                    message = json.loads(line)
+                    if predicate(message):
+                        return message
+                if selector.select(0.1):
+                    pending.extend(os.read(process.stdout.fileno(), 65536))
+            self.fail('shared dock service response timed out')
+        catalogue = receive(lambda message: message.get('event') == 'catalogue')
+        app = next(app for app in catalogue['applications'] if app['id'] == 'dock.desktop')
+        self.assertEqual(app['startupWMClass'], 'ExactFixtureClass')
+        receive(lambda message: message.get('event') == 'dock')
+        personal = Path(self.environment['XDG_CONFIG_HOME']) / 'shittim/dock.json'
+        personal.parent.mkdir(parents=True)
+        personal.write_text('{"favorites":["dock.desktop"],"windowClasses":{"dock.desktop":["ExactFixtureClass"]}}')
+        dock = receive(lambda message: message.get('event') == 'dock' and message.get('favorites') == ['dock.desktop'])
+        self.assertEqual(dock['windowClasses'], {'dock.desktop': ['ExactFixtureClass']})
+        replacement = personal.with_suffix('.new')
+        replacement.write_text('{"favorites":[]}'); replacement.replace(personal)
+        receive(lambda message: message.get('event') == 'dock' and message.get('favorites') == [] and not message.get('error'))
+        personal.write_text('invalid config')
+        receive(lambda message: message.get('error') == 'DockConfigInvalid')
+        personal.unlink()
+        process.stdin.write(b'{"action":"refresh"}\n')
+        receive(lambda message: message.get('event') == 'dock' and not message.get('error') and 'kitty.desktop' in message.get('favorites', []))
+
     def test_service_watches_app_changes_and_keeps_child_output_out_of_protocol(self):
         output = self.base / 'child-finished'
         recorder = self.base / 'noisy.py'

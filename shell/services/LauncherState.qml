@@ -16,6 +16,11 @@ Scope {
     property int sequence: 0
     property int launchGeneration: 0
     signal applicationLaunched()
+    signal launchFinished(string appId, bool ok)
+    property string launchAppId: ""
+    property var dockFavorites: []
+    property var dockWindowClasses: ({})
+    property string dockError: ""
     readonly property alias model: search
     readonly property string helperPath: Quickshell.shellDir + "/../scripts/launcher-service.py"
     LauncherModel { id: search }
@@ -43,6 +48,7 @@ Scope {
         launching = true
         error = ""
         launchGeneration = generation
+        launchAppId = appId
         sequence++
         bridge.write(JSON.stringify({action: "launch", id: appId, request: sequence}) + "\n")
     }
@@ -76,18 +82,24 @@ Scope {
                 try {
                     const message = JSON.parse(data)
                     if (message.event === "catalogue") { search.applications = message.applications; root.ready = true }
+                    else if (message.event === "dock") { root.dockFavorites = message.favorites; root.dockWindowClasses = message.windowClasses; root.dockError = message.error ? "즐겨찾기 설정 형식을 확인하세요." : "" }
                     else if (message.event === "error") root.error = root.errorText(message.error)
                     else if (message.event === "launched" && message.request === root.sequence) {
                         root.launching = false
                         if (message.ok) root.applicationLaunched()
                         if (message.ok && root.launchGeneration === root.generation) root.close()
                         else if (!message.ok) root.error = root.errorText(message.error)
+                        root.launchFinished(root.launchAppId, message.ok)
                     }
                 } catch (_) { root.error = "앱 서비스 응답을 처리하지 못했습니다." }
             }
         }
         stderr: SplitParser { onRead: data => { root.error = "앱 서비스 실행 오류. 설치 상태를 확인하세요." } }
-        onExited: { root.ready = false; root.launching = false; root.error = "앱 서비스가 종료되었습니다. python-gobject 설치 후 F5를 누르세요." }
+        onExited: {
+            const interrupted = root.launching
+            root.ready = false; root.launching = false; root.error = "앱 서비스가 종료되었습니다. python-gobject 설치 후 F5를 누르세요."
+            if (interrupted) root.launchFinished(root.launchAppId, false)
+        }
     }
     IpcHandler {
         target: "launcher"

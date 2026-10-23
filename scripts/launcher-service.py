@@ -4,6 +4,12 @@ import json
 import os
 import signal
 import sys
+import importlib.util
+from pathlib import Path
+
+_dock_spec = importlib.util.spec_from_file_location('dock_settings', Path(__file__).with_name('dock-settings.py'))
+dock_settings = importlib.util.module_from_spec(_dock_spec)
+_dock_spec.loader.exec_module(dock_settings)
 
 
 def load_gio():
@@ -43,7 +49,8 @@ class Catalogue:
             applications[app_id] = app
             entries.append({'id': app_id, 'name': app.get_display_name() or app.get_name() or app_id,
                 'genericName': app.get_generic_name() or '', 'keywords': list(app.get_keywords() or []),
-                'icons': icons, 'iconFile': icon_file})
+                'icons': icons, 'iconFile': icon_file,
+                'startupWMClass': getattr(app, 'get_startup_wm_class', lambda: '')() or ''})
         self.applications = applications
         entries.sort(key=lambda item: (item['name'].casefold(), item['id']))
         self.emit({'event': 'catalogue', 'applications': entries})
@@ -89,12 +96,35 @@ def serve(gio, glib, desktop, emit):
     loop = glib.MainLoop()
     pending = bytearray()
     refresh_source = 0
+    config_monitors = []
+
+    def watch_config():
+        for monitor in config_monitors:
+            monitor.cancel()
+        config_monitors.clear()
+        # Watch the nearest existing directory, including atomic file replacements
+        # and creation of a previously absent ~/.config/shittim directory.
+        directories = set()
+        for path in dock_settings.paths():
+            directory = path.parent
+            while not directory.exists() and directory != directory.parent:
+                directory = directory.parent
+            directories.add(str(directory))
+        for directory in directories:
+            try:
+                monitor = gio.File.new_for_path(directory).monitor_directory(gio.FileMonitorFlags.NONE, None)
+                monitor.connect('changed', lambda *_args: changed(None))
+                config_monitors.append(monitor)
+            except Exception:
+                pass  # F5 / IPC reload remains available on unsupported filesystems.
 
     def refresh():
         nonlocal refresh_source
         refresh_source = 0
         try:
+            watch_config()
             catalogue.refresh()
+            emit(dock_settings.read_settings())
         except Exception:
             emit({'event': 'error', 'error': 'CatalogueFailed'})
         return False
@@ -123,7 +153,11 @@ def serve(gio, glib, desktop, emit):
                     line, _, tail = pending.partition(b'\n')
                     pending[:] = tail
                     try:
-                        catalogue.handle(json.loads(line))
+                        message = json.loads(line)
+                        catalogue.handle(message)
+                        if isinstance(message, dict) and message.get('action') == 'refresh':
+                            watch_config()
+                            emit(dock_settings.read_settings())
                     except (ValueError, UnicodeError):
                         emit({'event': 'error', 'error': 'InvalidRequest'})
                     except Exception:

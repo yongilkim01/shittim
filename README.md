@@ -10,6 +10,8 @@ Arch Linux + Hyprland + Quickshell 기반 데스크톱 환경. SHITTIM HUD 디�
 
 상단 바의 **SHITTIM 로고**는 원본 시안 4번의 System Dashboard를 연다. CPU·RAM·GPU·온도·Storage·Network의 실제 Linux 정보를 표시하며, 사이드바는 기존 런처와 시스템 제어 서비스를 재사용한다. [대시보드 사용법·센서 지원·검증](docs/dashboard.md)을 참고한다.
 
+상단 바의 **음악 아이콘**은 원본 시안 6번의 App / Media Controls를 오른쪽 하단에 연다. 실제 MPRIS 재생·탐색·플레이어 전환과 설치된 즐겨찾기 앱 실행·기존 창 활성화를 지원한다. [미디어 사용법·즐겨찾기 설정·실기 검사](docs/media-controls.md)를 참고한다.
+
 ## 새 Arch Linux 환경 설치
 
 설치된 Arch Linux x86_64에서 네트워크 연결과 일반 사용자 계정, `git`, `sudo` 및 해당 사용자의 sudo 권한을 먼저 준비한다. Arch 설치 ISO/chroot나 root 계정에서 실행하지 않는다. TTY 로그인 비밀번호는 유지하며 디스플레이 매니저와 자동 로그인은 설치하지 않는다.

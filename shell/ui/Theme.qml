@@ -61,6 +61,8 @@ QtObject {
 	readonly property int notificationHeight: 187
 	readonly property int dashboardWidth: 746
 	readonly property int dashboardHeight: 300
+	readonly property int mediaWidth: 349
+	readonly property int mediaHeight: 271
 
 	readonly property int hoverDuration: 150
 	readonly property int stateDuration: 200

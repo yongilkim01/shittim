@@ -21,6 +21,8 @@ PanelWindow {
 			if (NotificationState.opened && (point.position.x < notificationX || point.position.x > notificationX + notificationArea.width)) NotificationState.close()
 			const logoX = logo.mapToItem(null, 0, 0).x
 			if (DashboardState.opened && (point.position.x < logoX || point.position.x > logoX + logo.width)) DashboardState.close()
+			const mediaX = mediaArea.mapToItem(null, 0, 0).x
+			if (MediaState.opened && (point.position.x < mediaX || point.position.x > mediaX + mediaArea.width)) MediaState.close()
 		}
 	}
 
@@ -89,6 +91,15 @@ PanelWindow {
 			Workspaces { id: workspaces }
 		}
 		Item { Layout.fillWidth: true; Layout.minimumWidth: Theme.spaceS }
+		HudIcon {
+			id: mediaArea
+			text: "\uf001"; font.pixelSize: Theme.barIconSize; width: Theme.barIconSize
+			color: MediaState.opened || MediaState.model.playing ? Theme.accent : Theme.textSecondary
+			Layout.alignment: Qt.AlignVCenter
+			Layout.preferredWidth: Theme.barIconSize
+			Layout.preferredHeight: Theme.barIconSize
+			MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: MediaState.toggle(bar) }
+		}
 		Item {
 			id: notificationArea
 			Layout.preferredWidth: notificationStatus.implicitWidth

@@ -14,4 +14,5 @@ ShellRoot {
 	NotificationCenter {}
 	NotificationPopups {}
 	SystemDashboard {}
+	AppMediaControls {}
 }
