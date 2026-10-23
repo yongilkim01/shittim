@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+*.log
+*.bak
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+*.nmconnection
+id_rsa*
+id_ed25519*
+credentials*
+secrets*

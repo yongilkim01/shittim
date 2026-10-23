@@ -1,6 +1,129 @@
 # Shittim
 
-Hyprland용 Quickshell 0.3.2 데스크톱 셸. SHITTIM HUD 디자인 시스템을 사용하며 왼쪽에는 워크스페이스, 오른쪽에는 네트워크·볼륨·배터리·초 단위 시계를 표시한다.
+Arch Linux + Hyprland + Quickshell 기반 데스크톱 환경. SHITTIM HUD 디자인 시스템을 사용하며 워크스페이스·네트워크·볼륨·배터리·시계를 표시한다.
+
+## 새 Arch Linux 환경 설치
+
+설치된 Arch Linux x86_64에서 네트워크 연결과 일반 사용자 계정, `git`, `sudo` 및 해당 사용자의 sudo 권한을 먼저 준비한다. Arch 설치 ISO/chroot나 root 계정에서 실행하지 않는다. TTY 로그인 비밀번호는 유지하며 디스플레이 매니저와 자동 로그인은 설치하지 않는다.
+
+```bash
+git clone https://github.com/yongilkim01/shittim.git
+cd shittim
+./install.sh --dry-run
+./install.sh
+./scripts/verify.sh
+```
+
+`--dry-run`은 파일·패키지·서비스를 변경하지 않는다. Python이 없는 최소 설치에서는 설정 파일의 상세 검사가 Python 설치 뒤 수행됨을 알린다. 실제 설치는 다음 순서로 진행한다.
+
+1. `install-packages.sh`: `pacman -Syu`로 전체 업그레이드하고 공식 저장소의 패키지를 `--needed`로 설치한다. pacman의 확인 질문은 유지한다.
+2. `link-dotfiles.sh`: 수집본을 검사한 뒤 파일별로 백업하고 사용자 설정에 심볼릭 링크한다.
+3. `setup-autostart.sh`: 원본 Lua 설정을 보존하고 Hyprland 진입 파일·사용자 서비스·로그인 프로필을 구성한다.
+4. `verify.sh`: 패키지, 링크, 자동 실행, 진입점, 서비스 상태를 검사한다.
+
+설치 전체를 `sudo`로 실행하지 않는다. pacman과 시스템 서비스 구성에만 sudo를 사용한다. 이미 활성화된 네트워크·오디오·데스크톱을 강제로 restart하지 않는다. 다른 네트워크 관리자와 충돌하면 연결을 끊는 대신 원인을 출력하고 중단한다. 실패 단계와 종료 코드를 확인해 원인을 해결한 뒤 `./install.sh`를 재실행한다. 패키지 업그레이드는 자동으로 되돌리지 않는다.
+
+설치 후 작업을 저장하고 직접 로그아웃한 다음 **tty1에서 비밀번호로 로그인**하면 `start-hyprland` → Shittim 순서로 실행된다. 커널·그래픽 드라이버가 갱신되었다면 직접 재부팅한다. 설치 프로그램은 재부팅·로그아웃하지 않는다. 장치별 NVIDIA 설정 등은 [Hyprland 설치 안내](https://wiki.hypr.land/Getting-Started/Master-Tutorial/)를 확인한다.
+
+## 기존 Arch Linux 설정 수집
+
+이 스크립트는 실제 Arch 노트북에서 실행한다. Windows에는 노트북 설정 사본을 임의로 만들지 않는다.
+
+수집기에는 Python 3가 필요하다. 아직 없다면 `sudo pacman -Syu --needed python`으로 설치한 뒤 진행한다.
+
+```bash
+cd /home/yongil/projects/shittim
+./scripts/capture-config.sh --dry-run
+./scripts/capture-config.sh
+./scripts/check-secrets.sh
+git status --short
+git add -N -- dotfiles
+git diff -- dotfiles
+```
+
+마지막 diff를 직접 검토한 뒤 안전한 파일만 커밋한다. 이전 수집본과 다른 파일은 기본적으로 보류한다. 갱신하려면 `./scripts/capture-config.sh --update`를 사용하며 이전 수집본은 저장소 밖 사용자 상태 디렉터리에 백업한다. 수집기가 Git add·commit·push를 자동 수행하지는 않는다.
+
+```bash
+./scripts/check-secrets.sh
+git add -- dotfiles
+git diff --cached -- dotfiles
+git commit -m "chore: capture reviewed Arch desktop configuration"
+git push origin main
+```
+
+수집된 설정을 원격에 반영하면 새 기기에서는 같은 저장소를 clone하고 `./install.sh`만 실행하면 된다. 수집본이 없으면 기존 사용자 설정을 유지하고, Hyprland Lua 설정마저 없는 새 환경에는 설치된 패키지의 `/usr/share/hypr/hyprland.lua`를 사용한다. Kitty·Fcitx5·Fontconfig는 수집본이 없으면 기본 동작을 사용한다. 한글 입력 프로필도 수집되지 않았다면 첫 세션에서 `fcitx5-configtool`로 Hangul을 추가한다.
+
+수집 허용 범위:
+
+- `~/.config/hypr/`의 Lua·conf 파일: `hyprland.lua`와 분리된 설정 모듈.
+- `~/.config/kitty/`의 conf 파일.
+- `~/.config/fcitx5/`의 `config`, `profile`, conf 파일.
+- `~/.config/fontconfig/`의 conf 파일. 현대 경로가 없을 때만 `~/.fonts.conf`도 확인한다.
+- `~/.config/environment.d/`의 conf 파일.
+
+`XDG_CONFIG_HOME`을 지정했다면 해당 경로를 사용한다. 파일이 없으면 건너뛴다. SSH 키, NetworkManager 연결 프로필, 임의 셸 프로필, 브라우저 저장소는 수집하지 않는다. 설정 밖을 가리키는 링크·바이너리·큰 파일·인증 값 의심 패턴은 제외하며 내용은 출력하지 않는다. `.gitignore`와 `check-secrets.sh`로 추가 검사한다. 정적 패턴 검사만으로 모든 형태의 비밀을 판별할 수는 없으므로 커밋 전 직접 검토가 필수다.
+
+외부 스크립트·테마·플러그인·절대 경로를 참조하는 설정은 해당 의존성이 새 기기에도 있는지 검토한다. 제외된 파일과 AUR 프로그램을 자동으로 복사하거나 실행하지 않는다. 원본 설정은 수집 과정에서 수정하지 않는다.
+
+## 자동 실행과 복구
+
+Hyprland 0.55 이상과 Quickshell 0.3.2 이상을 확인한다. 공식 Lua API인 [`hl.on("hyprland.start", ...)`와 `hl.exec_cmd()`](https://wiki.hypr.land/Configuring/Basics/Autostart/)를 사용하며, `start-hyprland`는 [공식 TTY 실행 방식](https://wiki.hypr.land/Getting-Started/Master-Tutorial/)이다. `hyprland.conf`를 Lua로 추측 변환하지 않는다.
+
+- `~/.config/hypr/shittim-base.lua`: 수집된 원본의 링크. 수집본이 없으면 기존 Lua 원본의 사본 또는 설치된 공식 기본 설정의 링크다.
+- `~/.config/hypr/hyprland.lua`: 원본을 `dofile()`로 불러오고 시작·종료 이벤트만 추가하는 관리 파일. 원본의 분리된 모듈은 기존 설정 디렉터리에서 그대로 참조한다.
+- `~/.config/systemd/user/shittim*.service`: Shittim·Fcitx5·인증 에이전트 사용자 서비스. Hyprland 시작 이벤트가 서비스를 시작하며 로그는 journal에 남는다.
+- Bash의 실제 로그인 프로필 또는 Zsh의 `.zprofile`: tty1, SSH 아님, 기존 그래픽 세션 없음 조건에서만 시작한다. Bash·Zsh 외 로그인 셸은 자동 변경하지 않고 중단한다.
+
+기존 프로필에 단순한 `start-hyprland` 자동 실행이 있으면 그 명령과 조건을 유지하며 중복 블록을 추가하지 않는다. 이 경우 기존 TTY·SSH 조건은 사용자가 확인한다. 별도 config 인자, UWSM 등 복잡한 세션 명령은 자동으로 덮어쓰지 않고 중단한다.
+
+저장소 경로는 실행 스크립트 위치에서 계산한다. 관리 파일에는 설치 시점의 실제 경로를 기록하므로 저장소를 옮긴 뒤에는 `./scripts/setup-autostart.sh`를 다시 실행한다. 같은 사용자 세션의 Shittim은 서비스와 `flock`으로 중복 실행을 막고 이미 직접 실행된 같은 Quickshell 진입점도 `/proc`에서 확인한다. 수동 실행도 `./scripts/run-shell.sh`를 사용한다.
+
+원본을 교체할 때는 `${XDG_STATE_HOME:-$HOME/.local/state}/shittim/backups/` 아래에 날짜·실행별로 백업한다. 다른 설정 파일을 통째로 지우지 않으며 디렉터리 링크가 있으면 원본을 보존한 로컬 사본으로 전환한 뒤 필요한 파일만 연결한다. 백업은 Git 저장소 밖에 남긴다.
+
+복구가 필요하면 Ctrl+Alt+F2로 tty2에 로그인한다. 새로 설치한 tty1 자동 실행을 잠시 막으려면:
+
+```bash
+mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}/shittim"
+touch "${XDG_CONFIG_HOME:-$HOME/.config}/shittim/disable-autostart"
+```
+
+기존 프로필의 자동 실행을 그대로 사용한 경우에는 해당 프로필의 기존 명령을 직접 비활성화한다. 백업 위치와 원인을 확인해 설정을 복원하거나 수정하고 설치를 재실행한다. 정상화한 뒤 위 `disable-autostart` 파일을 제거한다.
+
+```bash
+./scripts/verify.sh --dry-run
+./scripts/verify.sh
+hyprctl -j configerrors
+systemctl --user status shittim.service shittim-fcitx5.service shittim-polkit.service
+journalctl --user -u shittim.service -b --no-pager
+```
+
+TTY에서는 아직 그래픽 프로세스가 없어도 설치 상태를 검사한다. 새 설정 적용 전의 기존 Hyprland 세션에서 Shittim 서비스가 비활성이면 다음 로그인 안내를 표시한다.
+
+## 패키지
+
+전체 목록은 `scripts/packages.txt`에 있다. 작성 시 Arch 공식 저장소에서 이름을 확인했고 실제 설치에서도 `pacman -Si`로 공식 저장소 소속을 다시 검사한다. AUR이 필요한 항목이 추가되면 별도 안내와 명시적 동의가 필요하며 현재 설치기는 AUR을 사용하지 않는다.
+
+| 역할 | 공식 패키지 |
+| --- | --- |
+| 데스크톱 | `hyprland`, `quickshell`, `kitty`, `git` |
+| 네트워크·전원 | `networkmanager`, `upower` |
+| 오디오 | `pipewire`, `pipewire-audio`, `pipewire-pulse`, `wireplumber`, `libpulse` |
+| 한글 입력 | `fcitx5`, `fcitx5-hangul`, `fcitx5-gtk`, `fcitx5-qt`, `fcitx5-configtool` |
+| 폰트 | `ttf-hack-nerd`, `ttf-d2coding-nerd`, `fontconfig` |
+| 데스크톱 통합 | `xdg-desktop-portal-hyprland`, `xdg-desktop-portal-gtk`, `polkit-kde-agent`, `wl-clipboard`, `xdg-utils`, `xdg-user-dirs` |
+| 설치·검증 도구 | `python`, `lua`, `util-linux`, `procps-ng`, `dbus` |
+
+Arch의 D2Coding Nerd Font 실제 family를 `fc-list`에서 탐색하고 `D2Coding` 별칭을 사용자 Fontconfig에 추가한다. 기존 `shell/`의 폰트 지정·디자인 코드는 변경하지 않는다. 관련 공식 패키지: [Hyprland](https://archlinux.org/packages/extra/x86_64/hyprland/), [Quickshell](https://archlinux.org/packages/extra/x86_64/quickshell/), [Fcitx5 Hangul](https://archlinux.org/packages/extra/x86_64/fcitx5-hangul/), [Hack Nerd Font](https://archlinux.org/packages/extra/any/ttf-hack-nerd/), [D2Coding Nerd Font](https://archlinux.org/packages/extra/any/ttf-d2coding-nerd/).
+
+## 설치기 검사
+
+```bash
+for script in install.sh scripts/*.sh; do bash -n "$script" || exit; done
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -v
+./scripts/check-secrets.sh
+```
+
+파일 작업 테스트는 임시 홈 디렉터리를 사용한다. 실제 pacman 설치·Hyprland 그래픽 실행·노트북 장치 검증은 해당 Arch 환경에서 수행한다.
 
 ## 저장소 구조
 
@@ -12,13 +135,26 @@ shittim/
 │   ├── ui/
 │   └── tests/
 ├── dotfiles/
+│   ├── hypr/
+│   ├── kitty/
+│   ├── fcitx5/
+│   ├── fontconfig/
+│   └── environment.d/
 ├── scripts/
+│   ├── capture-config.sh
+│   ├── install-packages.sh
+│   ├── link-dotfiles.sh
+│   ├── setup-autostart.sh
+│   ├── verify.sh
+│   └── ...
+├── tests/
 ├── docs/
+├── install.sh
 ├── README.md
 └── LICENSE
 ```
 
-모노레포 전환 1단계로 Quickshell 소스와 테스트를 `shell/`에 모았다. `dotfiles/`와 `scripts/`는 `.gitkeep`만 둔 빈 디렉터리다. 향후 루트의 `install.sh`에서 Arch Linux 환경을 구성할 예정이며, 이번 단계에서는 설치 프로그램이나 실제 설정 파일을 제공하지 않는다.
+Quickshell 소스와 UI 테스트는 `shell/`, 설치기 테스트는 루트 `tests/`에 있다. 실제 사용자 dotfiles는 Arch에서 수집해 검토한 뒤 같은 저장소에 반영한다.
 
 `shell/shell.qml`의 `import "./components"`, 컴포넌트와 테스트의 `import "../ui"`, `shell/ui/qmldir`의 싱글턴 등록은 기존 상대 관계를 유지한다. 기능과 디자인 코드는 변경하지 않았다.
 
@@ -125,7 +261,7 @@ git -c safe.directory=C:/Users/User/Desktop/Yongil/projects/shittim diff -- shel
 Get-Content shell/ui/Theme.qml
 git -c safe.directory=C:/Users/User/Desktop/Yongil/projects/shittim add --all
 git -c safe.directory=C:/Users/User/Desktop/Yongil/projects/shittim diff --cached
-git -c safe.directory=C:/Users/User/Desktop/Yongil/projects/shittim commit -m "refactor: move Quickshell sources into shell directory"
+git -c safe.directory=C:/Users/User/Desktop/Yongil/projects/shittim commit -m "feat: automate Arch desktop setup"
 ```
 
 변경 검토 및 사용자 승인 후에만 푸시한다.
