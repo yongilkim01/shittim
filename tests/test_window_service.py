@@ -79,7 +79,18 @@ class WindowActions(unittest.TestCase):
         self.assertIn('mode="maximized"', self.commands[0][2]); self.assertIn('mode="fullscreen"', self.commands[1][2])
         self.assertIn('window.float({action="toggle"', self.commands[2][2])
         self.client['fullscreen'] = 2
-        with self.assertRaisesRegex(ValueError, 'RequiresNormal'): self.windows.action('fit', 'abc')
+        with self.assertRaisesRegex(ValueError, 'ExitFullscreenBeforeFit'): self.windows.action('fit', 'abc')
+
+    def test_fit_reapplies_maximized_area_and_preserves_tiling(self):
+        self.client['fullscreen']=1
+        self.assertEqual(self.windows.action('fit','abc'),{'mode':'maximized'})
+        self.assertIn('mode="maximized",action="unset"',self.commands[0][2])
+        self.assertIn('mode="maximized",action="set"',self.commands[1][2])
+        self.commands=[]; self.client.update(fullscreen=0,floating=False)
+        self.assertEqual(self.windows.action('fit','abc'),{'mode':'tiled'})
+        self.assertEqual(self.commands,[])
+        self.client['fullscreenClient']=2
+        with self.assertRaisesRegex(ValueError,'ExitFullscreenBeforeFit'): self.windows.action('fit','abc')
 
     def test_failed_dispatch_is_reported(self):
         self.windows.runner = lambda *_args, **_kwargs: Mock(stdout='[bad]')

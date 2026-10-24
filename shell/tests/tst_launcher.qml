@@ -1,6 +1,7 @@
 import QtQuick
 import QtTest
 import "../components/launcher"
+import "../components/launcher/Diagnostics.js" as Diagnostics
 
 TestCase {
     id: testCase
@@ -12,6 +13,14 @@ TestCase {
     SignalSpy { id: closeSpy; signalName: "closeRequested" }
     SignalSpy { id: refreshSpy; signalName: "refreshRequested" }
     function init() { failOnWarning(/.*/) }
+    function test_serviceWarningsDoNotBecomeLaunchFailures() {
+        verify(!Diagnostics.isFailure("launcher-service.py:19: PyGIDeprecationWarning: Gio.DesktopAppInfo is deprecated; use GioUnix.DesktopAppInfo instead"))
+        verify(!Diagnostics.isFailure("  desktop = getattr(Gio, 'DesktopAppInfo', None)"))
+        verify(!Diagnostics.isFailure("Gtk-WARNING: optional theme warning"))
+        verify(Diagnostics.isFailure("Traceback (most recent call last):"))
+        verify(Diagnostics.isFailure("Fatal Python error: initialization failed"))
+        verify(Diagnostics.isFailure("GLib-GIO-ERROR: initialization failed"))
+    }
     function cleanup() { launchSpy.target = null; closeSpy.target = null; refreshSpy.target = null; launchSpy.clear(); closeSpy.clear(); refreshSpy.clear() }
     function apps() {
         return [{id: "editor.desktop", name: "Code Editor", genericName: "Text editor", keywords: ["개발", "Programming"]},

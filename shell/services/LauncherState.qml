@@ -4,6 +4,7 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Hyprland
 import "../components/launcher"
+import "../components/launcher/Diagnostics.js" as Diagnostics
 
 Scope {
     id: root
@@ -98,7 +99,7 @@ Scope {
                 } catch (_) { root.error = "앱 서비스 응답을 처리하지 못했습니다." }
             }
         }
-        stderr: SplitParser { onRead: data => { root.error = "앱 서비스 실행 오류. 설치 상태를 확인하세요." } }
+        stderr: SplitParser { onRead: data => { if (Diagnostics.isFailure(data)) root.error = "앱 서비스 내부 오류. F5로 새로고침하고 실행 상태를 확인하세요." } }
         onExited: {
             const interrupted = root.launching
             root.ready = false; root.launching = false; root.error = "앱 서비스가 종료되었습니다. python-gobject 설치 후 F5를 누르세요."

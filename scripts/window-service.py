@@ -101,8 +101,14 @@ class Windows:
         elif operation == 'tile':
             send('window.float', 'action="toggle"')
         elif operation == 'fit':
-            if not client.get('floating') or client.get('fullscreen') or client.get('fullscreenClient'):
-                raise ValueError('RequiresNormalFloatingWindow')
+            if int(client.get('fullscreen',0)) & 2 or int(client.get('fullscreenClient',0)) & 2:
+                raise ValueError('ExitFullscreenBeforeFit')
+            if client.get('fullscreen') or client.get('fullscreenClient'):
+                send('window.fullscreen', 'mode="maximized",action="unset"')
+                send('window.fullscreen', 'mode="maximized",action="set"')
+                return {'mode':'maximized'}
+            if not client.get('floating'):
+                return {'mode':'tiled'}
             monitors = self.query('monitors')
             monitor = next((item for item in monitors if item.get('id') == client.get('monitor')), None)
             if not monitor:
@@ -183,11 +189,12 @@ def main():
             monitor = next((item for item in Windows().query('monitors') if item['id']==args.monitor),None)
             if monitor is None: raise ValueError('MonitorUnavailable')
             print(json.dumps({'ok':True,'geometry':snapped(monitor,args.zone),'monitor':monitor})); return 0
-        Windows().action(args.action, args.address,args.zone,args.monitor)
-        print(json.dumps({'ok': True}))
+        result=Windows().action(args.action, args.address,args.zone,args.monitor)
+        print(json.dumps(dict(ok=True,**(result or {}))))
         return 0
     except (OSError, ValueError, KeyError, TypeError, subprocess.SubprocessError) as error:
         code = str(error) if isinstance(error, ValueError) and re.fullmatch(r'[A-Za-z]+', str(error)) else type(error).__name__
+        if code=='ExitFullscreenBeforeFit': print('전체 화면을 먼저 해제한 뒤 다시 맞추세요. 최대화는 그대로 사용할 수 있습니다.',file=sys.stderr)
         print(json.dumps({'ok': False, 'error': code}))
         return 1
 

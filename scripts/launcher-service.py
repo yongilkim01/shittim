@@ -16,11 +16,12 @@ def load_gio():
     import gi
     gi.require_version('Gio', '2.0')
     from gi.repository import Gio, GLib
-    desktop = getattr(Gio, 'DesktopAppInfo', None)
-    if desktop is None:
+    try:
         gi.require_version('GioUnix', '2.0')
         from gi.repository import GioUnix
         desktop = GioUnix.DesktopAppInfo
+    except (ImportError, ValueError):
+        desktop = Gio.DesktopAppInfo
     return Gio, GLib, desktop
 
 
