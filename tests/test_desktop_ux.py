@@ -3,6 +3,7 @@ import importlib.util
 import json
 import os
 from pathlib import Path
+import shlex
 import shutil
 import subprocess
 import sys
@@ -17,6 +18,19 @@ TOOL = importlib.util.module_from_spec(SPEC); SPEC.loader.exec_module(TOOL)
 
 
 class DesktopUX(unittest.TestCase):
+    def test_configerrors_ignores_blank_lines_and_reports_actual_errors(self):
+        script = (ROOT / 'scripts/verify-desktop-ux.sh').read_text(encoding='utf-8')
+        line = next(line for line in script.splitlines() if 'hyprctl -j configerrors |' in line)
+        code = shlex.split(line.split('|', 1)[1])[-1]
+        for errors, expected in [([], 0), ([''], 0), (['', '  ', '\n'], 0),
+                                 (['', 'bad rule', '  '], 1)]:
+            with self.subTest(errors=errors):
+                result = subprocess.run([sys.executable, '-c', code], input=json.dumps(errors),
+                                        capture_output=True, text=True, timeout=5)
+                self.assertEqual(result.returncode, expected, result.stderr)
+                self.assertIn('Hyprland 설정 오류: ' + str(expected), result.stdout)
+                if expected: self.assertIn('bad rule', result.stdout)
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(); self.addCleanup(self.temp.cleanup)
         self.base = Path(self.temp.name); self.home = self.base / 'home'; self.home.mkdir()
