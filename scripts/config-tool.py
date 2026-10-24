@@ -44,7 +44,7 @@ def allowed(relative):
         return False
     group = relative.parts[0]
     if group == 'hypr':
-        return relative.suffix in ('.lua', '.conf') and relative.name not in ('shittim-base.lua', 'shittim-desktop.lua', 'shittim-windows.lua')
+        return relative.suffix in ('.lua', '.conf') and relative.name not in ('shittim-base.lua', 'shittim-desktop.lua', 'shittim-windows.lua', 'shittim-titlebars.lua')
     if group == 'kitty':
         return relative.suffix == '.conf'
     if group == 'fcitx5':
@@ -329,7 +329,10 @@ class Config:
                 'if desktop_file then desktop_file:close(); dofile(desktop_path) end\n'
                 'local windows_path = ' + json.dumps(str(self.config / 'hypr/shittim-windows.lua'), ensure_ascii=False) + '\n'
                 'local windows_file = io.open(windows_path, "r")\n'
-                'if windows_file then windows_file:close(); dofile(windows_path) end\n')
+                'if windows_file then windows_file:close(); dofile(windows_path) end\n'
+                'local titlebars_path = ' + json.dumps(str(self.config / 'hypr/shittim-titlebars.lua'), ensure_ascii=False) + '\n'
+                'local titlebars_file = io.open(titlebars_path, "r")\n'
+                'if titlebars_file then titlebars_file:close(); dofile(titlebars_path) end\n')
 
     def launcher_key(self, replace=False):
         self.write(self.config / 'shittim/launcher-key', 'SUPER + R\n' if replace else 'SUPER + SPACE\n')

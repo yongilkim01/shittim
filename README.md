@@ -18,6 +18,8 @@ Arch Linux + Hyprland + Quickshell 기반 데스크톱 환경. SHITTIM HUD 디�
 
 원본 성과 호수 배경, 실제 바탕화면 파일 아이콘, 독립된 하단 중앙 Dock, 호버 창 캡처와 절반/사분면 드래그 스냅은 [바탕화면·Dock 통합](docs/desktop-shell.md)을 따른다. Dock 고정·순서와 모니터별 아이콘 위치는 사용자 경로에 저장한다. 앱 자체 최소화는 설치된 Hyprland의 공식 이벤트 지원 여부를 검사해 구분한다.
 
+Kitty·Nemo·Chrome의 공통 제목 표시줄과 최소화·최대화·닫기 버튼은 [선택 설치형 hyprbars 연동](docs/titlebars.md)을 사용한다. 기본 설치는 외부 플러그인을 자동으로 설치하지 않으며, 노트북에서 `bash scripts/setup-titlebars.sh --install-hyprbars`를 실행할 때만 공식 소스를 빌드한다.
+
 ## 새 Arch Linux 환경 설치
 
 설치된 Arch Linux x86_64에서 네트워크 연결과 일반 사용자 계정, `git`, `sudo` 및 해당 사용자의 sudo 권한을 먼저 준비한다. Arch 설치 ISO/chroot나 root 계정에서 실행하지 않는다. TTY 로그인 비밀번호는 유지하며 디스플레이 매니저와 자동 로그인은 설치하지 않는다.

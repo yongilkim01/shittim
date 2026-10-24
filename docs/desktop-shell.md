@@ -78,6 +78,8 @@ Quickshell도 `Shittim-HUD` 아이콘 테마를 사용한다. Nemo의 공식 `sy
 
 ## 최소화 지원 범위
 
+Kitty를 포함한 공통 제목 표시줄·버튼이 필요하면 [선택 설치형 hyprbars 연동](titlebars.md)을 사용한다. 아래 내용은 외부 플러그인 없는 기본 환경의 앱 자체 버튼 지원 범위다.
+
 기존 `WindowState`와 `window-service.py`의 Special Workspace 이동/원래 워크스페이스/전체 화면 상태 복원을 재사용한다. 새 별도 숨김 모델을 만들지 않는다. Dock·기존 창 목록·미디어 앱 목록이 같은 창 상태를 읽는다.
 
 확인한 Hyprland v0.55.0은 앱 CSD의 최소화 요청을 외부에서 사용할 Lua/IPC 이벤트로 전달하지 않는다. 최신 공식 소스에는 [window.minimize Lua 이벤트](https://github.com/hyprwm/Hyprland/blob/main/src/config/lua/LuaEventHandler.cpp)가 있다. 설치기는 실제 `Hyprland` 실행 파일에 그 정확한 이벤트 선언 문자열이 있는지 검사하고, 있을 때만 콜백을 생성한다. 지원하지 않는 버전에 알 수 없는 `hl.on` 이벤트를 등록하지 않는다. 선언 문자열 검사는 실제 앱의 요청 전달 검증을 대신하지 않으며 결과를 설치/검증 출력에 표시한다.
