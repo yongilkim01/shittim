@@ -13,16 +13,15 @@ Scope {
     property var anchorWindow: null
     property var targetScreen: null
     readonly property alias model: playback
-    property var recentWindows: []
+    readonly property var recentWindows: WindowState.recent
     property string error: ""
     property string pendingApp: ""
     property string artworkState: "unloaded"
-    readonly property var apps: LauncherState.dockFavorites.map(id => LauncherState.model.applications.find(app => app.id === id)).filter(app => app !== undefined)
-    readonly property var windows: Hyprland.toplevels.values.map(window => ({
-        handle: window, address: window.address, activated: window.activated,
-        appId: window.wayland ? window.wayland.appId : "",
-        className: window.lastIpcObject.class || "", initialClass: window.lastIpcObject.initialClass || ""
-    }))
+    readonly property var apps: {
+        const favorites = LauncherState.dockFavorites.map(id => LauncherState.model.applications.find(app => app.id === id)).filter(app => app !== undefined)
+        return favorites.concat(LauncherState.model.applications.filter(app => LauncherState.dockFavorites.indexOf(app.id) < 0 && Data.matches(app, windows, LauncherState.model.applications, LauncherState.dockWindowClasses).length > 0))
+    }
+    readonly property var windows: WindowState.windows
     MediaModel { id: playback; players: Mpris.players.values }
     Timer {
         interval: 250; repeat: true
@@ -31,6 +30,7 @@ Scope {
     }
     function close() { playback.cancelSeek(); opened = false }
     function show(window) {
+        WindowState.close()
         ControlState.close(); NotificationState.close(); LauncherState.close(); DashboardState.close()
         anchorWindow = window || null
         const monitor = Hyprland.focusedMonitor
@@ -49,24 +49,12 @@ Scope {
             return
         }
         const candidates = Data.preferred(matches(app), recentWindows)
-        const target = candidates.find(candidate => candidate.handle.wayland !== null)
+        const target = candidates[0]
         if (target) {
             close()
-            Qt.callLater(() => {
-                // Resolve again after the focus grab is released; the window may close.
-                const live = Hyprland.toplevels.values.find(window => window.address === target.address)
-                if (live && live.wayland) live.wayland.activate()
-                else { root.show(root.anchorWindow); root.error = "창이 닫혔습니다. 다시 선택하세요." }
-            })
-        } else if (candidates.length > 0) error = "창 활성화 인터페이스를 사용할 수 없습니다."
-        else { pendingApp = app.id; LauncherState.launch(app.id) }
-    }
-    Connections {
-        target: Hyprland
-        function onActiveToplevelChanged() {
-            const window = Hyprland.activeToplevel
-            if (window) root.recentWindows = [window.address].concat(root.recentWindows.filter(address => address !== window.address)).slice(0, 256)
+            if (!WindowState.perform("activate", target.address)) error = WindowState.error || "창을 활성화할 수 없습니다."
         }
+        else { pendingApp = app.id; LauncherState.launch(app.id) }
     }
     Connections {
         target: LauncherState
@@ -81,6 +69,7 @@ Scope {
     Connections { target: ControlState; function onOpenedChanged() { if (ControlState.opened) root.close() } }
     Connections { target: NotificationState; function onOpenedChanged() { if (NotificationState.opened) root.close() } }
     Connections { target: DashboardState; function onOpenedChanged() { if (DashboardState.opened) root.close() } }
+    Connections { target: WindowState; function onShowing() { root.close() } }
     Connections { target: Quickshell; function onScreensChanged() { if (root.opened && Quickshell.screens.indexOf(root.targetScreen) < 0) root.close() } }
     IpcHandler {
         target: "media"

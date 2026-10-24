@@ -44,7 +44,7 @@ def allowed(relative):
         return False
     group = relative.parts[0]
     if group == 'hypr':
-        return relative.suffix in ('.lua', '.conf') and relative.name not in ('shittim-base.lua', 'shittim-desktop.lua')
+        return relative.suffix in ('.lua', '.conf') and relative.name not in ('shittim-base.lua', 'shittim-desktop.lua', 'shittim-windows.lua')
     if group == 'kitty':
         return relative.suffix == '.conf'
     if group == 'fcitx5':
@@ -73,8 +73,9 @@ class Config:
         self.root = Path(root or Path(__file__).resolve().parent.parent).resolve()
         self.home = Path(home or os.environ.get('HOME') or Path.home()).absolute()
         self.config = Path(os.environ.get('XDG_CONFIG_HOME') or self.home / '.config')
+        self.data = Path(os.environ.get('XDG_DATA_HOME') or self.home / '.local/share')
         self.state = Path(os.environ.get('XDG_STATE_HOME') or self.home / '.local/state') / 'shittim'
-        for path in (self.home, self.config, self.state):
+        for path in (self.home, self.config, self.data, self.state):
             if not path.is_absolute() or any(c in str(path) for c in '\n\r\0'):
                 raise ValueError('HOME/XDG 경로는 제어 문자 없는 절대 경로여야 합니다.')
         if inside(self.state.resolve(), self.root):
@@ -91,6 +92,8 @@ class Config:
             relative = Path('config') / path.relative_to(self.config)
         elif inside(path, self.root / 'dotfiles'):
             relative = Path('repository-dotfiles') / path.relative_to(self.root / 'dotfiles')
+        elif inside(path, self.data):
+            relative = Path('data') / path.relative_to(self.data)
         elif inside(path, self.home):
             relative = Path('home') / path.relative_to(self.home)
         else:
@@ -110,6 +113,8 @@ class Config:
             boundary = self.config
         elif inside(path, self.root / 'dotfiles'):
             boundary = self.root / 'dotfiles'
+        elif inside(path, self.data):
+            boundary = self.data
         elif inside(path, self.home):
             boundary = self.home
         else:
@@ -321,7 +326,10 @@ class Config:
                 '        hl.bind("SUPER + R", hl.dsp.exec_cmd(' + json.dumps(launcher, ensure_ascii=False) + '))\n    end\nend\n'
                 'local desktop_path = ' + json.dumps(str(self.config / 'hypr/shittim-desktop.lua'), ensure_ascii=False) + '\n'
                 'local desktop_file = io.open(desktop_path, "r")\n'
-                'if desktop_file then desktop_file:close(); dofile(desktop_path) end\n')
+                'if desktop_file then desktop_file:close(); dofile(desktop_path) end\n'
+                'local windows_path = ' + json.dumps(str(self.config / 'hypr/shittim-windows.lua'), ensure_ascii=False) + '\n'
+                'local windows_file = io.open(windows_path, "r")\n'
+                'if windows_file then windows_file:close(); dofile(windows_path) end\n')
 
     def launcher_key(self, replace=False):
         self.write(self.config / 'shittim/launcher-key', 'SUPER + R\n' if replace else 'SUPER + SPACE\n')

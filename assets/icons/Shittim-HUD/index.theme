@@ -1,0 +1,19 @@
+[Icon Theme]
+Name=Shittim HUD
+Comment=Original cyan HUD folders and file types with Adwaita fallback
+Inherits=Adwaita,hicolor
+Directories=scalable/places,scalable/mimetypes
+
+[scalable/places]
+Size=48
+MinSize=16
+MaxSize=512
+Type=Scalable
+Context=Places
+
+[scalable/mimetypes]
+Size=48
+MinSize=16
+MaxSize=512
+Type=Scalable
+Context=MimeTypes

@@ -14,6 +14,8 @@ Arch Linux + Hyprland + Quickshell 기반 데스크톱 환경. SHITTIM HUD 디�
 
 기본 데스크톱 앱은 **Nemo / Swayimg / Zathura / VLC**다. Chrome은 AUR 설치를 명시적으로 선택한다. 기본 파일 연결·포털·캡처·잠금·선택적 클립보드 기록과 진단은 [Desktop Essentials](docs/desktop-essentials.md)에 정리되어 있다.
 
+일반 창의 Floating 기본 배치, 마우스 테두리 크기 조절, Alt+Tab, 창 목록의 숨김/복원, Nemo GTK HUD/아이콘 구성은 [Desktop UX](docs/desktop-ux.md)를 따른다. 음표 아이콘 우클릭으로 열린 창을 관리하며 Dock 우클릭으로 해당 앱의 여러 창을 선택한다. 앱 자체 최소화/제목 표시줄의 Hyprland 지원 한계와 실제 마우스 검증 절차도 해당 문서에 구분해 두었다.
+
 ## 새 Arch Linux 환경 설치
 
 설치된 Arch Linux x86_64에서 네트워크 연결과 일반 사용자 계정, `git`, `sudo` 및 해당 사용자의 sudo 권한을 먼저 준비한다. Arch 설치 ISO/chroot나 root 계정에서 실행하지 않는다. TTY 로그인 비밀번호는 유지하며 디스플레이 매니저와 자동 로그인은 설치하지 않는다.
@@ -34,7 +36,8 @@ Chrome까지 설치하려면 `./install.sh --with-chrome`을 사용한다. AUR �
 2. `link-dotfiles.sh`: 수집본을 검사한 뒤 파일별로 백업하고 사용자 설정에 심볼릭 링크한다.
 3. `setup-autostart.sh`: 원본 Lua 설정을 보존하고 Hyprland 진입 파일·사용자 서비스·로그인 프로필을 구성한다.
 4. `setup-desktop.sh`: 설치된 앱의 MIME 연결, Hyprland 전용 포털 선택, 충돌을 검사한 단축키를 백업하며 구성한다.
-5. `verify.sh`: 패키지, 링크, 자동 실행, 기본 앱, 진입점, 서비스 상태를 검사한다. `--with-chrome`이면 공식 패키지 단계 뒤 AUR Chrome 설치를 별도로 수행한다.
+5. `setup-desktop-ux.sh`: Floating 창 정책, 창 관리 단축키, GTK HUD 스타일·아이콘·Nemo 설정을 백업하며 적용한다.
+6. `verify.sh`: 패키지, 링크, 자동 실행, 기본 앱, Desktop UX, 진입점, 서비스 상태를 검사한다. `--with-chrome`이면 공식 패키지 단계 뒤 AUR Chrome 설치를 별도로 수행한다.
 
 설치 전체를 `sudo`로 실행하지 않는다. pacman과 시스템 서비스 구성에만 sudo를 사용한다. 이미 활성화된 네트워크·오디오·데스크톱을 강제로 restart하지 않는다. 다른 네트워크 관리자와 충돌하면 연결을 끊는 대신 원인을 출력하고 중단한다. 실패 단계와 종료 코드를 확인해 원인을 해결한 뒤 `./install.sh`를 재실행한다. 패키지 업그레이드는 자동으로 되돌리지 않는다.
 

@@ -10,11 +10,13 @@ FocusScope {
     property var apps: []
     property var iconSource: function(app) { return "" }
     property var isRunning: function(app) { return false }
+    property var isActiveApp: function(app) { return false }
     property bool ready: false
     property bool launching: false
     property bool active: true
     property string error: ""
     signal appRequested(var app)
+    signal appWindowsRequested(var app)
     signal refreshRequested()
     signal closeRequested()
     readonly property real contentScale: Math.min(width / Theme.mediaWidth, height / Theme.mediaHeight)
@@ -86,7 +88,9 @@ FocusScope {
                             imageSource: root.iconSource(modelData); icon: "\uf2d0"
                             tooltipText: Data.text(modelData.name); enabled: root.ready && !root.launching
                             running: root.isRunning(modelData)
+                            active: root.isActiveApp(modelData)
                             onClicked: root.appRequested(modelData)
+                            onContextRequested: root.appWindowsRequested(modelData)
                         }
                     }
                 }

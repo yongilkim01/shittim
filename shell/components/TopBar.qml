@@ -98,7 +98,8 @@ PanelWindow {
 			Layout.alignment: Qt.AlignVCenter
 			Layout.preferredWidth: Theme.barIconSize
 			Layout.preferredHeight: Theme.barIconSize
-			MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: MediaState.toggle(bar) }
+			MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; acceptedButtons: Qt.LeftButton | Qt.RightButton
+				onClicked: event => { if (event.button === Qt.RightButton) WindowState.show([], 0, bar.screen); else MediaState.toggle(bar) } }
 		}
 		Item {
 			id: notificationArea

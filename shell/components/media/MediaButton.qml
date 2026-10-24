@@ -9,8 +9,10 @@ Item {
     property string tooltipText: ""
     property bool framed: false
     property bool running: false
+    property bool active: false
     property string imageSource: ""
     signal clicked()
+    signal contextRequested()
     implicitWidth: 30; implicitHeight: 28
     activeFocusOnTab: enabled
     Accessible.role: Accessible.Button
@@ -21,7 +23,7 @@ Item {
     ControlFrame {
         anchors.fill: parent; cut: 2
         visible: root.framed || mouse.containsMouse || root.activeFocus
-        strokeColor: mouse.containsMouse || root.activeFocus ? Theme.accent : Theme.border
+        strokeColor: mouse.containsMouse || root.activeFocus || root.active ? Theme.accent : Theme.border
         fillColor: mouse.containsMouse ? Theme.surfaceElevated : Theme.background
     }
     Image {
@@ -35,7 +37,9 @@ Item {
         visible: image.status !== Image.Ready; color: root.enabled ? Theme.textPrimary : Theme.textMuted
     }
     Rectangle { visible: root.running; height: 2; width: 12; anchors.horizontalCenter: parent.horizontalCenter; anchors.bottom: parent.bottom; anchors.bottomMargin: 2; color: Theme.accent }
-    MouseArea { id: mouse; anchors.fill: parent; hoverEnabled: true; cursorShape: root.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor; onClicked: root.clicked() }
+    MouseArea { id: mouse; anchors.fill: parent; hoverEnabled: true; acceptedButtons: Qt.LeftButton | Qt.RightButton
+        cursorShape: root.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+        onClicked: event => { if (event.button === Qt.RightButton) root.contextRequested(); else root.clicked() } }
     Controls.ToolTip {
         visible: mouse.containsMouse && root.tooltipText.length > 0; delay: 450
         contentItem: HudText { text: root.tooltipText; font.pixelSize: 10; maximumLineCount: 4; wrapMode: Text.Wrap; width: Math.min(280, implicitWidth) }

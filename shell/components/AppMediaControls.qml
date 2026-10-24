@@ -31,8 +31,13 @@ PanelWindow {
         id: view; anchors.fill: parent; active: window.visible; model: MediaState.model; apps: MediaState.apps
         ready: LauncherState.ready; launching: LauncherState.launching
         iconSource: LauncherState.iconSource; isRunning: app => MediaState.running(app)
+        isActiveApp: app => MediaState.matches(app).some(window => window.activated)
         error: MediaState.error || LauncherState.dockError || (!LauncherState.ready ? LauncherState.error : "")
         onAppRequested: app => MediaState.activate(app)
+        onAppWindowsRequested: app => {
+            const matches = MediaState.matches(app)
+            if (matches.length) WindowState.show(matches.map(window => window.address), 0, window.screen)
+        }
         onCloseRequested: MediaState.close()
         onRefreshRequested: LauncherState.refresh()
         onArtworkStateChanged: MediaState.artworkState = artworkState

@@ -116,12 +116,16 @@ TestCase {
     function test_dockAndSmallScreenAndKeyboard() {
         const app = {id: "fixture.desktop", name: "실제 앱 <&>"}
         const v = createTemporaryObject(viewFactory, testCase, {model: model(), apps: [app], ready: true,
-            width: 280, height: 271 * 280 / 349, isRunning: function(a) { return a.id === app.id }})
+            width: 280, height: 271 * 280 / 349, isRunning: function(a) { return a.id === app.id }, isActiveApp: function(a) { return a.id === app.id }})
         const button = findChild(v, "dock-fixture.desktop")
         verify(button !== null); compare(button.running, true); compare(button.tooltipText, app.name)
         compare(v.contentScale, 280 / 349)
         const launch = createTemporaryObject(spyFactory, testCase, {target: v, signalName: "appRequested"})
         mouseClick(button, 21, 21); compare(launch.count, 1); compare(launch.signalArguments[0][0].id, app.id)
+        compare(button.active, true)
+        const context = createTemporaryObject(spyFactory, testCase, {target: v, signalName: "appWindowsRequested"})
+        mouseClick(button, 21, 21, Qt.RightButton); compare(context.count, 1); compare(launch.count, 1)
+        compare(context.signalArguments[0][0].id, app.id)
         v.launching = true; compare(button.enabled, false)
         const close = createTemporaryObject(spyFactory, testCase, {target: v, signalName: "closeRequested"})
         v.forceActiveFocus(); keyClick(Qt.Key_Escape); compare(close.count, 1)

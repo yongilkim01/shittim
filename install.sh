@@ -31,7 +31,7 @@ shittim_stage=preflight
 trap 'shittim_status=$?; printf "[Shittim:실패] 단계=%s, 종료 코드=%s. 원인을 해결한 뒤 재실행하세요.\n" "$shittim_stage" "$shittim_status" >&2; exit "$shittim_status"' ERR
 shittim_flags=()
 (( SHITTIM_DRY_RUN == 0 )) || shittim_flags+=(--dry-run)
-for shittim_stage in install-packages install-chrome link-dotfiles setup-autostart setup-desktop verify; do
+for shittim_stage in install-packages install-chrome link-dotfiles setup-autostart setup-desktop setup-desktop-ux verify; do
     if [[ $shittim_stage == install-chrome && ${SHITTIM_WITH_CHROME:-0} != 1 ]]; then
         info 'Chrome AUR 설치는 선택 사항입니다. 원하면 ./install.sh --with-chrome 또는 bash scripts/install-chrome.sh를 실행하세요.'
         continue
