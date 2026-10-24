@@ -18,6 +18,13 @@ QtObject {
 	readonly property color warning: "#ffc56b"
 	readonly property color danger: "#ff637e"
 	readonly property color transparent: "transparent"
+	readonly property color floatingSurface: "#ed020f15"
+	readonly property color selectionFill: "#3300d9f5"
+	readonly property int dockIconSize: 38
+	readonly property int dockCellSize: 58
+	readonly property int dockHeight: 70
+	readonly property int desktopCellWidth: 88
+	readonly property int desktopCellHeight: 92
 
 	readonly property string fontMono: "Hack Nerd Font Mono"
 	readonly property string fontKorean: "D2Coding"

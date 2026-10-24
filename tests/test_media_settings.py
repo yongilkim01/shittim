@@ -38,7 +38,7 @@ class DockSettings(unittest.TestCase):
     def test_invalid_personal_never_falls_back_or_executes(self):
         for data in [None, [], {'favorites': 'kitty.desktop'}, {'favorites': ['/tmp/app.desktop']},
                      {'favorites': ['x.desktop\n']}, {'favorites': ['x.desktop'], 'windowClasses': {'x.desktop': 'x'}},
-                     {'favorites': [], 'windowClasses': {'unlisted.desktop': ['class']}}, {'favorites': ['x.desktop'] * 65}]:
+                     {'favorites': [], 'windowClasses': {'/tmp/unlisted.desktop': ['class']}}, {'favorites': ['x.desktop'] * 65}]:
             self.user.write_text(json.dumps(data), encoding='utf-8')
             self.assertEqual(TOOL.read_settings()['error'], 'DockConfigInvalid', repr(data))
         self.user.write_bytes(b'not json')

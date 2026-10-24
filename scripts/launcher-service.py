@@ -64,7 +64,13 @@ class Catalogue:
         if action == 'refresh':
             self.refresh()
             return
-        if action != 'launch' or not isinstance(message.get('id'), str):
+        if action in ('pin', 'unpin', 'reorder'):
+            try:
+                self.emit(dock_settings.update_settings(action, message.get('id'), self.applications, message.get('index')))
+            except (OSError, ValueError, TypeError, KeyError):
+                self.emit({'event': 'error', 'error': 'DockConfigInvalid'})
+            return
+        if action not in ('launch','new-window') or not isinstance(message.get('id'), str):
             self.emit({'event': 'error', 'error': 'InvalidRequest'})
             return
         # Only catalogue IDs are accepted. No command text or path is executed here.
@@ -75,7 +81,10 @@ class Catalogue:
                 self.emit({'event': 'launched', 'request': request, 'ok': False, 'error': 'ApplicationMissing'})
                 self.refresh()
                 return
-            app.launch_uris_async([], self.gio.AppLaunchContext(), None, self.launched, request)
+            if action == 'new-window' and 'new-window' in list(getattr(app,'list_actions',lambda:[])()):
+                app.launch_action('new-window',self.gio.AppLaunchContext())
+                self.emit({'event':'launched','request':request,'ok':True})
+            else: app.launch_uris_async([], self.gio.AppLaunchContext(), None, self.launched, request)
         except Exception:
             # GError text may contain arbitrary Exec arguments; never log or forward it.
             self.emit({'event': 'launched', 'request': request, 'ok': False, 'error': 'LaunchFailed'})

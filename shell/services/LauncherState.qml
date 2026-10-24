@@ -43,14 +43,18 @@ Scope {
         if (!bridge.running) { ready = false; bridge.running = true }
         else bridge.write(JSON.stringify({action: "refresh"}) + "\n")
     }
-    function launch(appId) {
+    function launch(appId, newWindow) {
         if (!ready || launching || !search.applications.some(app => app.id === appId)) return
         launching = true
         error = ""
         launchGeneration = generation
         launchAppId = appId
         sequence++
-        bridge.write(JSON.stringify({action: "launch", id: appId, request: sequence}) + "\n")
+        bridge.write(JSON.stringify({action: newWindow ? "new-window" : "launch", id: appId, request: sequence}) + "\n")
+    }
+    function dockAction(action, appId, index) {
+        if (ready && ["pin", "unpin", "reorder"].indexOf(action) >= 0)
+            bridge.write(JSON.stringify({action: action, id: appId, index: index}) + "\n")
     }
     function iconSource(app) {
         if (app.iconFile) return app.iconFile

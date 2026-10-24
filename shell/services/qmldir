@@ -8,3 +8,6 @@ singleton NotificationState 1.0 NotificationState.qml
 singleton DashboardState 1.0 DashboardState.qml
 singleton MediaState 1.0 MediaState.qml
 singleton WindowState 1.0 WindowState.qml
+singleton DockState 1.0 DockState.qml
+singleton DesktopState 1.0 DesktopState.qml
+singleton SnapState 1.0 SnapState.qml

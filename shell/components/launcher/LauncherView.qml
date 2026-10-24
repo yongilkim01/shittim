@@ -11,6 +11,8 @@ FocusScope {
     property string error: ""
     property var iconSource: app => app.iconFile || ""
     signal launchRequested(string appId)
+    signal pinRequested(string appId)
+    property var isPinned: function(appId) { return false }
     signal closeRequested()
     signal refreshRequested()
     implicitWidth: Theme.launcherWidth
@@ -95,8 +97,13 @@ FocusScope {
                 HudText { x: parent.width - 75; y: 0; width: 62; height: 27; text: "Application"; font.pixelSize: 10; font.letterSpacing: -0.5; color: Theme.accentDim; horizontalAlignment: Text.AlignRight }
                 MouseArea {
                     anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                    acceptedButtons: Qt.LeftButton | Qt.RightButton
                     onPositionChanged: if (containsMouse) root.model.selectedIndex = row.index
-                    onClicked: { root.model.selectedIndex = row.index; root.focusSearch(); root.activate() }
+                    onClicked: event => {
+                        root.model.selectedIndex = row.index
+                        if (event.button === Qt.RightButton) { pinMenu.appId=row.modelData.id; pinMenu.popup() }
+                        else { root.focusSearch(); root.activate() }
+                    }
                 }
             }
         }
@@ -109,6 +116,15 @@ FocusScope {
         HudText {
             x: 14; y: parent.height - 30; width: 366; height: 26
             visible: root.error.length > 0; text: root.error; font.pixelSize: 10; color: Theme.danger
+        }
+    }
+    Controls.Menu {
+        id: pinMenu; property string appId: ""
+        background: ControlFrame { fillColor:Theme.floatingSurface; strokeColor:Theme.accentDim }
+        Controls.MenuItem {
+            text: root.isPinned(pinMenu.appId) ? "Dock 고정 해제" : "Dock에 고정"
+            contentItem: HudText { text:parent.text }
+            onTriggered: root.pinRequested(pinMenu.appId)
         }
     }
 }

@@ -32,7 +32,7 @@ class Windows:
         if result.stdout.strip().lower() != 'ok':
             raise ValueError('DispatcherFailed')
 
-    def action(self, operation, target='active'):
+    def action(self, operation, target='active', zone=None, monitor_id=None):
         clients = self.query('clients')
         if target == 'active':
             target = self.query('activewindow').get('address', '')
@@ -110,6 +110,18 @@ class Windows:
             x, y, width, height = fitted(client, monitor)
             send('window.resize', f'x={width},y={height},relative=false')
             send('window.move', f'x={x},y={y},relative=false')
+        elif operation == 'snap':
+            if not client.get('floating') or client.get('pinned') or client.get('grouped') or client.get('fullscreen') == 2 or client.get('fullscreenClient') == 2:
+                raise ValueError('RequiresNormalFloatingWindow')
+            monitor = next((item for item in self.query('monitors') if item['id'] == monitor_id),None)
+            if monitor is None: raise ValueError('MonitorUnavailable')
+            x,y,width,height = snapped(monitor,zone)
+            if zone == 'top':
+                send('window.fullscreen','mode="maximized",action="set"')
+                return
+            if client.get('fullscreen') or client.get('fullscreenClient'): send('window.fullscreen_state','internal=0,client=0,action="set"')
+            send('window.resize',f'x={width},y={height},relative=false')
+            send('window.move',f'x={x},y={y},relative=false')
         else:
             raise ValueError('InvalidAction')
 
@@ -143,13 +155,37 @@ def fitted(client, monitor):
     return min(max(int(client['at'][0]), x0), x0 + max_w - w), min(max(int(client['at'][1]), y0), y0 + max_h - h), w, h
 
 
+def snapped(monitor,zone):
+    if zone not in ('left','right','top-left','top-right','bottom-left','bottom-right','top'):
+        raise ValueError('InvalidSnapZone')
+    x,y,w,h = work_area(monitor)
+    if zone == 'top': return x,y,w,h
+    # Leave room for the floating Dock, without changing exclusive zones globally.
+    h=max(1,h-78)
+    left=zone in ('left','top-left','bottom-left')
+    half=w//2
+    if not left: x+=half
+    w=half if left else w-half
+    if zone not in ('left','right'):
+        half=h//2
+        if zone.startswith('bottom'): y+=half; h-=half
+        else: h=half
+    return x,y,max(1,w),max(1,h)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', choices=['activate', 'hide', 'close', 'maximize', 'fullscreen', 'tile', 'fit'])
+    parser.add_argument('action', choices=['activate', 'hide', 'close', 'maximize', 'fullscreen', 'tile', 'fit','snap','snap-preview'])
     parser.add_argument('address', nargs='?', default='active')
+    parser.add_argument('zone',nargs='?')
+    parser.add_argument('monitor',nargs='?',type=int)
     args = parser.parse_args()
     try:
-        Windows().action(args.action, args.address)
+        if args.action == 'snap-preview':
+            monitor = next((item for item in Windows().query('monitors') if item['id']==args.monitor),None)
+            if monitor is None: raise ValueError('MonitorUnavailable')
+            print(json.dumps({'ok':True,'geometry':snapped(monitor,args.zone),'monitor':monitor})); return 0
+        Windows().action(args.action, args.address,args.zone,args.monitor)
         print(json.dumps({'ok': True}))
         return 0
     except (OSError, ValueError, KeyError, TypeError, subprocess.SubprocessError) as error:

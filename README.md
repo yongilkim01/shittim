@@ -16,6 +16,8 @@ Arch Linux + Hyprland + Quickshell 기반 데스크톱 환경. SHITTIM HUD 디�
 
 일반 창의 Floating 기본 배치, 마우스 테두리 크기 조절, Alt+Tab, 창 목록의 숨김/복원, Nemo GTK HUD/아이콘 구성은 [Desktop UX](docs/desktop-ux.md)를 따른다. 음표 아이콘 우클릭으로 열린 창을 관리하며 Dock 우클릭으로 해당 앱의 여러 창을 선택한다. 앱 자체 최소화/제목 표시줄의 Hyprland 지원 한계와 실제 마우스 검증 절차도 해당 문서에 구분해 두었다.
 
+원본 성과 호수 배경, 실제 바탕화면 파일 아이콘, 독립된 하단 중앙 Dock, 호버 창 캡처와 절반/사분면 드래그 스냅은 [바탕화면·Dock 통합](docs/desktop-shell.md)을 따른다. Dock 고정·순서와 모니터별 아이콘 위치는 사용자 경로에 저장한다. 앱 자체 최소화는 설치된 Hyprland의 공식 이벤트 지원 여부를 검사해 구분한다.
+
 ## 새 Arch Linux 환경 설치
 
 설치된 Arch Linux x86_64에서 네트워크 연결과 일반 사용자 계정, `git`, `sudo` 및 해당 사용자의 sudo 권한을 먼저 준비한다. Arch 설치 ISO/chroot나 root 계정에서 실행하지 않는다. TTY 로그인 비밀번호는 유지하며 디스플레이 매니저와 자동 로그인은 설치하지 않는다.

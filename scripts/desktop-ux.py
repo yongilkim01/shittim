@@ -9,6 +9,7 @@ import os
 from pathlib import Path
 import re
 import shlex
+import shutil
 import subprocess
 import sys
 
@@ -59,7 +60,18 @@ class UX:
                 ('SUPER + Tab', 'show', '{}'), ('SUPER + H', 'hide', '{}'), ('SUPER + CTRL + Home', 'fit', '{}')]:
             text += '\nbind(' + json.dumps(key) + ', hl.dsp.exec_cmd(' + json.dumps(command + ' ' + operation, ensure_ascii=False) + '), ' + options + ')'
         # Force GTK3 client-side title bars where GTK itself supports decorations.
+        snap = shlex.join(['quickshell','ipc','--path',str(self.files.root / 'shell/shell.qml'),'call','snap','event'])
+        text += '\n' + (self.files.root / 'config/desktop-snap.lua').read_text(encoding='utf-8').replace('__SHITTIM_SNAP_COMMAND__',json.dumps(snap,ensure_ascii=False))
+        if self.native_minimize():
+            command = shlex.join(['quickshell','ipc','--path',str(self.files.root / 'shell/shell.qml'),'call','windows','nativeMinimize'])
+            text += '\nhl.on("window.minimize",function(w,state)\n    if w and w.address and w.address:match("^0x%x+$") then hl.exec_cmd(' + json.dumps(command,ensure_ascii=False) + ' .. " " .. w.address .. " " .. (state and "1" or "0")) end\nend)\n'
         return text + '\nhl.env("GTK_CSD", "1")\n'
+
+    def native_minimize(self):
+        binary = shutil.which('Hyprland')
+        try:
+            return binary is not None and b'window.minimize\0' in Path(binary).read_bytes()
+        except OSError: return False
 
     def gsettings(self):
         from gi.repository import Gio, GLib
@@ -101,6 +113,7 @@ class UX:
             directory = self.files.config / ('gtk-' + version)
             settings, style = directory / 'settings.ini', directory / 'gtk.css'
             values = dict(GTK)
+            if self.native_minimize(): values['gtk-decoration-layout'] = ':minimize,maximize,close'
             if version == '4.0':
                 values['gtk-theme-name'] = 'Adwaita'
             self.files.write(settings, ini(settings.read_text(encoding='utf-8') if settings.is_file() else '', values))
@@ -117,13 +130,15 @@ class UX:
         else:
             subprocess.run(['luac', '-p', str(self.files.config / 'hypr/shittim-windows.lua')], check=True)
             records = self.gsettings()
-        self.files.write(self.manifest, json.dumps({'settings': records}, ensure_ascii=False, indent=2) + '\n')
+        self.files.write(self.manifest, json.dumps({'settings': records,'nativeMinimize':self.native_minimize()}, ensure_ascii=False, indent=2) + '\n')
+        files.say('앱 자체 최소화 이벤트: ' + ('이벤트 선언 발견, 연동 구성. 실제 앱에서 검증하세요.' if self.native_minimize() else '설치된 Hyprland에서 지원 확인 안 됨. Dock 메뉴/창 목록의 최소화를 사용하세요.'))
         files.say('Floating·GTK HUD·아이콘 구성 완료. hyprctl reload와 다음 로그인 후 앱을 다시 열어 확인하세요.')
 
     def verify(self):
         if self.files.dry:
             files.say('Floating·테마 점검 계획. 파일·창·설정은 변경하지 않았습니다.'); return
         errors = []
+        if not (self.files.root / 'assets/wallpapers/shittim-lake.png').is_file(): errors.append('원본 배경화면 PNG가 없습니다.')
         if not self.manifest.is_file():
             raise ValueError('Desktop UX 설정이 없습니다. bash scripts/setup-desktop-ux.sh를 실행하세요.')
         path = self.files.config / 'hypr/shittim-windows.lua'
@@ -140,6 +155,7 @@ class UX:
                 parser = configparser.ConfigParser(interpolation=None); parser.optionxform = str
                 parser.read_string((directory / 'settings.ini').read_text(encoding='utf-8'))
                 expected = dict(GTK)
+                if self.native_minimize(): expected['gtk-decoration-layout'] = ':minimize,maximize,close'
                 if version == '4.0': expected['gtk-theme-name'] = 'Adwaita'
                 for key, value in expected.items():
                     if parser.get('Settings', key, fallback=None) != value: errors.append('GTK 설정 불일치: ' + version + '/' + key)

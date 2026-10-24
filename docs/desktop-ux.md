@@ -1,5 +1,7 @@
 # Floating Desktop / Nemo HUD
 
+후속 바탕화면·독립 Dock·스냅 확장과 최신 최소화 지원 범위는 [바탕화면·Dock 통합](desktop-shell.md)을 따른다. 아래 내용은 초기 Floating/Nemo 기반과 복구 방법을 기록한다.
+
 일반 창을 Floating으로 열고, 앱의 CSD 제목 표시줄과 Hyprland 테두리 조절을 사용한다. Top Bar·Control Center·런처·알림·대시보드·미디어·Dock의 기존 배치와 크기는 유지한다.
 
 ## 적용

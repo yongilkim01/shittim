@@ -28,6 +28,8 @@ PanelWindow {
         launching: LauncherState.launching; error: LauncherState.error
         iconSource: app => LauncherState.iconSource(app)
         onLaunchRequested: appId => LauncherState.launch(appId)
+        isPinned: appId => LauncherState.dockFavorites.indexOf(appId)>=0
+        onPinRequested: appId => LauncherState.dockAction(LauncherState.dockFavorites.indexOf(appId)>=0 ? "unpin" : "pin",appId)
         onCloseRequested: LauncherState.close()
         onRefreshRequested: LauncherState.refresh()
     }

@@ -80,11 +80,19 @@ class DesktopUX(unittest.TestCase):
     def test_generated_policy_is_excluded_from_config_capture(self):
         self.assertFalse(TOOL.files.allowed(Path('hypr/shittim-windows.lua')))
 
+    def test_native_minimize_is_enabled_only_when_installed_binary_declares_event(self):
+        binary=self.base/'Hyprland'; binary.write_bytes(b'old-version-without-event')
+        with patch.object(TOOL.shutil,'which',return_value=str(binary)):
+            self.assertFalse(self.ux.native_minimize()); self.assertNotIn('hl.on("window.minimize"',self.ux.lua())
+            binary.write_bytes(b'window.minimize\0')
+            self.assertTrue(self.ux.native_minimize()); self.assertIn('hl.on("window.minimize"',self.ux.lua())
+
     @unittest.skipUnless(shutil.which('lua'), '실제 Lua 인터프리터 검사')
     def test_lua_policy_uses_static_rule_and_expected_mouse_bindings(self):
         text = '''local rules,binds,options={},{},{}
 hl={window_rule=function(v) table.insert(rules,v) end, config=function(v) options=v end,
 env=function() end, unbind=function() end,
+timer=function() return {set_enabled=function() end} end, on=function() end,
 bind=function(key,fn,opts) binds[key]=opts or {} end,
 dsp={window={drag=function() end,resize=function() end,close=function() end,float=function() end,fullscreen=function() end},exec_cmd=function() end}}
 '''

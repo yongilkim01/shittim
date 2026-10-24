@@ -56,6 +56,13 @@ class Protocol(unittest.TestCase):
         self.assertEqual(call[4], 7)
         self.assertEqual(self.events[-1], {'event': 'launched', 'request': 7, 'ok': True})
 
+    def test_new_window_uses_desktop_action_when_provided(self):
+        self.app.list_actions=Mock(return_value=['new-window']); self.app.launch_action=Mock()
+        self.catalogue.handle({'action':'new-window','id':self.app.app_id,'request':9})
+        self.app.launch_action.assert_called_once_with('new-window',self.gio.AppLaunchContext.return_value)
+        self.app.launch_uris_async.assert_not_called()
+        self.assertEqual(self.events[-1],{'event':'launched','request':9,'ok':True})
+
     def test_unknown_id_and_disappeared_entry_never_launch(self):
         for app_id in ['sh -c anything', '/tmp/unregistered.desktop', 'sample.desktop']:
             Desktop.records.clear()

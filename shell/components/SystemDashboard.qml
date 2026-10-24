@@ -45,6 +45,8 @@ PanelWindow {
                 iconSource: LauncherState.iconSource
                 Component.onCompleted: Qt.callLater(focusSearch)
                 onLaunchRequested: appId => LauncherState.launch(appId)
+                isPinned: appId => LauncherState.dockFavorites.indexOf(appId)>=0
+                onPinRequested: appId => LauncherState.dockAction(LauncherState.dockFavorites.indexOf(appId)>=0 ? "unpin" : "pin",appId)
                 onRefreshRequested: LauncherState.refresh()
                 onCloseRequested: DashboardState.close()
             }

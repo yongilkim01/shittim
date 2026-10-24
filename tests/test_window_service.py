@@ -85,6 +85,18 @@ class WindowActions(unittest.TestCase):
         self.windows.runner = lambda *_args, **_kwargs: Mock(stdout='[bad]')
         with self.assertRaisesRegex(ValueError, 'DispatcherFailed'): self.windows.dispatch('hl.dsp.focus({})')
 
+    def test_half_quarter_snap_geometry_and_safe_dispatch(self):
+        left=TOOL.snapped(self.monitor,'left'); right=TOOL.snapped(self.monitor,'right')
+        self.assertEqual(left,(8,48,952,946)); self.assertEqual(right,(960,48,952,946))
+        self.assertEqual(TOOL.snapped(self.monitor,'top-left'),(8,48,952,473))
+        self.assertEqual(TOOL.snapped(self.monitor,'bottom-right'),(960,521,952,473))
+        self.windows.action('snap','abc','left',0)
+        self.assertIn('x=952,y=946,relative=false',self.commands[0][2])
+        self.assertIn('x=8,y=48,relative=false',self.commands[1][2])
+        with self.assertRaises(ValueError): self.windows.action('snap','abc','bad',0)
+        self.client['fullscreen']=2
+        with self.assertRaises(ValueError): self.windows.action('snap','abc','left',0)
+
     def test_activation_recovers_offscreen_window_but_leaves_fullscreen_untouched(self):
         self.client['at'] = [-5000, -5000]
         self.windows.action('activate', 'abc')

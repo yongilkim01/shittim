@@ -10,10 +10,19 @@ ShellRoot {
 		}
 	}
 	ControlCenter {}
+	Variants {
+		model: Quickshell.screens
+		DesktopDock {}
+	}
+	Variants {
+		model: Quickshell.screens
+		DesktopSurface {}
+	}
 	AppLauncher {}
 	NotificationCenter {}
 	NotificationPopups {}
 	SystemDashboard {}
 	AppMediaControls {}
 	WindowManager {}
+	SnapPreview {}
 }

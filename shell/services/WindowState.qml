@@ -24,6 +24,7 @@ Scope {
             title: window.title, appId: window.wayland ? window.wayland.appId : "",
             className: ipc.class || "", initialClass: ipc.initialClass || "",
             floating: Boolean(ipc.floating), fullscreen: Number(ipc.fullscreen || 0),
+            monitor: Number(ipc.monitor), at: ipc.at || [0,0], size: ipc.size || [0,0],
             workspace: ipc.workspace ? ipc.workspace.name : "",
             hidden: ipc.workspace ? /^special:shittim-hidden-\d+-[0-3]-[0-3]-[0-9a-f]+$/.test(ipc.workspace.name) : false}
     }).filter(window => /^[0-9a-fA-F]+$/.test(window.address))
@@ -111,6 +112,7 @@ Scope {
     }
     IpcHandler {
         target: "windows"
+        function nativeMinimize(address: string, state: string): void { root.minimizeRequest(address.replace(/^0x/, "") + "," + state) }
         function show(): void { root.show([], 0) }
         function next(): void { root.cycle(1) }
         function previous(): void { root.cycle(-1) }
