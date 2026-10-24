@@ -15,9 +15,10 @@ PanelWindow {
     readonly property bool fullscreen: WindowState.windows.some(client => client.monitor === (monitor ? monitor.id : -1) && (client.fullscreen & 2)!==0 && !client.hidden && client.workspace === (monitor && monitor.activeWorkspace ? monitor.activeWorkspace.name : ""))
     visible: !fullscreen
     anchors { bottom: true }
-    margins.bottom: Theme.spaceS
-    implicitWidth: Math.min(screen.width - 24, Math.max(282, Math.min(720, MediaState.apps.length * Theme.dockCellSize + 70)))
-    implicitHeight: expanded ? Math.min(screen.height - Theme.barHeight - 24, 422) : Theme.dockHeight + (view.error.length>0 ? 42 : 0)
+    margins.bottom: Theme.dockBottomMargin
+    implicitWidth: Math.min(screen.width - 24, Math.max(224, Math.min(640, MediaState.apps.length * Theme.dockCellSize + Theme.dockEndSpace)))
+    // Keep the layer surface fixed while previews open; only its input region changes.
+    implicitHeight: Math.min(screen.height - Theme.barHeight - 24, Theme.dockHeight + 342)
     color: Theme.transparent
     // Reserve the strip only; opening menus or previews must not resize app windows.
     exclusionMode: ExclusionMode.Normal
@@ -32,7 +33,7 @@ PanelWindow {
     }
     HyprlandFocusGrab { active: window.visible && window.expanded && DockState.mode !== "preview"; windows: [window]; onCleared: DockState.close() }
     onVisibleChanged: if (!visible && DockState.screen===screen) DockState.close()
-    Timer { id: hoverTimer; interval: 400; property var app: null; onTriggered: { if (app && ["menu","choose"].indexOf(DockState.mode) < 0) DockState.open(app,"preview",window.screen) } }
+    Timer { id: hoverTimer; interval: 400; property var app: null; onTriggered: { if (app && MediaState.matches(app).length > 0 && ["menu","choose"].indexOf(DockState.mode) < 0) DockState.open(app,"preview",window.screen) } }
     Timer { id: leaveTimer; interval: 350; onTriggered: { if (DockState.mode === "preview") DockState.close() } }
     DockView {
         id: view; anchors.fill: parent; apps: DockState.apps; favorites: LauncherState.dockFavorites

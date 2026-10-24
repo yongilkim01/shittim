@@ -2,6 +2,7 @@ import QtQuick
 import QtTest
 import "../components/launcher"
 import "../components/launcher/Diagnostics.js" as Diagnostics
+import "../components/launcher/IconResolver.js" as Icons
 
 TestCase {
     id: testCase
@@ -20,6 +21,14 @@ TestCase {
         verify(Diagnostics.isFailure("Traceback (most recent call last):"))
         verify(Diagnostics.isFailure("Fatal Python error: initialization failed"))
         verify(Diagnostics.isFailure("GLib-GIO-ERROR: initialization failed"))
+    }
+    function test_icons_keep_system_theme_and_resolve_missing_file_manager() {
+        const bundled = name => "bundled/" + name + ".svg"
+        const missing = name => ""
+        compare(Icons.resolve({id:"nemo.desktop",icons:["system-file-manager"]},missing,bundled),"bundled/system-file-manager.svg")
+        compare(Icons.resolve({id:"other.desktop",icons:["unknown"]},missing,bundled),"bundled/application-x-executable.svg")
+        compare(Icons.resolve({icons:["first","second"]},name => name === "second" ? "theme/second" : "",bundled),"theme/second")
+        compare(Icons.resolve({iconFile:"file:///tmp/custom.svg"},missing,bundled),"file:///tmp/custom.svg")
     }
     function cleanup() { launchSpy.target = null; closeSpy.target = null; refreshSpy.target = null; launchSpy.clear(); closeSpy.clear(); refreshSpy.clear() }
     function apps() {

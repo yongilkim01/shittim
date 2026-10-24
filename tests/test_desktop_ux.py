@@ -89,8 +89,9 @@ class DesktopUX(unittest.TestCase):
 
     @unittest.skipUnless(shutil.which('lua'), '실제 Lua 인터프리터 검사')
     def test_lua_policy_uses_static_rule_and_expected_mouse_bindings(self):
-        text = '''local rules,binds,options={},{},{}
+        text = '''local rules,layers,binds,options={},{},{},{}
 hl={window_rule=function(v) table.insert(rules,v) end, config=function(v) options=v end,
+layer_rule=function(v) table.insert(layers,v) end,
 env=function() end, unbind=function() end,
 timer=function() return {set_enabled=function() end} end, on=function() end,
 bind=function(key,fn,opts) binds[key]=opts or {} end,
@@ -101,6 +102,8 @@ dsp={window={drag=function() end,resize=function() end,close=function() end,floa
 assert(#rules==1 and rules[1].float==true and rules[1].match.float==false)
 assert(rules[1].match.fullscreen==false and rules[1].match.fullscreen_state_client==0)
 assert(options.general.resize_on_border and options.general.snap.enabled)
+assert(options.general.gaps_out==4 and options.cursor.no_warps)
+assert(#layers==1 and layers[1].match.namespace=='shittim-dock' and layers[1].no_anim)
 assert(binds['SUPER + mouse:272'].mouse and binds['SUPER + mouse:273'].mouse)
 assert(binds['ALT + Alt_L'].release and binds['ALT + Alt_R'].release)
 '''

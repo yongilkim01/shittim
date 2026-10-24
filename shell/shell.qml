@@ -1,3 +1,4 @@
+//@ pragma IconTheme Shittim-HUD
 import Quickshell
 import "./components"
 

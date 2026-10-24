@@ -5,6 +5,7 @@ import Quickshell.Io
 import Quickshell.Hyprland
 import "../components/launcher"
 import "../components/launcher/Diagnostics.js" as Diagnostics
+import "../components/launcher/IconResolver.js" as Icons
 
 Scope {
     id: root
@@ -58,12 +59,8 @@ Scope {
             bridge.write(JSON.stringify({action: action, id: appId, index: index}) + "\n")
     }
     function iconSource(app) {
-        if (app.iconFile) return app.iconFile
-        for (const name of app.icons || []) {
-            const path = Quickshell.iconPath(name, true)
-            if (path.length > 0) return path
-        }
-        return Quickshell.iconPath("application-x-executable", true)
+        return Icons.resolve(app, name => Quickshell.iconPath(name, true),
+            name => Qt.resolvedUrl("../../assets/icons/Shittim-HUD/scalable/apps/" + name + ".svg"))
     }
     function errorText(code) {
         if (code === "GioUnavailable") return "python-gobject 설치를 확인하세요. F5로 다시 시도합니다."

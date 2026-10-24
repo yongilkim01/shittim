@@ -50,4 +50,21 @@ TestCase {
         mouseClick(findChild(view,"dock-preview-abc"),60,50); compare(chosen.signalArguments[0][0],"abc")
         view.width=300; verify(view.stripItem.width<=300); verify(view.popupItem.width<=300)
     }
+    function test_compact_dock_strip_stays_fixed_during_preview_menu_and_errors() {
+        const app={id:"nemo.desktop",name:"Files",icons:[]}
+        const view=createTemporaryObject(dockFactory,testCase,{apps:[app],favorites:[app.id]})
+        const strip=view.stripItem, originalY=strip.y
+        compare(strip.height,52); compare(strip.width,92)
+        compare(view.errorItem.height,0)
+        const image=findChild(view,"dock-image-nemo.desktop")
+        compare(image.width,30); compare(image.height,30)
+        view.app=app; view.mode="preview"
+        compare(strip.y,originalY); compare(strip.height,52)
+        verify(view.popupItem.y+view.popupItem.height<=strip.y)
+        view.mode="menu"
+        compare(strip.y,originalY)
+        view.mode=""; view.error="Fixture error"
+        compare(strip.y,originalY); compare(view.errorItem.height,42)
+        view.error=""; compare(view.errorItem.height,0)
+    }
 }

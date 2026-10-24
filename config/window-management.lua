@@ -9,12 +9,15 @@ hl.window_rule({
     center = true,
 })
 hl.config({
-    general = { resize_on_border = true, extend_border_grab_area = 8, hover_icon_on_border = true, border_size = 1,
+    general = { resize_on_border = true, extend_border_grab_area = 8, hover_icon_on_border = true, border_size = 1, gaps_out = 4,
                 snap = { enabled = true, window_gap = 10, monitor_gap = 10 },
                 col = { active_border = "rgb(00d9f5)", inactive_border = "rgb(145263)" } },
     decoration = { rounding = 0, shadow = { enabled = false } },
     input = { follow_mouse = 0 },
+    cursor = { no_warps = true },
 })
+-- Dock geometry and input masks are managed by QML, without compositor stretching.
+hl.layer_rule({ name = "shittim-dock-stable", match = { namespace = "shittim-dock" }, no_anim = true })
 
 -- These bindings implement the requested desktop policy, replacing these keys only.
 local function bind(key, dispatcher, options)
