@@ -160,8 +160,6 @@ def snapped(monitor,zone):
         raise ValueError('InvalidSnapZone')
     x,y,w,h = work_area(monitor)
     if zone == 'top': return x,y,w,h
-    # Leave room for the floating Dock, without changing exclusive zones globally.
-    h=max(1,h-78)
     left=zone in ('left','top-left','bottom-left')
     half=w//2
     if not left: x+=half

@@ -86,6 +86,7 @@ class WindowActions(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'DispatcherFailed'): self.windows.dispatch('hl.dsp.focus({})')
 
     def test_half_quarter_snap_geometry_and_safe_dispatch(self):
+        self.monitor['reserved']=[0,40,0,78]
         left=TOOL.snapped(self.monitor,'left'); right=TOOL.snapped(self.monitor,'right')
         self.assertEqual(left,(8,48,952,946)); self.assertEqual(right,(960,48,952,946))
         self.assertEqual(TOOL.snapped(self.monitor,'top-left'),(8,48,952,473))
@@ -96,6 +97,17 @@ class WindowActions(unittest.TestCase):
         with self.assertRaises(ValueError): self.windows.action('snap','abc','bad',0)
         self.client['fullscreen']=2
         with self.assertRaises(ValueError): self.windows.action('snap','abc','left',0)
+
+    def test_dock_reservation_is_shared_by_fit_and_snap_without_double_subtraction(self):
+        self.monitor['reserved']=[0,40,0,78]
+        self.assertEqual(TOOL.work_area(self.monitor),(8,48,1904,946))
+        self.assertEqual(TOOL.fitted(self.client,self.monitor),(8,48,1904,946))
+        self.assertEqual(TOOL.snapped(self.monitor,'left')[3],946)
+        self.assertEqual(TOOL.snapped(self.monitor,'top'),TOOL.work_area(self.monitor))
+        self.windows.action('fit','abc')
+        self.assertIn('x=1904,y=946,relative=false',self.commands[0][2])
+        self.monitor['reserved']=[0,40,0,0]
+        self.assertEqual(TOOL.snapped(self.monitor,'left')[3],1024)
 
     def test_activation_recovers_offscreen_window_but_leaves_fullscreen_untouched(self):
         self.client['at'] = [-5000, -5000]

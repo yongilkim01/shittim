@@ -18,7 +18,10 @@ PanelWindow {
     margins.bottom: Theme.spaceS
     implicitWidth: Math.min(screen.width - 24, Math.max(282, Math.min(720, MediaState.apps.length * Theme.dockCellSize + 70)))
     implicitHeight: expanded ? Math.min(screen.height - Theme.barHeight - 24, 422) : Theme.dockHeight + (view.error.length>0 ? 42 : 0)
-    color: Theme.transparent; exclusionMode: ExclusionMode.Ignore
+    color: Theme.transparent
+    // Reserve the strip only; opening menus or previews must not resize app windows.
+    exclusionMode: ExclusionMode.Normal
+    exclusiveZone: Theme.dockHeight
     WlrLayershell.namespace: "shittim-dock"
     WlrLayershell.layer: WlrLayer.Top
     WlrLayershell.keyboardFocus: expanded && DockState.mode !== "preview" ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
