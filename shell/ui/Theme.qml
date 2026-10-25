@@ -24,7 +24,7 @@ QtObject {
 	readonly property int dockCellSize: 44
 	readonly property int dockHeight: 52
 	readonly property int dockBottomMargin: 2
-	readonly property int dockEndSpace: 48
+	readonly property int dockEndSpace: 112
 	readonly property int desktopCellWidth: 88
 	readonly property int desktopCellHeight: 92
 

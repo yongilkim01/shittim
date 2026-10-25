@@ -54,7 +54,7 @@ TestCase {
         const app={id:"nemo.desktop",name:"Files",icons:[]}
         const view=createTemporaryObject(dockFactory,testCase,{apps:[app],favorites:[app.id]})
         const strip=view.stripItem, originalY=strip.y
-        compare(strip.height,52); compare(strip.width,92)
+        compare(strip.height,52); compare(strip.width,156)
         compare(view.errorItem.height,0)
         const image=findChild(view,"dock-image-nemo.desktop")
         compare(image.width,30); compare(image.height,30)
@@ -66,5 +66,16 @@ TestCase {
         view.mode=""; view.error="Fixture error"
         compare(strip.y,originalY); compare(view.errorItem.height,42)
         view.error=""; compare(view.errorItem.height,0)
+    }
+    function test_reference_utilities_open_settings_trash_and_keep_launcher_access() {
+        const view=createTemporaryObject(dockFactory,testCase)
+        const settings=createTemporaryObject(spyFactory,testCase,{target:view,signalName:"settingsRequested"})
+        const launcher=createTemporaryObject(spyFactory,testCase,{target:view,signalName:"launcherRequested"})
+        const trash=createTemporaryObject(spyFactory,testCase,{target:view,signalName:"trashRequested"})
+        mouseClick(findChild(view,"dock-settings"),15,15); compare(settings.count,1)
+        mouseClick(findChild(view,"dock-settings"),15,15,Qt.RightButton); compare(launcher.count,1)
+        mouseClick(findChild(view,"dock-trash"),15,15); compare(trash.count,1)
+        view.trashAvailable=false
+        mouseClick(findChild(view,"dock-trash"),15,15); compare(trash.count,1)
     }
 }

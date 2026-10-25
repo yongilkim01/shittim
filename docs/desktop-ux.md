@@ -77,7 +77,7 @@ Dock은 기존 고정 앱 순서를 유지하고 식별 가능한 실행 앱을 
 
 Nemo의 GTK3를 중심으로 설치된 Adwaita-dark 기반에 `assets/gtk/hud.css`를 적용한다. 배경 `#020f15`, 콘텐츠 `#041923`, 강조 `#00d9f5`, 얇은 청록 구분선, 어두운 사이드바/툴바/선택 색을 사용한다. GTK3/4의 `settings.ini`는 관련 키만 병합하고 사용자 CSS는 유지한 채 표시된 HUD 블록만 추가·갱신한다. [GTK3](https://docs.gtk.org/gtk3/class.Settings.html), [GTK4](https://docs.gtk.org/gtk4/class.Settings.html)의 설정 로딩 방식에 맞춘다.
 
-글꼴은 Hack Nerd Font Mono 10pt와 기존 Fontconfig의 D2Coding 한글 폴백을 사용한다. Nemo 아이콘 보기 크기는 `standard`, 홈/새 폴더 버튼은 켜고 컴퓨터/새로고침 버튼은 정리한다. 실제 설치된 GSettings 스키마와 키·허용값·쓰기 권한을 확인한 뒤 적용하고 현재 값을 읽어 검증한다. 스키마가 없는 구성은 건너뛰며 출력으로 구분한다.
+글꼴은 Hack Nerd Font Mono 9pt와 기존 Fontconfig의 D2Coding 한글 폴백을 사용한다. Nemo 아이콘 보기 크기는 `small`, 홈/새 폴더 버튼은 켜고 컴퓨터/새로고침 버튼은 정리한다. 실제 설치된 GSettings 스키마와 키·허용값·쓰기 권한을 확인한 뒤 적용하고 현재 값을 읽어 검증한다. 스키마가 없는 구성은 건너뛰며 출력으로 구분한다.
 
 `assets/icons/Shittim-HUD`는 직접 작성한 MIT 라이선스 SVG 폴더·홈·다운로드·사진·문서·휴지통과 기본 파일 형식 아이콘이다. 사용자 XDG 데이터 디렉터리에 파일별 심볼릭 링크로 설치한다. 없는 아이콘은 설치된 Adwaita/hicolor를 상속한다. 전체 외부 아이콘 팩을 복사하지 않는다. 실제 사진 미리보기는 Nemo의 기존 썸네일 동작을 따른다.
 

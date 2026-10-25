@@ -17,14 +17,16 @@ SPEC = importlib.util.spec_from_file_location('shittim_config', Path(__file__).w
 files = importlib.util.module_from_spec(SPEC); SPEC.loader.exec_module(files)
 CSS_BEGIN, CSS_END = '/* >>> Shittim HUD >>> */', '/* <<< Shittim HUD <<< */'
 GTK = {'gtk-theme-name': 'Adwaita-dark', 'gtk-icon-theme-name': 'Shittim-HUD',
-       'gtk-font-name': 'Hack Nerd Font Mono 10', 'gtk-application-prefer-dark-theme': 'true',
+       'gtk-font-name': 'Hack Nerd Font Mono 9', 'gtk-application-prefer-dark-theme': 'true',
        'gtk-decoration-layout': ':maximize,close', 'gtk-titlebar-double-click': 'toggle-maximize'}
 SETTINGS = {
     'org.gnome.desktop.interface': {'gtk-theme': 'Adwaita-dark', 'icon-theme': 'Shittim-HUD',
-        'font-name': 'Hack Nerd Font Mono 10', 'monospace-font-name': 'Hack Nerd Font Mono 10', 'color-scheme': 'prefer-dark'},
-    'org.nemo.icon-view': {'default-zoom-level': 'standard'},
+        'font-name': 'Hack Nerd Font Mono 9', 'monospace-font-name': 'Hack Nerd Font Mono 9', 'color-scheme': 'prefer-dark'},
+    'org.nemo.icon-view': {'default-zoom-level': 'small', 'labels-beside-icons': False},
     'org.nemo.preferences': {'show-home-icon-toolbar': True, 'show-new-folder-icon-toolbar': True,
-        'show-computer-icon-toolbar': False, 'show-reload-icon-toolbar': False},
+        'show-computer-icon-toolbar': False, 'show-reload-icon-toolbar': False,
+        'show-up-icon-toolbar': False, 'show-edit-icon-toolbar': False,
+        'show-search-icon-toolbar': True, 'show-icon-view-icon-toolbar': True, 'show-list-view-icon-toolbar': True},
 }
 
 

@@ -37,6 +37,7 @@ PanelWindow {
     Timer { id: leaveTimer; interval: 350; onTriggered: { if (DockState.mode === "preview") DockState.close() } }
     DockView {
         id: view; anchors.fill: parent; apps: DockState.apps; favorites: LauncherState.dockFavorites
+        trashAvailable: DesktopState.ready && DesktopState.entries.some(entry => entry.id === "trash")
         matches: app => MediaState.matches(app); iconSource: LauncherState.iconSource
         mode: window.expanded ? DockState.mode : ""; app: DockState.app; windows: DockState.windows; target: DockState.target
         error:LauncherState.dockError || MediaState.error || LauncherState.error
@@ -48,6 +49,8 @@ PanelWindow {
         onTargetChosen: address => DockState.targetAddress=address
         onReorderRequested: (appId,index) => LauncherState.dockAction("reorder",appId,index)
         onLauncherRequested: { DockState.close(); LauncherState.show() }
+        onSettingsRequested: { DockState.close(); ControlState.toggle(window) }
+        onTrashRequested: { DockState.close(); DesktopState.send("open", {ids:["trash"]}) }
         onCloseRequested: DockState.close()
         onHoverLeft: { hoverTimer.stop(); leaveTimer.restart() }
         onHoverEntered: leaveTimer.stop()

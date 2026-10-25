@@ -127,7 +127,7 @@ assert(binds['ALT + Alt_L'].release and binds['ALT + Alt_R'].release)
                 'm=importlib.util.module_from_spec(s); s.loader.exec_module(m); from gi.repository import Gio; '
                 'settings=Gio.Settings.new("org.gnome.desktop.interface"); settings.set_string("font-name","Before font 11"); '
                 'ux=m.UX(); records=ux.gsettings(); backup=ux.files.backups/"desktop-gsettings.json"; before=backup.read_bytes(); '
-                'assert settings.get_string("font-name")=="Hack Nerd Font Mono 10"; '
+                'assert settings.get_string("font-name")=="Hack Nerd Font Mono 9"; '
                 'ux.gsettings(); assert backup.read_bytes()==before; '
                 'ux.restore_settings(backup); assert settings.get_string("font-name")=="Before font 11"; '
                 'assert settings.get_user_value("gtk-theme") is None')

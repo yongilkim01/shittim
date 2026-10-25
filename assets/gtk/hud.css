@@ -42,3 +42,14 @@ menu, .menu, popover, popover contents { background-color: #041923; color: #d5f8
 menuitem:hover { background-color: #08232e; color: #50eaff; }
 tooltip, tooltip.background { background-color: #020f15; color: #d5f8ff; border: 1px solid #145263; }
 progressbar progress, scale highlight { background-color: #00d9f5; background-image: none; }
+
+/* Compact title, toolbar and tabs from the desktop reference. */
+headerbar, .titlebar { min-height: 24px; padding: 2px 6px; }
+toolbar, .toolbar { padding: 3px 6px; border-bottom: 1px solid #145263; }
+toolbar button, .toolbar button { min-width: 20px; min-height: 20px; padding: 2px 4px; background-color: transparent; border-color: transparent; }
+toolbar button:hover, .toolbar button:hover { background-color: #08232e; border-color: #08798b; }
+notebook > header { background-color: #020f15; border-bottom: 1px solid #145263; }
+notebook > header tab { min-height: 22px; padding: 2px 10px; border: 1px solid transparent; border-radius: 1px; }
+notebook > header tab:checked { background-color: #041923; border-color: #145263; color: #50eaff; }
+entry { min-height: 22px; padding: 2px 6px; }
+.sidebar, .sidebar .view { background-color: #020f15; color: #76aebc; }

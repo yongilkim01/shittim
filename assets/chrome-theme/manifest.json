@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "version": "1.0.0",
+  "name": "Shittim HUD",
+  "description": "Shittim HUD browser frame, toolbar and address bar colors.",
+  "theme": {
+    "colors": {
+      "frame": [2, 15, 21],
+      "frame_inactive": [4, 25, 35],
+      "toolbar": [4, 25, 35],
+      "tab_text": [213, 248, 255],
+      "tab_background_text": [118, 174, 188],
+      "bookmark_text": [213, 248, 255],
+      "toolbar_button_icon": [0, 217, 245],
+      "omnibox_background": [2, 15, 21],
+      "omnibox_text": [213, 248, 255],
+      "toolbar_top_separator": [20, 82, 99],
+      "toolbar_bottom_separator": [20, 82, 99],
+      "ntp_background": [2, 15, 21],
+      "ntp_text": [213, 248, 255],
+      "ntp_link": [0, 217, 245]
+    }
+  }
+}

@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls.Basic as Controls
 import "../../ui"
 import "../control"
+import "../media"
 
 FocusScope {
     id: root
@@ -14,6 +15,7 @@ FocusScope {
     property var windows: []
     property var target: null
     property string error:""
+    property bool trashAvailable: true
     property Component previewContent: null
     readonly property alias stripItem: strip
     readonly property alias popupItem: popup
@@ -26,19 +28,21 @@ FocusScope {
     signal targetChosen(string address)
     signal reorderRequested(string appId, int index)
     signal launcherRequested()
+    signal settingsRequested()
+    signal trashRequested()
     signal closeRequested()
     signal hoverLeft()
     signal hoverEntered()
     readonly property real stripWidth: Math.min(width, apps.length * Theme.dockCellSize + Theme.dockEndSpace)
     readonly property real popupHeight: Math.min(mode === "menu" ? 330 : mode ? 208 : 0,Math.max(0,height-Theme.dockHeight-12))
     Keys.onEscapePressed: closeRequested()
-    ControlFrame {
+    Item {
         id: strip; objectName: "desktopDockStrip"
         width: root.stripWidth; height: Theme.dockHeight; anchors.bottom: parent.bottom; anchors.horizontalCenter: parent.horizontalCenter
-        cut: 10; strokeColor: Theme.accentDim; fillColor: Theme.floatingSurface
+        DockFrame { anchors.fill: parent }
         Flickable {
             id:appScroll
-            x: 8; y: 5; width: parent.width - Theme.dockEndSpace; height: parent.height - 10
+            x: 12; y: 5; width: parent.width - Theme.dockEndSpace; height: parent.height - 10
             contentWidth: icons.width; clip: true; boundsBehavior: Flickable.StopAtBounds
             Row {
                 id: icons
@@ -53,8 +57,8 @@ FocusScope {
                         readonly property bool allHidden: clients.length > 0 && clients.every(window => window.hidden)
                         Rectangle {
                             x: 3; y: 0; width: 38; height: 38; radius: 2
-                            color: hover.containsMouse ? Theme.selectionFill : Theme.transparent
-                            border.width: 1; border.color: cell.clients.some(window => window.activated) ? Theme.accent : hover.containsMouse ? Theme.border : Theme.transparent
+                            color: hover.containsMouse || cell.clients.some(window => window.activated) ? Theme.selectionFill : Theme.transparent
+                            border.width: 1; border.color: cell.clients.some(window => window.activated) ? Theme.accent : hover.containsMouse ? Theme.accentDim : Theme.border
                             Behavior on color { ColorAnimation { duration: Theme.hoverDuration } }
                         }
                         Image { objectName:"dock-image-"+cell.modelData.id; x: 7; y: 4; width: Theme.dockIconSize; height: Theme.dockIconSize; source: root.iconSource(cell.modelData); sourceSize.width: Theme.dockIconSize * 2; sourceSize.height: Theme.dockIconSize * 2; fillMode: Image.PreserveAspectFit; opacity: cell.allHidden ? 0.4 : 1; asynchronous: true }
@@ -83,13 +87,23 @@ FocusScope {
                 }
             }
         }
-        HudButton { x: parent.width - 34; y: 9; width: 26; height: 32; text: "\uf009"; onClicked: root.launcherRequested() }
+        Rectangle { x: parent.width - 100; y: 10; width: 1; height: parent.height - 20; color: Theme.border }
+        MediaButton {
+            objectName: "dock-settings"; x: parent.width - 96; y: 6; width: 38; height: 38
+            framed: true; icon: "\uf013"; tooltipText: "설정 · 우클릭 앱 런처"
+            onClicked: root.settingsRequested(); onContextRequested: root.launcherRequested()
+        }
+        MediaButton {
+            objectName: "dock-trash"; x: parent.width - 48; y: 6; width: 38; height: 38
+            framed: true; icon: "\uf014"; tooltipText: "휴지통 열기"; enabled: root.trashAvailable
+            onClicked: root.trashRequested()
+        }
     }
     ControlFrame {
         id: popup; objectName: "dockPopup"
         visible: root.mode.length > 0 && root.app !== null
         anchors.bottom: strip.top; anchors.bottomMargin: 10
-        x:Math.max(0,Math.min(root.width-width,strip.x+8+Math.max(0,root.apps.findIndex(candidate=>root.app && candidate.id===root.app.id))*Theme.dockCellSize+Theme.dockCellSize/2-appScroll.contentX-width/2))
+        x:Math.max(0,Math.min(root.width-width,strip.x+12+Math.max(0,root.apps.findIndex(candidate=>root.app && candidate.id===root.app.id))*Theme.dockCellSize+Theme.dockCellSize/2-appScroll.contentX-width/2))
         width: Math.min(root.width, root.mode === "menu" ? 282 : Math.max(224, Math.min(3, root.windows.length) * 224))
         height: root.popupHeight; fillColor: Theme.floatingSurface; strokeColor: Theme.accentDim; cut: 8
         HoverHandler { onHoveredChanged: { if (hovered) root.hoverEntered(); else root.hoverLeft() } }
