@@ -1,5 +1,7 @@
 # 공통 제목 표시줄
 
+`hyprpm`은 Arch의 별도 공식 패키지다. `--install-hyprbars`는 누락된 `hyprpm`도 빌드 도구와 함께 먼저 설치한다.
+
 Kitty·Nemo·Chrome 같은 일반 창의 바깥쪽에 [공식 hyprbars](https://github.com/hyprwm/hyprland-plugins/tree/main/hyprbars)의 실제 compositor decoration을 추가한다. Quickshell 창을 외부 앱 위에 겹치는 방식은 사용하지 않는다. 기본 `install.sh`는 플러그인을 설치하지 않는다.
 
 노트북의 실행 중인 Hyprland 안에서 선택적으로 실행한다.

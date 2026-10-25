@@ -13,10 +13,10 @@ if (( SHITTIM_DRY_RUN )); then
 fi
 require_command python3
 require_command hyprctl
-require_command hyprpm
 [[ -n ${HYPRLAND_INSTANCE_SIGNATURE:-} ]] || die '실행 중인 Hyprland의 터미널에서 실행하세요.'
 if [[ $shittim_mode == --verify ]]; then exec python3 "$SHITTIM_ROOT/scripts/titlebar-tool.py" verify; fi
 if [[ $shittim_mode == --disable ]]; then
+    require_command hyprpm
     python3 "$SHITTIM_ROOT/scripts/titlebar-tool.py" disable
     hyprpm disable hyprbars
     hyprpm reload
@@ -30,7 +30,10 @@ if [[ $shittim_mode == --install-hyprbars ]]; then
     info '공식 hyprbars 소스를 다운로드·빌드합니다. 플러그인은 Hyprland 안에서 실행됩니다.'
     info '빌드 도구는 공식 패키지로 설치하며 pacman과 hyprpm의 확인 문구를 읽고 진행하세요.'
     require_command sudo
-    sudo pacman -S --needed -- base-devel cmake cpio
+    sudo pacman -S --needed -- base-devel cmake cpio hyprpm
+fi
+require_command hyprpm
+if [[ $shittim_mode == --install-hyprbars ]]; then
     shittim_plugins=$(hyprpm list)
     if [[ $shittim_plugins != *'Plugin hyprbars'* ]]; then
         hyprpm add https://github.com/hyprwm/hyprland-plugins "$shittim_revision"

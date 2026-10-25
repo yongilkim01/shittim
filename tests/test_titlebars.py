@@ -15,6 +15,49 @@ TOOL = importlib.util.module_from_spec(SPEC); SPEC.loader.exec_module(TOOL)
 
 
 class Titlebars(unittest.TestCase):
+    @unittest.skipUnless(os.name != 'nt' and shutil.which('bash'), '격리된 Linux Bash 설치 흐름 검사')
+    def test_install_bootstraps_missing_hyprpm_before_requiring_it(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory); scripts = root / 'scripts'; scripts.mkdir(); binary = root / 'bin'; binary.mkdir()
+            log = root / 'commands'
+            shutil.copyfile(ROOT / 'scripts/setup-titlebars.sh', scripts / 'setup-titlebars.sh')
+            (scripts / 'common.sh').write_text('''set -Eeuo pipefail
+SHITTIM_ROOT="$FIXTURE_ROOT"
+SHITTIM_DRY_RUN=0
+SHITTIM_ARGS=("$@")
+info() { :; }
+die() { echo "$*" >&2; exit 1; }
+require_user() { :; }
+require_arch() { :; }
+require_command() {
+    if [[ $1 == hyprpm ]]; then [[ -x "$FIXTURE_ROOT/bin/hyprpm" ]] || die 'missing hyprpm';
+    else command -v "$1" >/dev/null || die "missing $1"; fi
+}
+config_tool() { echo config >> "$FIXTURE_LOG"; }
+''')
+            commands = {
+                'python3': 'echo "python $2" >> "$FIXTURE_LOG"\nif [[ $2 == revision ]]; then echo 3aa21f2e0ca72412f1b434c3126f8f1fec3c716c; fi\n',
+                'hyprctl': 'echo "hyprctl $*" >> "$FIXTURE_LOG"\n',
+                'sudo': '''echo "sudo $*" >> "$FIXTURE_LOG"
+cat > "$FIXTURE_ROOT/bin/hyprpm" <<'STUB'
+#!/bin/bash
+echo "hyprpm $*" >> "$FIXTURE_LOG"
+STUB
+chmod +x "$FIXTURE_ROOT/bin/hyprpm"
+'''}
+            for name, body in commands.items():
+                target = binary / name; target.write_text('#!/bin/bash\n' + body); target.chmod(0o755)
+            result = subprocess.run(['bash', str(scripts / 'setup-titlebars.sh'), '--install-hyprbars'],
+                env=dict(os.environ, PATH=str(binary) + ':/usr/bin:/bin', FIXTURE_ROOT=str(root), FIXTURE_LOG=str(log), HYPRLAND_INSTANCE_SIGNATURE='fixture'),
+                capture_output=True, text=True, timeout=5)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            calls = log.read_text().splitlines()
+            install = 'sudo pacman -S --needed -- base-devel cmake cpio hyprpm'
+            self.assertIn(install, calls)
+            self.assertLess(calls.index(install), calls.index('hyprpm list'))
+            self.assertIn('hyprpm enable hyprbars', calls)
+            self.assertIn('python verify', calls)
+
     def test_only_confirmed_running_commits_choose_a_plugin_revision(self):
         for commit, expected in TOOL.COMPATIBLE.items():
             self.assertEqual(TOOL.revision({'commit': commit}), expected)
