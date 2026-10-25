@@ -39,6 +39,7 @@ PanelWindow {
         id: view; anchors.fill: parent; apps: DockState.apps; favorites: LauncherState.dockFavorites
         trashAvailable: DesktopState.ready && DesktopState.entries.some(entry => entry.id === "trash")
         matches: app => MediaState.matches(app); iconSource: LauncherState.iconSource
+        assetSource: LauncherState.assetSource
         mode: window.expanded ? DockState.mode : ""; app: DockState.app; windows: DockState.windows; target: DockState.target
         error:LauncherState.dockError || MediaState.error || LauncherState.error
         onAppClicked: app => { hoverTimer.stop(); DockState.click(app,window.screen) }

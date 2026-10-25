@@ -14,7 +14,7 @@ PanelWindow {
     WlrLayershell.namespace:"shittim-desktop"
     WlrLayershell.layer:WlrLayer.Background
     WlrLayershell.keyboardFocus:WlrKeyboardFocus.OnDemand
-    Image { anchors.fill:parent; source:Qt.resolvedUrl("../../assets/wallpapers/shittim-lake.png"); fillMode:Image.PreserveAspectCrop; asynchronous:true }
+    Image { anchors.fill:parent; source:LauncherState.assetSource("wallpapers/shittim-lake.png"); fillMode:Image.PreserveAspectCrop; asynchronous:true }
     DesktopView {
         anchors.fill:parent; anchors.topMargin:Theme.barHeight+Theme.spaceM; anchors.bottomMargin:Theme.dockHeight+Theme.spaceXL; anchors.leftMargin:Theme.spaceM; anchors.rightMargin:Theme.spaceM
         entries:DesktopState.entries; saved:DesktopState.positions[window.screen.name] || {}; error:DesktopState.error; busy:DesktopState.busy

@@ -6,8 +6,21 @@ TestCase {
     id:testCase;name:"ShittimFiles";width:700;height:500;visible:true;when:windowShown
     Component{id:modelFactory;FilesModel{}}
     Component{id:viewFactory;FilesView{width:440;height:326}}
+    Component{id:windowFactory;FilesWindow{visible:false;width:440;height:326}}
     Component{id:spyFactory;SignalSpy{}}
     function init(){failOnWarning(/.*/)}
+    function test_actual_native_window_loads_with_eight_resize_handles(){
+        const model=setup(),window=createTemporaryObject(windowFactory,testCase,{browserModel:model})
+        verify(window!==null);compare(window.width,440);compare(window.height,326)
+        try {
+            window.show();tryCompare(window,"visible",true)
+            tryVerify(()=>findChild(window.contentItem,"files-resize-"+Qt.LeftEdge)!==null)
+            const left=findChild(window.contentItem,"files-resize-"+Qt.LeftEdge),corner=findChild(window.contentItem,"files-resize-"+(Qt.RightEdge|Qt.BottomEdge))
+            verify(corner!==null);compare(left.width,5);compare(corner.width,5);compare(corner.height,5)
+            const min=createTemporaryObject(spyFactory,testCase,{target:window,signalName:"minimizeRequested"})
+            findChild(window.contentItem,"files-minimize").clicked();compare(min.count,1)
+        } finally { window.destroy();wait(0) }
+    }
     function listing(model,uri,entries){return {event:"listing",request:model.current.request,tab:model.current.id,uri:uri,name:"Home",parent:"file:///",writable:true,entries:entries || [],breadcrumbs:[],truncated:false}}
     function setup(){
         const model=createTemporaryObject(modelFactory,testCase)

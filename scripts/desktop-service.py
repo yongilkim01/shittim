@@ -79,7 +79,7 @@ class Desktop:
     def refresh(self):
         entries = [{'id':'home','name':'Home','uri':self.home.as_uri(),'directory':True,'special':True,'icons':['user-home']},
             {'id':'trash','name':'Trash','uri':'trash:///','directory':True,'special':True,'icons':['user-trash']},
-            {'id':'projects','name':'Projects','uri':self.projects.as_uri(),'directory':True,'special':True,'icons':['folder']}]
+            {'id':'projects','name':'Projects','uri':self.projects.as_uri(),'directory':True,'special':True,'icons':['folder-projects']}]
         if self.enabled and self.directory.is_dir():
             folder = self.gio.File.new_for_path(str(self.directory))
             iterator = folder.enumerate_children('standard::name,standard::display-name,standard::type,standard::icon,standard::is-hidden', self.gio.FileQueryInfoFlags.NOFOLLOW_SYMLINKS, None)

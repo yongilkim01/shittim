@@ -10,6 +10,7 @@ FocusScope {
     property var favorites: []
     property var matches: function(app) { return [] }
     property var iconSource: function(app) { return "" }
+    property var assetSource: function(relative) { return "" }
     property string mode: ""
     property var app: null
     property var windows: []
@@ -92,12 +93,12 @@ FocusScope {
         Rectangle { x: parent.width - 66; y: 12; width: 1; height: parent.height - 24; color: Theme.border }
         MediaButton {
             objectName: "dock-settings"; x: parent.width - 115; y: 12; width: 40; height: 40
-            framed: false; imageSource: Qt.resolvedUrl("../../../assets/icons/Shittim-HUD/scalable/apps/preferences-system.svg"); tooltipText: "설정 · 우클릭 앱 런처"
+            framed: false; imageSource: root.assetSource("icons/Shittim-HUD/scalable/apps/preferences-system.svg"); icon: "\uf013"; tooltipText: "설정 · 우클릭 앱 런처"
             onClicked: root.settingsRequested(); onContextRequested: root.launcherRequested()
         }
         MediaButton {
             objectName: "dock-trash"; x: parent.width - 54; y: 12; width: 40; height: 40
-            framed: false; imageSource: Qt.resolvedUrl("../../../assets/icons/Shittim-HUD/scalable/places/user-trash.svg"); tooltipText: "휴지통 열기"; enabled: root.trashAvailable
+            framed: false; imageSource: root.assetSource("icons/Shittim-HUD/scalable/places/user-trash.svg"); icon: "\uf1f8"; tooltipText: "휴지통 열기"; enabled: root.trashAvailable
             onClicked: root.trashRequested()
         }
     }

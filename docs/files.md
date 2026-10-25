@@ -42,6 +42,7 @@ Dock의 파일 아이콘, 바탕화면 Home/Projects/Trash, 기본 폴더 열기
 
 - `shell/files.qml`은 독립 AppId/ShellId의 Quickshell 앱이다. 로그인 때 파일 창을 자동 실행하지 않는다. `files-client.py`가 사용자 런타임의 flock과 IPC로 기존 인스턴스에 경로를 전달한다. 여러 폴더는 탭으로 연다.
 - GIO로 실제 파일·XDG 사용자 폴더·마운트를 읽고 폴더 변경 이벤트로 갱신한다. 디스크 폴링은 하지 않는다. 오래된 응답은 요청 번호로 무시한다.
+- 저장소의 아이콘·배경은 절대 `file:` 주소로 읽는다. QML 설정 루트 밖의 `assets/`를 Quickshell 내부 상대 주소로 해석하지 않는다. Home·Projects는 같은 파란 폴더 계열을 사용한다.
 - 파일명은 일반 텍스트다. 이름/URI 검증과 인수 배열을 사용하고 셸 문자열로 조합하지 않는다. 복사/이동은 기존 Nemo의 형식이 지정된 D-Bus API를 재사용한다. 접수 이후 진행·충돌 선택은 Nemo 대화상자가 담당한다.
 - 파일명·탐색 기록을 Git이나 로그에 저장하지 않는다. 탭·선택·기록은 현재 프로세스 메모리에만 둔다.
 - 폴더당 최대 20,000개, 작업당 최대 256개다. 한도·권한·연결 오류는 화면에 알린다. 메뉴의 **보조 앱 Nemo로 열기**로 전환할 수 있다.
@@ -52,6 +53,8 @@ Dock의 파일 아이콘, 바탕화면 Home/Projects/Trash, 기본 폴더 열기
 ## 검증
 
 격리된 Linux 임시 폴더에서 실제 GIO 탐색·이름 변경·생성·휴지통 이동, Desktop Entry 특수문자 경로 실행과 IPC 클라이언트를 검사했다. Windows Qt에서는 FilesView를 렌더링하고 선택·탭·키 입력·버튼 신호를 검사했다. 실제 Hyprland 창 조작·Dock 복원, Wayland 드래그, Nemo 복사 대화상자·다중 모니터는 노트북에서 확인한다.
+
+`FilesWindow` 전체 생성·표시와 크기 조절 핸들을 회귀 검사한다. `verify-files.sh`는 실제 Quickshell에서 이 창 전체를 로드하고 Dock 아이콘 4개·Home·Projects·배경 이미지 및 GIO 폴더 읽기를 함께 확인한다.
 
 ```bash
 bash scripts/verify-files.sh

@@ -68,6 +68,7 @@ class Files(ops.Desktop):
         folder_icons = {'desktop':'user-desktop','document':'folder-documents','download':'folder-download',
                         'image':'folder-pictures','music':'folder-music','video':'folder-videos'}
         special_icons = {place['uri']:folder_icons[place['icon']] for place in self.places() if place['icon'] in folder_icons}
+        if self.projects.is_dir(): special_icons[self.projects.as_uri()]='folder-projects'
         iterator = folder.enumerate_children(ATTRIBUTES, self.gio.FileQueryInfoFlags.NONE, None)
         try:
             for child in iterator:

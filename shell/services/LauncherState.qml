@@ -6,6 +6,7 @@ import Quickshell.Hyprland
 import "../components/launcher"
 import "../components/launcher/Diagnostics.js" as Diagnostics
 import "../components/launcher/IconResolver.js" as Icons
+import "../ui/AssetPaths.js" as AssetPaths
 
 Scope {
     id: root
@@ -58,9 +59,11 @@ Scope {
         if (ready && ["pin", "unpin", "reorder"].indexOf(action) >= 0)
             bridge.write(JSON.stringify({action: action, id: appId, index: index}) + "\n")
     }
+    function assetSource(relative) { return AssetPaths.asset(Quickshell.shellDir, relative) }
     function iconSource(app) {
         return Icons.resolve(app, name => Quickshell.iconPath(name, true),
-            name => Qt.resolvedUrl("../../assets/icons/Shittim-HUD/scalable/apps/" + name + ".svg"))
+            name => root.assetSource("icons/Shittim-HUD/scalable/apps/" + name + ".svg"),
+            name => root.assetSource("icons/Shittim-HUD/scalable/places/" + name + ".svg"))
     }
     function errorText(code) {
         if (code === "GioUnavailable") return "python-gobject 설치를 확인하세요. F5로 다시 시도합니다."

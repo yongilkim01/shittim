@@ -9,6 +9,11 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class DesktopDesign(unittest.TestCase):
+    def test_assets_outside_shell_are_not_resolved_through_qml_config_urls(self):
+        for path in (ROOT/'shell').rglob('*.qml'):
+            if 'tests' in path.parts: continue
+            self.assertNotRegex(path.read_text(encoding='utf-8'),r'Qt\.resolvedUrl\(["\'][^"\']*\.\./assets/',str(path))
+
     def test_browser_is_a_color_theme_with_the_same_shell_palette(self):
         manifest = json.loads((ROOT / 'assets/chrome-theme/manifest.json').read_text(encoding='utf-8'))
         self.assertEqual(set(manifest), {'name', 'description', 'version', 'manifest_version', 'theme'})
