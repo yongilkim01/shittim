@@ -53,3 +53,40 @@ notebook > header tab { min-height: 22px; padding: 2px 10px; border: 1px solid t
 notebook > header tab:checked { background-color: #041923; border-color: #145263; color: #50eaff; }
 entry { min-height: 22px; padding: 2px 6px; }
 .sidebar, .sidebar .view { background-color: #020f15; color: #76aebc; }
+
+/* Nemo's pane frames and path buttons have their own Adwaita node styles. */
+.nemo-window { background-color: #020f15; color: #d5f8ff; font-size: 10px; }
+.nemo-window label, .nemo-window .view { font-weight: normal; text-shadow: none; }
+.nemo-window .view, .nemo-window viewport, .nemo-window scrolledwindow {
+    background-color: #020f15; background-image: linear-gradient(to bottom right, #000e14, #01131c); color: #d5f8ff;
+}
+.nemo-window .view { font-size: 12px; }
+.nemo-window scrolledwindow, .nemo-window frame > border {
+    border: none; box-shadow: none;
+}
+.nemo-window paned > separator {
+    background: #145263; border: none; min-width: 1px; min-height: 1px;
+    margin: 0; padding: 0;
+}
+.nemo-window .sidebar, .nemo-window .sidebar .view {
+    background-color: #000c11; background-image: none; color: #76aebc; font-size: 10px;
+}
+.nemo-window .sidebar .view:selected, .nemo-window .sidebar .view:selected:focus {
+    background-color: #08232e; color: #50eaff;
+}
+.nemo-window toolbar, .nemo-window .toolbar {
+    background: #020f15; border: none; border-bottom: 1px solid #145263;
+    padding: 2px 4px; box-shadow: none;
+}
+.nemo-window toolbar button, .nemo-window .toolbar button {
+    background: transparent; color: #76aebc; border: 1px solid transparent;
+    border-radius: 1px; padding: 2px 4px; min-height: 18px; min-width: 18px;
+    box-shadow: none; text-shadow: none;
+}
+.nemo-window toolbar button:hover, .nemo-window .toolbar button:hover,
+.nemo-window toolbar button:checked, .nemo-window .toolbar button:checked {
+    background: #08232e; color: #50eaff; border-color: #145263;
+}
+.nemo-window .view:selected, .nemo-window .view:selected:focus {
+    background-color: #08232e; color: #d5f8ff;
+}

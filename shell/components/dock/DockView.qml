@@ -42,7 +42,7 @@ FocusScope {
         DockFrame { anchors.fill: parent }
         Flickable {
             id:appScroll
-            x: 12; y: 5; width: parent.width - Theme.dockEndSpace; height: parent.height - 10
+            x: 32; y: 10; width: parent.width - Theme.dockEndSpace; height: parent.height - 16
             contentWidth: icons.width; clip: true; boundsBehavior: Flickable.StopAtBounds
             Row {
                 id: icons
@@ -52,18 +52,20 @@ FocusScope {
                         id: cell
                         required property var modelData
                         required property int index
-                        width: Theme.dockCellSize; height: 42
+                        width: Theme.dockCellSize; height: 48
                         readonly property var clients: root.matches(modelData)
                         readonly property bool allHidden: clients.length > 0 && clients.every(window => window.hidden)
                         Rectangle {
-                            x: 3; y: 0; width: 38; height: 38; radius: 2
+                            objectName: "dock-highlight-" + cell.modelData.id
+                            x: 6; y: 0; width: 40; height: 40; radius: 3
                             color: hover.containsMouse || cell.clients.some(window => window.activated) ? Theme.selectionFill : Theme.transparent
-                            border.width: 1; border.color: cell.clients.some(window => window.activated) ? Theme.accent : hover.containsMouse ? Theme.accentDim : Theme.border
+                            border.width: 1; border.color: cell.clients.some(window => window.activated) ? Theme.accentDim : hover.containsMouse ? Theme.border : Qt.alpha(Theme.border, 0.35)
                             Behavior on color { ColorAnimation { duration: Theme.hoverDuration } }
+                            Rectangle { anchors.fill: parent; anchors.margins: -2; radius: 5; color: "transparent"; border.width: 2; border.color: Qt.alpha(Theme.accent,0.08); visible: cell.clients.some(window => window.activated) }
                         }
-                        Image { objectName:"dock-image-"+cell.modelData.id; x: 7; y: 4; width: Theme.dockIconSize; height: Theme.dockIconSize; source: root.iconSource(cell.modelData); sourceSize.width: Theme.dockIconSize * 2; sourceSize.height: Theme.dockIconSize * 2; fillMode: Image.PreserveAspectFit; opacity: cell.allHidden ? 0.4 : 1; asynchronous: true }
+                        Image { objectName:"dock-image-"+cell.modelData.id; x: 10; y: 4; width: Theme.dockIconSize; height: Theme.dockIconSize; source: root.iconSource(cell.modelData); sourceSize.width: Theme.dockIconSize * 2; sourceSize.height: Theme.dockIconSize * 2; fillMode: Image.PreserveAspectFit; opacity: cell.allHidden ? 0.4 : 1; asynchronous: true }
                         Row {
-                            anchors.horizontalCenter: parent.horizontalCenter; y: 39; spacing: 3
+                            anchors.horizontalCenter: parent.horizontalCenter; y: 44; spacing: 3
                             Repeater { model: Math.min(4, cell.clients.length); Rectangle { width: 3; height: 3; radius: 1.5; color: Theme.accent; opacity: cell.allHidden ? 0.5 : 1 } }
                         }
                         MouseArea {
@@ -87,15 +89,15 @@ FocusScope {
                 }
             }
         }
-        Rectangle { x: parent.width - 100; y: 10; width: 1; height: parent.height - 20; color: Theme.border }
+        Rectangle { x: parent.width - 66; y: 12; width: 1; height: parent.height - 24; color: Theme.border }
         MediaButton {
-            objectName: "dock-settings"; x: parent.width - 96; y: 6; width: 38; height: 38
-            framed: true; icon: "\uf013"; tooltipText: "설정 · 우클릭 앱 런처"
+            objectName: "dock-settings"; x: parent.width - 115; y: 12; width: 40; height: 40
+            framed: false; imageSource: Qt.resolvedUrl("../../../assets/icons/Shittim-HUD/scalable/apps/preferences-system.svg"); tooltipText: "설정 · 우클릭 앱 런처"
             onClicked: root.settingsRequested(); onContextRequested: root.launcherRequested()
         }
         MediaButton {
-            objectName: "dock-trash"; x: parent.width - 48; y: 6; width: 38; height: 38
-            framed: true; icon: "\uf014"; tooltipText: "휴지통 열기"; enabled: root.trashAvailable
+            objectName: "dock-trash"; x: parent.width - 54; y: 12; width: 40; height: 40
+            framed: false; imageSource: Qt.resolvedUrl("../../../assets/icons/Shittim-HUD/scalable/places/user-trash.svg"); tooltipText: "휴지통 열기"; enabled: root.trashAvailable
             onClicked: root.trashRequested()
         }
     }
@@ -103,7 +105,7 @@ FocusScope {
         id: popup; objectName: "dockPopup"
         visible: root.mode.length > 0 && root.app !== null
         anchors.bottom: strip.top; anchors.bottomMargin: 10
-        x:Math.max(0,Math.min(root.width-width,strip.x+12+Math.max(0,root.apps.findIndex(candidate=>root.app && candidate.id===root.app.id))*Theme.dockCellSize+Theme.dockCellSize/2-appScroll.contentX-width/2))
+        x:Math.max(0,Math.min(root.width-width,strip.x+32+Math.max(0,root.apps.findIndex(candidate=>root.app && candidate.id===root.app.id))*Theme.dockCellSize+Theme.dockCellSize/2-appScroll.contentX-width/2))
         width: Math.min(root.width, root.mode === "menu" ? 282 : Math.max(224, Math.min(3, root.windows.length) * 224))
         height: root.popupHeight; fillColor: Theme.floatingSurface; strokeColor: Theme.accentDim; cut: 8
         HoverHandler { onHoveredChanged: { if (hovered) root.hoverEntered(); else root.hoverLeft() } }

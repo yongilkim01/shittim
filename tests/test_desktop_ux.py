@@ -99,8 +99,13 @@ dsp={window={drag=function() end,resize=function() end,close=function() end,floa
 '''
         text += self.ux.lua()
         text += '''
-assert(#rules==1 and rules[1].float==true and rules[1].match.float==false)
+assert(#rules==3 and rules[1].float==true and rules[1].match.float==false)
 assert(rules[1].match.fullscreen==false and rules[1].match.fullscreen_state_client==0)
+assert(rules[2].name=='shittim-hud-frame' and rules[2].match.fullscreen==false)
+assert(rules[2].rounding==12 and rules[2].rounding_power==1)
+assert(rules[3].name=='shittim-files-frame' and rules[3].decorate==false and rules[3].no_shadow)
+assert(rules[3].border_size==0 and rules[3].rounding==0)
+assert(options.decoration.shadow.enabled and options.decoration.glow.enabled)
 assert(options.general.resize_on_border and options.general.snap.enabled)
 assert(options.general.gaps_out==4 and options.cursor.no_warps)
 assert(#layers==1 and layers[1].match.namespace=='shittim-dock' and layers[1].no_anim)

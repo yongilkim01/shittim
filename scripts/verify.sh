@@ -23,6 +23,7 @@ fi
 check_session_versions
 python3 -c 'import dbus_next' || { warn 'Control Center용 python-dbus-next가 없습니다.'; shittim_failures=$((shittim_failures + 1)); }
 python3 "$SHITTIM_ROOT/scripts/launcher-service.py" --check || { warn 'App Launcher용 GIO·python-gobject 설치를 확인하세요.'; shittim_failures=$((shittim_failures + 1)); }
+python3 "$SHITTIM_ROOT/scripts/files-config.py" --verify || { warn 'Shittim Files 등록을 확인하세요: bash scripts/setup-files.sh'; shittim_failures=$((shittim_failures + 1)); }
 python3 "$SHITTIM_ROOT/scripts/desktop-tool.py" verify || { warn '기본 데스크톱 설정을 확인하세요: bash scripts/setup-desktop.sh'; shittim_failures=$((shittim_failures + 1)); }
 python3 "$SHITTIM_ROOT/scripts/desktop-ux.py" verify || { warn 'Desktop UX 설정을 확인하세요: bash scripts/setup-desktop-ux.sh'; shittim_failures=$((shittim_failures + 1)); }
 if ! systemctl is-active --quiet bluetooth.service; then warn 'Bluetooth 서비스가 비활성입니다. 어댑터가 없으면 정상이며 Control Center는 해당 기능을 비활성화합니다.'; fi

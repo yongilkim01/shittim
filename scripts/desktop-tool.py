@@ -23,7 +23,7 @@ def module(name, filename):
 
 files = module('shittim_config', 'config-tool.py')
 APPLICATIONS = {
-    'nemo.desktop': ['inode/directory'],
+    'org.shittim.Files.desktop': ['inode/directory'],
     'swayimg.desktop': ['image/png', 'image/jpeg', 'image/webp', 'image/gif'],
     'org.pwmt.zathura.desktop': ['application/pdf'],
     'vlc.desktop': ['video/mp4', 'video/x-matroska', 'audio/mpeg', 'audio/flac', 'audio/x-flac'],
@@ -110,7 +110,7 @@ class Desktop:
                     allowed = allowed or (key == 'SUPER + E' and binding.get('dispatcher') in ('exec', 'exec_cmd') and binding.get('arg') in ('dolphin', 'nemo'))
                     # Lua handlers expose a function reference, not their command.
                     # The captured, simple default file-manager binding is explicitly
-                    # migrated to Nemo; opaque/custom Lua remains a conflict.
+                    # migrated to the managed file handler; opaque/custom Lua remains a conflict.
                     allowed = allowed or (key in source_defaults and key not in source_conflicts and not binding.get('description')
                                           and str(binding.get('dispatcher', '')).startswith('function:') and str(binding.get('arg', '')).isdigit())
                     if not allowed:
@@ -207,7 +207,7 @@ class Desktop:
 
 
 def launch(which):
-    app_id = {'browser': 'google-chrome.desktop', 'files': 'nemo.desktop'}[which]
+    app_id = {'browser': 'google-chrome.desktop', 'files': 'org.shittim.Files.desktop'}[which]
     config = files.Config()
     if which == 'files':
         # Open the actual home folder through the configured inode/directory association.

@@ -20,11 +20,11 @@ QtObject {
 	readonly property color transparent: "transparent"
 	readonly property color floatingSurface: "#ed020f15"
 	readonly property color selectionFill: "#3300d9f5"
-	readonly property int dockIconSize: 30
-	readonly property int dockCellSize: 44
-	readonly property int dockHeight: 52
-	readonly property int dockBottomMargin: 2
-	readonly property int dockEndSpace: 112
+	readonly property int dockIconSize: 32
+	readonly property int dockCellSize: 52
+	readonly property int dockHeight: 64
+	readonly property int dockBottomMargin: 8
+	readonly property int dockEndSpace: 150
 	readonly property int desktopCellWidth: 88
 	readonly property int desktopCellHeight: 92
 

@@ -26,6 +26,8 @@ TestCase {
         const bundled = name => "bundled/" + name + ".svg"
         const missing = name => ""
         compare(Icons.resolve({id:"nemo.desktop",icons:["system-file-manager"]},missing,bundled),"bundled/system-file-manager.svg")
+        compare(Icons.resolve({id:"nemo.desktop",icons:["nemo"]},name => "old-theme/"+name,bundled),"bundled/system-file-manager.svg")
+        compare(Icons.resolve({id:"kitty.desktop",icons:["kitty"]},name => "old-theme/"+name,bundled),"bundled/utilities-terminal.svg")
         compare(Icons.resolve({id:"other.desktop",icons:["unknown"]},missing,bundled),"bundled/application-x-executable.svg")
         compare(Icons.resolve({icons:["first","second"]},name => name === "second" ? "theme/second" : "",bundled),"theme/second")
         compare(Icons.resolve({iconFile:"file:///tmp/custom.svg"},missing,bundled),"file:///tmp/custom.svg")

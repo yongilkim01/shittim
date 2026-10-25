@@ -134,29 +134,29 @@ class GioIntegration(unittest.TestCase):
         receive(lambda message: message.get('event') == 'dock' and not message.get('error') and 'kitty.desktop' in message.get('favorites', []))
 
     def test_desktop_defaults_are_resolved_by_real_gio(self):
-        for name in ['google-chrome.desktop', 'nemo.desktop', 'swayimg.desktop', 'vlc.desktop', 'org.pwmt.zathura.desktop']:
+        for name in ['google-chrome.desktop', 'org.shittim.Files.desktop', 'swayimg.desktop', 'vlc.desktop', 'org.pwmt.zathura.desktop']:
             self.desktop(self.user, name, 'Name=Desktop association fixture\n')
         self.environment['HOME'] = str(self.base / 'home'); Path(self.environment['HOME']).mkdir()
         self.environment['XDG_STATE_HOME'] = str(self.base / 'state')
         code = ('import importlib.util; from pathlib import Path; s=importlib.util.spec_from_file_location("desktop",'
                 + repr(str(ROOT / 'scripts/desktop-tool.py')) + '); m=importlib.util.module_from_spec(s); s.loader.exec_module(m); '
                 'd=m.Desktop(); d.setup(); g,l,a=m.module("launcher","launcher-service.py").load_gio(); '
-                'expected={"inode/directory":"nemo.desktop","x-scheme-handler/https":"google-chrome.desktop",'
+                'expected={"inode/directory":"org.shittim.Files.desktop","x-scheme-handler/https":"google-chrome.desktop",'
                 '"image/webp":"swayimg.desktop","application/pdf":"org.pwmt.zathura.desktop","audio/flac":"vlc.desktop"}; '
                 '[(lambda app: (app is not None and app.get_id()==value) or (_ for _ in ()).throw(AssertionError(key)))'
                 '(g.AppInfo.get_default_for_type(key,False)) for key,value in expected.items()]')
         self.run_code(code)
 
     def test_desktop_setup_with_missing_and_hidden_apps_uses_only_installed_entries(self):
-        self.desktop(self.user, 'nemo.desktop', 'Name=Installed file manager\n')
+        self.desktop(self.user, 'org.shittim.Files.desktop', 'Name=Installed file manager\n')
         self.desktop(self.user, 'vlc.desktop', 'Hidden=true\n')
         self.desktop(self.user, 'swayimg.desktop', 'TryExec=shittim-nonexistent-image-viewer\n')
         self.environment['HOME'] = str(self.base / 'home'); Path(self.environment['HOME']).mkdir()
         self.environment['XDG_STATE_HOME'] = str(self.base / 'state')
         code = ('import importlib.util,json; s=importlib.util.spec_from_file_location("desktop",'
                 + repr(str(ROOT / 'scripts/desktop-tool.py')) + '); m=importlib.util.module_from_spec(s); s.loader.exec_module(m); '
-                'd=m.Desktop(); assert d.installed()=={"nemo.desktop"}; d.setup(); '
-                'data=json.loads(d.manifest.read_text()); assert data["defaults"]=={"inode/directory":"nemo.desktop"}')
+                'd=m.Desktop(); assert d.installed()=={"org.shittim.Files.desktop"}; d.setup(); '
+                'data=json.loads(d.manifest.read_text()); assert data["defaults"]=={"inode/directory":"org.shittim.Files.desktop"}')
         self.run_code(code)
 
     def test_nodisplay_viewer_is_a_mime_default_but_stays_out_of_launcher(self):

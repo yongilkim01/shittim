@@ -8,11 +8,30 @@ hl.window_rule({
     size = { "(monitor_w*0.78)", "(monitor_h*0.72)" },
     center = true,
 })
+-- Window-rule rounding_power accepts 1: the compositor shader draws a straight bevel.
+hl.window_rule({
+    name = "shittim-hud-frame",
+    match = { class = ".+", fullscreen = false },
+    rounding = 12, rounding_power = 1,
+})
+-- Shittim Files draws and handles its own HUD frame and title buttons.
+hl.window_rule({
+    name = "shittim-files-frame",
+    match = { class = "^org\\.shittim\\.Files$" },
+    float = true, center = true,
+    size = { "(monitor_w*0.34)", "(monitor_h*0.53)" },
+    decorate = false, border_size = 0, rounding = 0, no_shadow = true,
+})
 hl.config({
     general = { resize_on_border = true, extend_border_grab_area = 8, hover_icon_on_border = true, border_size = 1, gaps_out = 4,
                 snap = { enabled = true, window_gap = 10, monitor_gap = 10 },
                 col = { active_border = "rgb(00d9f5)", inactive_border = "rgb(145263)" } },
-    decoration = { rounding = 0, shadow = { enabled = false } },
+    decoration = { rounding = 0,
+        shadow = { enabled = true, range = 5, render_power = 3,
+                   color = "rgba(00d9f52b)", color_inactive = "rgba(08798b18)" },
+        glow = { enabled = true, range = 2, render_power = 3,
+                 color = "rgba(00d9f518)", color_inactive = "rgba(00d9f50c)" },
+    },
     input = { follow_mouse = 0 },
     cursor = { no_warps = true },
 })

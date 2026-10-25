@@ -116,7 +116,9 @@ class Desktop:
         if action == 'open':
             for entry in self.selected(message.get('ids')):
                 if entry['id'] == 'projects': self.projects.mkdir(exist_ok=True)
-                if entry['directory'] or entry['uri'].endswith('.desktop'):
+                if entry['directory']:
+                    subprocess.Popen([sys.executable,str(Path(__file__).with_name('files-client.py')),entry['uri']], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, close_fds=True)
+                elif entry['uri'].endswith('.desktop'):
                     subprocess.Popen(['nemo','--no-desktop',entry['uri']], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, close_fds=True)
                 else: self.gio.AppInfo.launch_default_for_uri(entry['uri'], None)
         elif action == 'trash':
@@ -150,7 +152,7 @@ class Desktop:
         elif action == 'open-desktop':
             if not self.enabled: raise ValueError('DesktopDirectoryUnavailable')
             self.directory.mkdir(exist_ok=True)
-            subprocess.Popen(['nemo','--no-desktop',str(self.directory)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, close_fds=True)
+            subprocess.Popen([sys.executable,str(Path(__file__).with_name('files-client.py')),str(self.directory)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, close_fds=True)
         else: raise ValueError('InvalidRequest')
 
 

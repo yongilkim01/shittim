@@ -6,7 +6,7 @@
 
 | 역할 | 공식 패키지 | Desktop Entry |
 |---|---|---|
-| 파일 관리자 | nemo, gvfs, udisks2 | nemo.desktop |
+| 파일 관리자 | 기존 Quickshell·python-gobject / 보조 nemo, gvfs, udisks2 | org.shittim.Files.desktop |
 | PNG/JPEG/WebP/GIF | swayimg | swayimg.desktop |
 | PDF | zathura, zathura-pdf-mupdf | org.pwmt.zathura.desktop |
 | 동영상·음악·MPRIS | vlc, vlc-gui-qt, vlc-plugin-ffmpeg, vlc-plugin-dbus | vlc.desktop |
@@ -19,7 +19,7 @@
 
 Swayimg의 [지원 형식](https://github.com/artemsen/swayimg)과 [Arch 빌드 의존성](https://archlinux.org/packages/extra/x86_64/swayimg/)에서 JPEG·PNG·GIF·WebP를 확인했다. imv는 이번 구성에 추가하지 않는다. VLC는 [Qt GUI](https://archlinux.org/packages/extra/x86_64/vlc-gui-qt/), [FFmpeg 모듈](https://archlinux.org/packages/extra/x86_64/vlc-plugin-ffmpeg/), [D-Bus 모듈](https://archlinux.org/packages/extra/x86_64/vlc-plugin-dbus/)을 명시했다. mpv의 MPRIS 플러그인을 가정하지 않는다.
 
-기존 설치의 Dolphin은 제거하지 않는다. 새 공식 패키지 목록에서는 Nemo를 사용하고, 기본 앱 바도 Nemo·Kitty·Chrome·VLC·Swayimg·Zathura로 구성한다. 개인 `~/.config/shittim/dock.json`은 변경하지 않는다. 개인 목록을 쓴다면 필요한 Desktop Entry ID를 직접 추가한다. App Launcher와 App Dock은 기존 GIO 카탈로그·실행·아이콘·창 매칭을 그대로 공유한다.
+기존 설치의 Dolphin은 제거하지 않는다. 기본 파일 관리자는 [Shittim Files](files.md)이며 Nemo를 파일 작업 보조로 사용한다. 기본 Dock은 Shittim Files·Kitty·Chrome·VLC·Swayimg·Zathura다. 첫 등록 때 개인 Dock의 Nemo 고정만 새 앱으로 이관하고 백업하며 나머지 설정은 유지한다. 개인 목록을 쓴다면 필요한 Desktop Entry ID를 직접 추가한다. App Launcher와 App Dock은 기존 GIO 카탈로그·실행·아이콘·창 매칭을 그대로 공유한다.
 
 Nemo는 전체 Cinnamon 데스크톱을 설치하거나 `nemo-desktop`을 자동 실행하지 않는다. GVfs와 udisks2는 휴지통·사용자 마운트를 지원하고 기존 Polkit 에이전트가 권한 요청을 처리한다. 장치 자동 마운트나 네트워크 공유용 선택 모듈을 강제로 켜지 않는다. 실제 이동식 장치는 Nemo에서 사용자가 열고 안전하게 해제해 확인한다.
 

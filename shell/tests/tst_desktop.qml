@@ -54,12 +54,12 @@ TestCase {
         const app={id:"nemo.desktop",name:"Files",icons:[]}
         const view=createTemporaryObject(dockFactory,testCase,{apps:[app],favorites:[app.id]})
         const strip=view.stripItem, originalY=strip.y
-        compare(strip.height,52); compare(strip.width,156)
+        compare(strip.height,64); compare(strip.width,202)
         compare(view.errorItem.height,0)
         const image=findChild(view,"dock-image-nemo.desktop")
-        compare(image.width,30); compare(image.height,30)
+        compare(image.width,32); compare(image.height,32)
         view.app=app; view.mode="preview"
-        compare(strip.y,originalY); compare(strip.height,52)
+        compare(strip.y,originalY); compare(strip.height,64)
         verify(view.popupItem.y+view.popupItem.height<=strip.y)
         view.mode="menu"
         compare(strip.y,originalY)

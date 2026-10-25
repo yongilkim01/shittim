@@ -33,9 +33,10 @@ class QmlImports(unittest.TestCase):
 
     def test_production_imports_stay_inside_config_root(self):
         self.check_entrypoint(ROOT / 'shell/shell.qml')
+        self.check_entrypoint(ROOT / 'shell/files.qml')
 
     def test_verification_uses_an_entrypoint_with_resolvable_imports(self):
-        for name in ['verify-control-center.sh', 'verify-launcher.sh']:
+        for name in ['verify-control-center.sh', 'verify-launcher.sh', 'verify-files.sh']:
             with self.subTest(script=name):
                 script = (ROOT / 'scripts' / name).read_text(encoding='utf-8')
                 match = re.search(r'quickshell --path "\$SHITTIM_ROOT/([^"\n]+)"', script)

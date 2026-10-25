@@ -89,6 +89,8 @@ hl.plugin.hyprbars={add_button=function(button) table.insert(buttons,button) end
 setup()
 assert(#buttons==3 and buttons[1].icon=='×' and buttons[2].icon=='□' and buttons[3].icon=='−')
 assert(buttons[1].bg_color=='rgba(00000000)' and buttons[1].fg_color=='rgb(00d9f5)')
+assert(buttons[1].size==18 and buttons[2].size==18 and buttons[3].size==18)
+assert(options.plugin.hyprbars.bar_button_padding==10 and options.plugin.hyprbars.bar_padding==12)
 assert(buttons[1].action:match(' close$') and buttons[2].action:match(' maximize$') and buttons[3].action:match(' hide$'))
 assert(options.plugin.hyprbars.bar_part_of_window and options.plugin.hyprbars.bar_height==24)
 assert(options.plugin.hyprbars.on_double_click==buttons[2].action)

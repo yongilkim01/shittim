@@ -12,7 +12,7 @@ Arch Linux + Hyprland + Quickshell 기반 데스크톱 환경. SHITTIM HUD 디�
 
 상단 바의 **음악 아이콘**은 원본 시안 6번의 App / Media Controls를 오른쪽 하단에 연다. 실제 MPRIS 재생·탐색·플레이어 전환과 설치된 즐겨찾기 앱 실행·기존 창 활성화를 지원한다. [미디어 사용법·즐겨찾기 설정·실기 검사](docs/media-controls.md)를 참고한다.
 
-기본 데스크톱 앱은 **Nemo / Swayimg / Zathura / VLC**다. Chrome은 AUR 설치를 명시적으로 선택한다. 기본 파일 연결·포털·캡처·잠금·선택적 클립보드 기록과 진단은 [Desktop Essentials](docs/desktop-essentials.md)에 정리되어 있다.
+기본 파일 관리자는 **Shittim Files**이며 Nemo는 파일 작업과 보조 탐색에 유지한다. 이미지·PDF·미디어 앱은 **Swayimg / Zathura / VLC**다. Chrome은 AUR 설치를 명시적으로 선택한다. 기본 파일 연결·포털·캡처·잠금·선택적 클립보드 기록과 진단은 [Desktop Essentials](docs/desktop-essentials.md)에 정리되어 있다.
 
 일반 창의 Floating 기본 배치, 마우스 테두리 크기 조절, Alt+Tab, 창 목록의 숨김/복원, Nemo GTK HUD/아이콘 구성은 [Desktop UX](docs/desktop-ux.md)를 따른다. 음표 아이콘 우클릭으로 열린 창을 관리하며 Dock 우클릭으로 해당 앱의 여러 창을 선택한다. 앱 자체 최소화/제목 표시줄의 Hyprland 지원 한계와 실제 마우스 검증 절차도 해당 문서에 구분해 두었다.
 
@@ -22,7 +22,7 @@ Kitty·Nemo·Chrome의 공통 제목 표시줄과 최소화·최대화·닫기 �
 
 ## 새 Arch Linux 환경 설치
 
-최신 데스크톱 시안의 Dock·앱 제목 표시줄·Nemo 아이콘과 Chrome 색상 테마 적용은 [데스크톱 디자인](docs/desktop-design.md)을 따른다. 기존 설치는 `bash scripts/apply-desktop-design.sh`로 갱신한다.
+원본 배치의 전용 [Shittim Files](docs/files.md)와 Dock·앱 제목 표시줄·아이콘·Chrome 색상 테마 적용은 [데스크톱 디자인](docs/desktop-design.md)을 따른다. 기존 설치는 `bash scripts/apply-desktop-design.sh`로 갱신한다.
 
 설치된 Arch Linux x86_64에서 네트워크 연결과 일반 사용자 계정, `git`, `sudo` 및 해당 사용자의 sudo 권한을 먼저 준비한다. Arch 설치 ISO/chroot나 root 계정에서 실행하지 않는다. TTY 로그인 비밀번호는 유지하며 디스플레이 매니저와 자동 로그인은 설치하지 않는다.
 
@@ -41,9 +41,10 @@ Chrome까지 설치하려면 `./install.sh --with-chrome`을 사용한다. AUR �
 1. `install-packages.sh`: `pacman -Syu`로 전체 업그레이드하고 공식 저장소의 패키지를 `--needed`로 설치한다. pacman의 확인 질문은 유지한다.
 2. `link-dotfiles.sh`: 수집본을 검사한 뒤 파일별로 백업하고 사용자 설정에 심볼릭 링크한다.
 3. `setup-autostart.sh`: 원본 Lua 설정을 보존하고 Hyprland 진입 파일·사용자 서비스·로그인 프로필을 구성한다.
-4. `setup-desktop.sh`: 설치된 앱의 MIME 연결, Hyprland 전용 포털 선택, 충돌을 검사한 단축키를 백업하며 구성한다.
-5. `setup-desktop-ux.sh`: Floating 창 정책, 창 관리 단축키, GTK HUD 스타일·아이콘·Nemo 설정을 백업하며 적용한다.
-6. `verify.sh`: 패키지, 링크, 자동 실행, 기본 앱, Desktop UX, 진입점, 서비스 상태를 검사한다. `--with-chrome`이면 공식 패키지 단계 뒤 AUR Chrome 설치를 별도로 수행한다.
+4. `setup-files.sh`: 전용 파일 관리자 앱을 등록하고 기존 Nemo 고정 항목을 백업하며 한 번 이관한다.
+5. `setup-desktop.sh`: 설치된 앱의 MIME 연결, Hyprland 전용 포털 선택, 충돌을 검사한 단축키를 백업하며 구성한다.
+6. `setup-desktop-ux.sh`: Floating 창 정책, 창 관리 단축키, GTK HUD 스타일·아이콘·Nemo 설정을 백업하며 적용한다.
+7. `verify.sh`: 패키지, 링크, 자동 실행, 기본 앱, Desktop UX, 진입점, 서비스 상태를 검사한다. `--with-chrome`이면 공식 패키지 단계 뒤 AUR Chrome 설치를 별도로 수행한다.
 
 설치 전체를 `sudo`로 실행하지 않는다. pacman과 시스템 서비스 구성에만 sudo를 사용한다. 이미 활성화된 네트워크·오디오·데스크톱을 강제로 restart하지 않는다. 다른 네트워크 관리자와 충돌하면 연결을 끊는 대신 원인을 출력하고 중단한다. 실패 단계와 종료 코드를 확인해 원인을 해결한 뒤 `./install.sh`를 재실행한다. 패키지 업그레이드는 자동으로 되돌리지 않는다.
 
@@ -67,7 +68,7 @@ bash scripts/verify-desktop.sh
 | 단축키 | 기능 |
 |---|---|
 | Super+B | Chrome 실행 또는 기존 창 활성화 |
-| Super+E | 기본 파일 관리자 Nemo로 홈 폴더 열기 |
+| Super+E | Shittim Files로 홈 폴더 열기 |
 | Super+L | Shittim HUD Hyprlock으로 수동 잠금 |
 | Print / Shift+Print | 전체 / 영역 캡처, 파일 저장과 클립보드 복사 |
 | Super+Shift+V | 선택적으로 켠 클립보드 기록 보기 |
@@ -83,7 +84,7 @@ xdg-settings get default-web-browser
 xdg-open https://www.youtube.com
 ```
 
-**B. 파일 관리자**: Super+E로 홈 폴더를 열고 실제 PNG/JPEG/WebP/GIF·PDF·MP4/MKV·MP3/FLAC 파일을 Nemo에서 연다. 이미지=Swayimg, PDF=Zathura, 영상·음악=VLC여야 한다. 실제 파일 경로를 따옴표로 감싸 `xdg-open "경로"`로도 확인한다.
+**B. 파일 관리자**: Super+E로 홈 폴더를 열고 실제 PNG/JPEG/WebP/GIF·PDF·MP4/MKV·MP3/FLAC 파일을 Shittim Files에서 연다. 이미지=Swayimg, PDF=Zathura, 영상·음악=VLC여야 한다. 실제 파일 경로를 따옴표로 감싸 `xdg-open "경로"`로도 확인한다.
 
 **C. 시스템**: Print / Shift+Print와 Control Center Screenshot을 확인한다. 캡처는 `$(xdg-user-dir PICTURES)/Screenshots`에 저장되고 이미지 붙여넣기가 가능해야 한다. `printf 'Shittim clipboard test' | wl-copy` 후 `wl-paste`로 텍스트 복사를 확인한다. Super+L은 현재 사용자 비밀번호로 잠금 해제되어야 한다. Chrome의 파일 업로드·저장 대화상자와 화면 공유 선택도 확인한다. 설치 검사가 실제 잠금이나 화면 공유를 대신 검증하지 않는다.
 

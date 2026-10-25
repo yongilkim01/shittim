@@ -71,13 +71,13 @@ class DesktopSetup(unittest.TestCase):
 
     def test_missing_chrome_never_creates_fake_default(self):
         self.config.dry = True
-        with patch.object(self.desktop, 'installed', return_value={'nemo.desktop'}):
+        with patch.object(self.desktop, 'installed', return_value={'org.shittim.Files.desktop'}):
             # Actual branch, with link/write isolated; no root commands.
             self.config.dry = False
             with patch.object(self.config, 'link'), patch.object(TOOL.subprocess, 'run'):
                 self.desktop.setup()
         data = json.loads(self.desktop.manifest.read_text())
-        self.assertEqual(data['defaults'], {'inode/directory': 'nemo.desktop'})
+        self.assertEqual(data['defaults'], {'inode/directory': 'org.shittim.Files.desktop'})
         self.assertNotIn('google-chrome', (self.config.config / 'mimeapps.list').read_text())
 
     def test_static_custom_binding_preserved_and_known_dolphin_replaced(self):

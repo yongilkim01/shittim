@@ -2,7 +2,7 @@
 
 `hyprpm`은 Arch의 별도 공식 패키지다. `--install-hyprbars`는 누락된 `hyprpm`도 빌드 도구와 함께 먼저 설치한다.
 
-Kitty·Nemo·Chrome 같은 일반 창의 바깥쪽에 [공식 hyprbars](https://github.com/hyprwm/hyprland-plugins/tree/main/hyprbars)의 실제 compositor decoration을 추가한다. Quickshell 창을 외부 앱 위에 겹치는 방식은 사용하지 않는다. 기본 `install.sh`는 플러그인을 설치하지 않는다.
+Kitty·Nemo·Chrome 같은 일반 창의 바깥쪽에 [공식 hyprbars](https://github.com/hyprwm/hyprland-plugins/tree/main/hyprbars)의 실제 compositor decoration을 추가한다. Quickshell 창을 외부 앱 위에 겹치는 방식은 사용하지 않는다. 기본 `install.sh`는 플러그인을 설치하지 않는다. 별도 Shittim Files는 자체 프레임과 세 버튼을 사용하고 전용 창 규칙으로 hyprbars를 비활성화하므로 이 플러그인이 필요하지 않다.
 
 노트북의 실행 중인 Hyprland 안에서 선택적으로 실행한다.
 
@@ -16,7 +16,7 @@ bash scripts/setup-titlebars.sh --install-hyprbars
 
 `hyprpm`은 현재 버전 헤더를 준비하고 플러그인을 빌드하므로 최초 실행에 시간이 걸릴 수 있다. 설치기를 root로 실행하지 않으며 패키지 명령에만 sudo를 사용한다. 다른 플러그인은 활성화하지 않는다. 이미 hyprbars가 등록되어 있으면 중복 add하지 않는다. 공식 호환 커밋으로 고정해 설치하므로 Hyprland 업그레이드 후에는 해당 커밋을 다시 확인해야 한다. 기존 저장소를 자동 삭제하거나 버전/ABI 검사 실패를 우회하지 않는다. 로드 실패 시 설치 출력을 확인한다.
 
-제목 표시줄 높이는 24px, 배경은 `#020f15`, 글꼴은 Hack Nerd Font Mono다. 원본 시안처럼 버튼 배경을 투명하게 하고 청록색 `− / □ / ×`를 오른쪽에 배치한다.
+제목 표시줄 높이는 24px, 배경은 `#020f15`, 글꼴은 Hack Nerd Font Mono다. 버튼 배경은 투명하고 청록색 `− / □ / ×`를 오른쪽에 배치한다. 버튼 칸 18px와 간격 10px를 사용한다. hyprbars가 기호를 칸 크기의 약 62%로 그리므로 실제 기호는 약 11px다. 창 외곽의 대각선 절단과 낮은 농도의 발광은 Shittim 창 정책에서 적용한다. 실제 화면에서 원본과 나란히 비교하는 검증은 노트북에서 수행한다.
 
 - `−`: 기존 Shittim Special Workspace 숨김. Dock에서 클릭해 복원한다.
 - `□`: 최대화/복원. 전체 화면과 별도 동작이다.
