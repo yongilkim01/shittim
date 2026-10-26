@@ -16,6 +16,28 @@ SPEC = importlib.util.spec_from_file_location('login_diagnostics', ROOT/'scripts
 DIAG = importlib.util.module_from_spec(SPEC); SPEC.loader.exec_module(DIAG)
 ADDRESS = re.compile(r'0x[0-9a-fA-F]{1,16}\Z')
 RESTORE = re.compile(r'shittim-restore_(-?\d{1,6})_(-?\d{1,6})_(\d{1,6})_(\d{1,6})_[01]\Z')
+FOCUS_FLAGS = ('requested', 'grabbed', 'windowActive', 'viewFocused')
+FOCUS_EVENTS = {'start', 'request', 'grab', 'keyboard', 'view', 'grab-cleared', 'active-window', 'desktop-press'}
+
+
+def clean_focus(value):
+    if not isinstance(value, dict) or value.get('protocol') != 1: return {'protocol': 0}
+    surfaces = value.get('surfaces', [])
+    if not isinstance(surfaces, list) or len(surfaces)>32: raise ValueError('바탕화면 포커스 항목 수를 확인하세요.')
+    output = {'protocol': 1, 'capturing': value.get('capturing') is True, 'surfaces': []}
+    for surface in surfaces:
+        if not isinstance(surface, dict): raise ValueError('바탕화면 포커스 형식을 확인하세요.')
+        item = {key: surface.get(key) is True for key in FOCUS_FLAGS}
+        events = surface.get('events', [])
+        if not isinstance(events, list) or len(events)>64: raise ValueError('바탕화면 포커스 이벤트 수를 확인하세요.')
+        item['events'] = []
+        for event in events:
+            if not isinstance(event, dict) or event.get('event') not in FOCUS_EVENTS: continue
+            ms = number(event.get('ms'))
+            if not 0<=ms<=60000: raise ValueError('바탕화면 포커스 이벤트 시간을 확인하세요.')
+            item['events'].append(dict(event=event['event'], ms=ms, **{key: event.get(key) is True for key in FOCUS_FLAGS}))
+        output['surfaces'].append(item)
+    return output
 
 
 def number(value):
@@ -40,6 +62,7 @@ def clean_report(source):
         active = sample.get('active')
         output = dict(time=round(number(sample['time'])-origin, 3), active=active if isinstance(active, str) and ADDRESS.fullmatch(active) else None,
             cursor={key: number(sample['cursor'][key]) for key in ('x', 'y')}, windows=[], monitors=[])
+        if 'desktopFocus' in sample: output['desktopFocus'] = clean_focus(sample['desktopFocus'])
         if len(sample['windows'])>512 or len(sample['monitors'])>32: raise ValueError('창 진단 항목 수가 한도를 초과했습니다.')
         for client in sample['windows']:
             value = client.get('address')

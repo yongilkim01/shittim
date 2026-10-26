@@ -12,12 +12,25 @@ import time
 
 SPEC = importlib.util.spec_from_file_location('window_actions', Path(__file__).with_name('window-service.py'))
 WINDOWS = importlib.util.module_from_spec(SPEC); SPEC.loader.exec_module(WINDOWS)
+ROOT = Path(__file__).resolve().parents[1]
 
 
-def snapshot(api):
+def desktop_focus(method='focusStatus', runner=subprocess.run):
+    try:
+        result = runner(['quickshell', 'ipc', '--path', str(ROOT/'shell/shell.qml'), 'call', 'desktop', method],
+                        check=True, capture_output=True, text=True, timeout=2)
+        value = json.loads(result.stdout)
+        if not isinstance(value, dict) or value.get('protocol') != 1:
+            raise ValueError('UnsupportedTrace')
+        return value
+    except (OSError, ValueError, subprocess.SubprocessError):
+        return {'protocol': 0}
+
+
+def snapshot(api, focus=None):
     clients = api.query('clients')
     active = api.query('activewindow')
-    return dict(time=time.monotonic(), active=active.get('address'), cursor=api.query('cursorpos'),
+    result = dict(time=time.monotonic(), active=active.get('address'), cursor=api.query('cursorpos'),
         windows=[{**{key: client.get(key) for key in ('address', 'class', 'mapped', 'floating', 'monitor', 'at', 'size', 'fullscreen', 'fullscreenClient')},
             'workspace': client.get('workspace', {}).get('id'),
             'hidden': bool(WINDOWS.HIDDEN.fullmatch(client.get('workspace', {}).get('name', ''))),
@@ -25,6 +38,8 @@ def snapshot(api):
             for client in clients],
         monitors=[{key: monitor.get(key) for key in ('id', 'x', 'y', 'width', 'height', 'scale', 'transform', 'reserved', 'focused')}
             for monitor in api.query('monitors')])
+    if focus is not None: result['desktopFocus'] = focus()
+    return result
 
 
 def inspect(state, settings):
@@ -52,12 +67,21 @@ def main():
     try:
         api = WINDOWS.Windows()
         settings = {key: api.query('getoption', key).get('int') for key in ('input:follow_mouse', 'input:float_switch_override_focus')}
-        if args.watch: print(f'{args.watch}초 동안 창을 마우스로 클릭하고 입력·최대화·복원을 확인하세요. 입력 내용은 기록하지 않습니다.', flush=True)
-        samples = [snapshot(api)]
-        until = time.monotonic() + args.watch
-        while time.monotonic() < until:
-            time.sleep(min(0.5, max(0, until-time.monotonic())))
-            samples.append(snapshot(api))
+        started = desktop_focus('startInputTrace') if args.watch else desktop_focus()
+        tracing = started.get('protocol') == 1
+        if args.watch:
+            print(f'{args.watch}초 동안 Kitty → 바탕화면 → 같은 Kitty를 클릭하고 입력을 확인하세요. 입력 내용은 기록하지 않습니다.', flush=True)
+            if not tracing:
+                print('[Shittim:주의] 실행 중인 Shittim이 포커스 진단에 응답하지 않습니다. git pull 후 systemctl --user restart shittim.service 하고 다시 검사하세요.', flush=True)
+        try:
+            samples = [snapshot(api, desktop_focus)]
+            until = time.monotonic() + args.watch
+            while time.monotonic() < until:
+                time.sleep(min(0.5, max(0, until-time.monotonic())))
+                samples.append(snapshot(api, desktop_focus))
+        finally:
+            if tracing and args.watch: stopped = desktop_focus('stopInputTrace')
+        if tracing and args.watch: samples[-1]['desktopFocus'] = stopped
         problems = inspect(samples[-1], settings)
         destination = Path(os.environ.get('XDG_STATE_HOME') or Path.home()/'.local/state')/'shittim'
         destination.mkdir(parents=True, exist_ok=True)
@@ -68,7 +92,7 @@ def main():
         path = destination/'window-check.json'; os.replace(name, path)
         print('검사 결과: ' + str(path))
         for problem in problems: print('[Shittim:오류] ' + problem)
-        if not problems: print('포커스 정책·최대화 복원 기록·작업 영역 검사 통과. 실제 클릭 후 입력 결과는 화면에서 확인하세요.')
+        if not problems: print('설정·최대화 복원 기록·작업 영역 정적 검사 통과. 클릭 포커스 정상 동작을 판정한 결과는 아닙니다.')
         return int(bool(problems))
     except (OSError, ValueError, KeyError, TypeError, subprocess.SubprocessError) as error:
         print('[Shittim:오류] 창 상태를 읽지 못했습니다: ' + type(error).__name__, file=sys.stderr)

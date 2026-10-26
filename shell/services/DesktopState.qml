@@ -11,6 +11,15 @@ Scope {
     property bool ready: false
     property string error: ""
     property string directory: ""
+    property bool tracingInput: false
+    property var inputSurfaces: []
+    function registerInput(trace) { inputSurfaces=inputSurfaces.concat([trace]) }
+    function unregisterInput(trace) { inputSurfaces=inputSurfaces.filter(candidate=>candidate!==trace) }
+    function focusStatus() {
+        return JSON.stringify({protocol:1,capturing:tracingInput,surfaces:inputSurfaces.map(trace=>trace.snapshot())})
+    }
+    // Diagnostics expire even if the requesting process exits before stopping them.
+    Timer { id:traceExpiry;interval:35000;onTriggered:root.tracingInput=false }
     function send(action, values) {
         error=""
         if (!bridge.running) { error="바탕화면 서비스를 다시 시작하려면 F5를 누르세요."; return }
@@ -38,5 +47,8 @@ Scope {
         target:"desktop"
         function reload(): void { root.refresh() }
         function status(): string { return JSON.stringify({ready:root.ready,entries:root.entries.length,busy:root.busy,error:root.error.length>0}) }
+        function focusStatus(): string { return root.focusStatus() }
+        function startInputTrace(): string { root.tracingInput=false;root.tracingInput=true;traceExpiry.restart();return root.focusStatus() }
+        function stopInputTrace(): string { root.tracingInput=false;traceExpiry.stop();return root.focusStatus() }
     }
 }

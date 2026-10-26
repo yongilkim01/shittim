@@ -36,6 +36,21 @@ class WindowReport(unittest.TestCase):
         source = self.report(); source['samples'][0]['windows'][0]['class'] = '/home/private/document'
         self.assertEqual(TOOL.clean_report(source)['samples'][0]['windows'][0]['class'], '<other>')
 
+    def test_focus_trace_exports_only_boolean_states_and_approved_events(self):
+        source = self.report()
+        source['samples'][0]['desktopFocus'] = {'protocol': 1, 'capturing': False, 'secret': 'private-data',
+            'surfaces': [{'requested': True, 'grabbed': False, 'windowActive': True, 'viewFocused': True,
+                'title': 'private-data', 'events': [{'event': 'desktop-press', 'ms': 52, 'windowActive': True,
+                    'keyboardText': 'private-data'}, {'event': 'private-data', 'ms': 60}]}]}
+        output = TOOL.clean_report(source)
+        self.assertNotIn('private-data', json.dumps(output))
+        focus = output['samples'][0]['desktopFocus']
+        self.assertEqual(focus['protocol'], 1)
+        self.assertTrue(focus['surfaces'][0]['windowActive'])
+        self.assertEqual(len(focus['surfaces'][0]['events']), 1)
+        source['samples'][0]['desktopFocus']['surfaces'][0]['events'][0]['ms'] = -1
+        with self.assertRaises(ValueError): TOOL.clean_report(source)
+
     def test_publish_only_stages_and_commits_the_selected_window_report(self):
         replies = ['main', '', 'https://github.com/yongilkim01/shittim.git', '', '', '', '', 'diagnostics/windows-latest.json', '', 'abc1234']
         with patch.object(TOOL.DIAG, 'git', side_effect=replies) as git, patch.object(TOOL.DIAG.subprocess, 'run') as run:

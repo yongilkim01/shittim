@@ -41,7 +41,17 @@ Files를 다시 열어 다음을 검사한다.
 bash scripts/verify-window-management.sh --watch 12
 ```
 
-결과는 `${XDG_STATE_HOME:-~/.local/state}/shittim/window-check.json`에 소유자만 읽고 쓸 수 있는 파일로 저장한다. 포커스 주소·커서 위치·창 class·geometry·최대화/숨김 상태·모니터 예약 영역만 기록하며, 창 제목·파일 경로·입력 내용은 수집하지 않는다. Git 추가나 업로드는 하지 않는다. 상태 검사는 실제 키 입력 성공 여부를 대신하지 않는다.
+결과는 `${XDG_STATE_HOME:-~/.local/state}/shittim/window-check.json`에 소유자만 읽고 쓸 수 있는 파일로 저장한다. 포커스 주소·커서 위치·창 class·geometry·최대화/숨김 상태·모니터 예약 영역과 바탕화면 입력 상태를 기록하며, 창 제목·파일 경로·입력 내용은 수집하지 않는다. Git 추가나 업로드는 하지 않는다. 상태 검사는 실제 키 입력 성공 여부를 대신하지 않는다.
+
+Kitty → 바탕화면 → 같은 Kitty 클릭 후 키보드가 복귀하지 않는 문제는 기존 `activewindow` 기록만으로 판별할 수 없다. 최신 코드로 셸을 다시 시작한 뒤 위 검사를 수행한다.
+
+```bash
+systemctl --user restart shittim.service
+bash scripts/verify-window-management.sh --watch 12
+bash scripts/share-window-diagnostics.sh --publish
+```
+
+12초 동안 Kitty를 클릭해 입력하고, 빈 바탕화면을 클릭한 다음 같은 Kitty를 다시 클릭해 입력한다. 이때 `desktopFocus`는 바탕화면의 입력 요청(`requested`), 실제 grab 상태(`grabbed`), Qt 창이 키보드를 받은 상태(`windowActive`), 내부 Item 포커스(`viewFocused`)를 구분한다. 마지막 64개의 상태 변경과 바탕화면 클릭·grab 해제 순서만 메모리에 보관한다. 캡처 종료 시 수집을 멈추고, 진단 프로세스가 중단돼도 35초 후 자동 종료한다. `protocol:0`이면 실행 중인 셸이 새 진단 API에 응답하지 않은 것이므로 포커스 해제를 확인한 것으로 해석하지 않는다. 진단은 포커스 설정이나 실제 창 동작을 변경하지 않는다.
 
 파일을 다른 PC로 직접 옮기기 어려우면 이미 수집한 로그를 다음 명령으로 전송한다. 다시 재현할 필요가 없다.
 
