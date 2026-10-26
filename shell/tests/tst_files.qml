@@ -64,6 +64,13 @@ TestCase {
             verify(window.visible);compare(closing.count,0)
         } finally { window.destroy();wait(0) }
     }
+    function test_recorded_maximize_clicks_are_not_client_close_clicks(){
+        const view=createTemporaryObject(viewFactory,testCase,{model:setup(),width:436,height:382})
+        const maximize=createTemporaryObject(spyFactory,testCase,{target:view,signalName:"maximizeRequested"})
+        const close=createTemporaryObject(spyFactory,testCase,{target:view,signalName:"closeRequested"})
+        mouseClick(view,821-422,175-153);compare(maximize.count,1);compare(close.count,0)
+        mouseClick(view,807-422,174-153);compare(maximize.count,2);compare(close.count,0)
+    }
     function test_maximized_frame_keeps_all_four_edges_visible(){
         const host=createTemporaryObject(frameFactory,testCase),frame=findChild(host,"test-frame")
         waitForRendering(frame)

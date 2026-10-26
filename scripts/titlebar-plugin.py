@@ -21,7 +21,7 @@ def digest(path):
 
 
 def patch_id(config):
-    sources = ('controls.hpp', 'interaction.hpp', 'hover.cpp.inc')
+    sources = ('controls.hpp', 'interaction.hpp', 'hover.cpp.inc', 'input-gate.cpp.inc')
     return hashlib.sha256((''.join(digest(config.root / 'native/titlebars' / name) for name in sources) + digest(Path(__file__))).encode()).hexdigest()[:16]
 
 
@@ -46,6 +46,11 @@ def patch_source(directory, config):
     if text.count(reserved) != 1:
         raise ValueError('확인한 hyprbars 공간 예약 소스와 다릅니다. 원본 플러그인을 유지했습니다.')
     text = text.replace(reserved, 'm_hidden || !ENABLED || !m_pWindow.lock() || !m_pWindow->m_ruleApplicator->decorate().valueOrDefault() ? 0 : HEIGHT')
+    input_hook = 'bool CHyprBar::inputIsValid() {'
+    if text.count(input_hook) != 1:
+        raise ValueError('확인한 hyprbars 입력 판별 소스와 다릅니다. 원본 플러그인을 유지했습니다.')
+    input_gate = (config.root / 'native/titlebars/input-gate.cpp.inc').read_text(encoding='utf-8')
+    text = text.replace(input_hook, input_hook + '\n' + input_gate)
     setup = ('const auto controlIcon = ShittimHUD::displayIcon(button.icon, button.icon == "□" && (' + maximized + '));\n'
              '        const int controlIndex = ShittimHUD::controlIndex(controlIcon);\n'
              '        auto& iconTex = controlIndex >= 0 ? m_shittimControls[controlIndex].texture : button.iconTex;\n'
