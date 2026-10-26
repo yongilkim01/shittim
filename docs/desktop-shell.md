@@ -1,6 +1,6 @@
 # 바탕화면·하단 Dock·드래그 스냅
 
-제공된 원본 PNG를 `assets/wallpapers/shittim-lake.png`로 복사했다. SHA-256은 `ef9a90a871ec50fbfee765ccdb7bca5f0604c31de5d7c40c442a78b48981ab87`이다. 새 이미지 생성·리사이즈·압축 변환을 하지 않았다. 각 모니터의 Background layer에 비율을 유지하는 `PreserveAspectCrop`으로 표시한다. 별도 배경 데몬이나 Nemo 데스크톱 프로세스를 추가하지 않는다. Top Bar·Control Center·알림·대시보드·미디어의 기존 배치를 유지하며, 미디어 내부의 기존 앱 목록도 유지한다.
+기본 배경은 `assets/wallpapers/shittim-lake.png`다. 사용자가 제공한 초기 시안의 절제된 남청색·청록색 산과 호수·성 구도를 따라 내장 이미지 생성 도구로 재생성했다. 글씨·상단 바·시계·HUD는 이미지에 포함하지 않는다. 실제 크기는 1672×941이며 생성 프롬프트와 출처는 [배경 파일 설명](../assets/wallpapers/README.md)에 기록한다. 각 모니터의 Background layer에 비율을 유지하는 `PreserveAspectCrop`으로 표시한다. 별도 배경 데몬이나 Nemo 데스크톱 프로세스를 추가하지 않는다. Top Bar·Control Center·알림·대시보드·미디어의 기존 배치를 유지하며, 미디어 내부의 기존 앱 목록도 유지한다.
 
 ## 기능 상태
 
