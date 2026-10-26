@@ -7,14 +7,14 @@
   "samples": [
     {
       "time": 0.0,
-      "active": "0x561034dbf320",
+      "active": "0x561034f28de0",
       "cursor": {
-        "x": 903,
-        "y": 232
+        "x": 755,
+        "y": 235
       },
       "windows": [
         {
-          "address": "0x561034dbf320",
+          "address": "0x561034f28de0",
           "class": "kitty",
           "at": [
             141,
@@ -51,18 +51,40 @@
           ],
           "focused": true
         }
-      ]
+      ],
+      "desktopFocus": {
+        "protocol": 1,
+        "capturing": true,
+        "surfaces": [
+          {
+            "requested": false,
+            "grabbed": false,
+            "windowActive": false,
+            "viewFocused": false,
+            "events": [
+              {
+                "event": "start",
+                "ms": 0,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              }
+            ]
+          }
+        ]
+      }
     },
     {
-      "time": 0.52,
-      "active": "0x561034dbf320",
+      "time": 0.547,
+      "active": "0x561034f28de0",
       "cursor": {
-        "x": 903,
-        "y": 232
+        "x": 755,
+        "y": 235
       },
       "windows": [
         {
-          "address": "0x561034dbf320",
+          "address": "0x561034f28de0",
           "class": "kitty",
           "at": [
             141,
@@ -99,18 +121,40 @@
           ],
           "focused": true
         }
-      ]
+      ],
+      "desktopFocus": {
+        "protocol": 1,
+        "capturing": true,
+        "surfaces": [
+          {
+            "requested": false,
+            "grabbed": false,
+            "windowActive": false,
+            "viewFocused": false,
+            "events": [
+              {
+                "event": "start",
+                "ms": 0,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              }
+            ]
+          }
+        ]
+      }
     },
     {
-      "time": 1.043,
-      "active": "0x561034dbf320",
+      "time": 1.094,
+      "active": "0x561034f28de0",
       "cursor": {
-        "x": 1005,
-        "y": 142
+        "x": 1279,
+        "y": 262
       },
       "windows": [
         {
-          "address": "0x561034dbf320",
+          "address": "0x561034f28de0",
           "class": "kitty",
           "at": [
             141,
@@ -147,18 +191,40 @@
           ],
           "focused": true
         }
-      ]
+      ],
+      "desktopFocus": {
+        "protocol": 1,
+        "capturing": true,
+        "surfaces": [
+          {
+            "requested": false,
+            "grabbed": false,
+            "windowActive": false,
+            "viewFocused": false,
+            "events": [
+              {
+                "event": "start",
+                "ms": 0,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              }
+            ]
+          }
+        ]
+      }
     },
     {
-      "time": 1.565,
-      "active": "0x561034dbf320",
+      "time": 1.641,
+      "active": "0x561034f28de0",
       "cursor": {
-        "x": 1119,
-        "y": 202
+        "x": 1204,
+        "y": 285
       },
       "windows": [
         {
-          "address": "0x561034dbf320",
+          "address": "0x561034f28de0",
           "class": "kitty",
           "at": [
             141,
@@ -195,18 +261,40 @@
           ],
           "focused": true
         }
-      ]
+      ],
+      "desktopFocus": {
+        "protocol": 1,
+        "capturing": true,
+        "surfaces": [
+          {
+            "requested": false,
+            "grabbed": false,
+            "windowActive": false,
+            "viewFocused": false,
+            "events": [
+              {
+                "event": "start",
+                "ms": 0,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              }
+            ]
+          }
+        ]
+      }
     },
     {
-      "time": 2.086,
-      "active": "0x561034dbf320",
+      "time": 2.19,
+      "active": "0x561034f28de0",
       "cursor": {
-        "x": 738,
-        "y": 691
+        "x": 1210,
+        "y": 285
       },
       "windows": [
         {
-          "address": "0x561034dbf320",
+          "address": "0x561034f28de0",
           "class": "kitty",
           "at": [
             141,
@@ -243,18 +331,80 @@
           ],
           "focused": true
         }
-      ]
+      ],
+      "desktopFocus": {
+        "protocol": 1,
+        "capturing": true,
+        "surfaces": [
+          {
+            "requested": true,
+            "grabbed": true,
+            "windowActive": true,
+            "viewFocused": true,
+            "events": [
+              {
+                "event": "start",
+                "ms": 0,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "keyboard",
+                "ms": 1829,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              }
+            ]
+          }
+        ]
+      }
     },
     {
-      "time": 2.604,
-      "active": "0x561034dbf320",
+      "time": 2.736,
+      "active": "0x561034f28de0",
       "cursor": {
-        "x": 679,
-        "y": 680
+        "x": 1142,
+        "y": 294
       },
       "windows": [
         {
-          "address": "0x561034dbf320",
+          "address": "0x561034f28de0",
           "class": "kitty",
           "at": [
             141,
@@ -291,18 +441,80 @@
           ],
           "focused": true
         }
-      ]
+      ],
+      "desktopFocus": {
+        "protocol": 1,
+        "capturing": true,
+        "surfaces": [
+          {
+            "requested": true,
+            "grabbed": true,
+            "windowActive": true,
+            "viewFocused": true,
+            "events": [
+              {
+                "event": "start",
+                "ms": 0,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "keyboard",
+                "ms": 1829,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              }
+            ]
+          }
+        ]
+      }
     },
     {
-      "time": 3.126,
-      "active": "0x561034ead540",
+      "time": 3.283,
+      "active": "0x561034f28de0",
       "cursor": {
-        "x": 927,
-        "y": 312
+        "x": 1057,
+        "y": 307
       },
       "windows": [
         {
-          "address": "0x561034dbf320",
+          "address": "0x561034f28de0",
           "class": "kitty",
           "at": [
             141,
@@ -311,26 +523,6 @@
           "size": [
             998,
             518
-          ],
-          "tags": [],
-          "mapped": true,
-          "floating": true,
-          "hidden": false,
-          "monitor": 0,
-          "workspace": 1,
-          "fullscreen": 0,
-          "fullscreenClient": 0
-        },
-        {
-          "address": "0x561034ead540",
-          "class": "org.shittim.Files",
-          "at": [
-            422,
-            153
-          ],
-          "size": [
-            436,
-            382
           ],
           "tags": [],
           "mapped": true,
@@ -359,18 +551,80 @@
           ],
           "focused": true
         }
-      ]
+      ],
+      "desktopFocus": {
+        "protocol": 1,
+        "capturing": true,
+        "surfaces": [
+          {
+            "requested": true,
+            "grabbed": true,
+            "windowActive": true,
+            "viewFocused": true,
+            "events": [
+              {
+                "event": "start",
+                "ms": 0,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "keyboard",
+                "ms": 1829,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              }
+            ]
+          }
+        ]
+      }
     },
     {
-      "time": 3.649,
-      "active": "0x561034ead540",
+      "time": 3.829,
+      "active": "0x561034f28de0",
       "cursor": {
-        "x": 821,
-        "y": 175
+        "x": 1071,
+        "y": 304
       },
       "windows": [
         {
-          "address": "0x561034dbf320",
+          "address": "0x561034f28de0",
           "class": "kitty",
           "at": [
             141,
@@ -379,26 +633,6 @@
           "size": [
             998,
             518
-          ],
-          "tags": [],
-          "mapped": true,
-          "floating": true,
-          "hidden": false,
-          "monitor": 0,
-          "workspace": 1,
-          "fullscreen": 0,
-          "fullscreenClient": 0
-        },
-        {
-          "address": "0x561034ead540",
-          "class": "org.shittim.Files",
-          "at": [
-            422,
-            153
-          ],
-          "size": [
-            436,
-            382
           ],
           "tags": [],
           "mapped": true,
@@ -427,18 +661,160 @@
           ],
           "focused": true
         }
-      ]
+      ],
+      "desktopFocus": {
+        "protocol": 1,
+        "capturing": true,
+        "surfaces": [
+          {
+            "requested": true,
+            "grabbed": true,
+            "windowActive": false,
+            "viewFocused": false,
+            "events": [
+              {
+                "event": "start",
+                "ms": 0,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "keyboard",
+                "ms": 1829,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "grab-cleared",
+                "ms": 3410,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "grab",
+                "ms": 3410,
+                "requested": true,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "request",
+                "ms": 3410,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 3410,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 3411,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 3411,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "keyboard",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              }
+            ]
+          }
+        ]
+      }
     },
     {
-      "time": 4.17,
-      "active": "0x561034dbf320",
+      "time": 4.377,
+      "active": "0x561034f28de0",
       "cursor": {
-        "x": 814,
-        "y": 170
+        "x": 1229,
+        "y": 291
       },
       "windows": [
         {
-          "address": "0x561034dbf320",
+          "address": "0x561034f28de0",
           "class": "kitty",
           "at": [
             141,
@@ -475,18 +851,160 @@
           ],
           "focused": true
         }
-      ]
+      ],
+      "desktopFocus": {
+        "protocol": 1,
+        "capturing": true,
+        "surfaces": [
+          {
+            "requested": true,
+            "grabbed": true,
+            "windowActive": false,
+            "viewFocused": false,
+            "events": [
+              {
+                "event": "start",
+                "ms": 0,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "keyboard",
+                "ms": 1829,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "grab-cleared",
+                "ms": 3410,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "grab",
+                "ms": 3410,
+                "requested": true,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "request",
+                "ms": 3410,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 3410,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 3411,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 3411,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "keyboard",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              }
+            ]
+          }
+        ]
+      }
     },
     {
-      "time": 4.693,
-      "active": "0x561034dbf320",
+      "time": 4.926,
+      "active": "0x561034f28de0",
       "cursor": {
-        "x": 999,
-        "y": 210
+        "x": 1223,
+        "y": 291
       },
       "windows": [
         {
-          "address": "0x561034dbf320",
+          "address": "0x561034f28de0",
           "class": "kitty",
           "at": [
             141,
@@ -523,18 +1041,160 @@
           ],
           "focused": true
         }
-      ]
+      ],
+      "desktopFocus": {
+        "protocol": 1,
+        "capturing": true,
+        "surfaces": [
+          {
+            "requested": true,
+            "grabbed": true,
+            "windowActive": false,
+            "viewFocused": false,
+            "events": [
+              {
+                "event": "start",
+                "ms": 0,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "keyboard",
+                "ms": 1829,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "grab-cleared",
+                "ms": 3410,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "grab",
+                "ms": 3410,
+                "requested": true,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "request",
+                "ms": 3410,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 3410,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 3411,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 3411,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "keyboard",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              }
+            ]
+          }
+        ]
+      }
     },
     {
-      "time": 5.214,
-      "active": "0x561034dbf320",
+      "time": 5.473,
+      "active": "0x561034f28de0",
       "cursor": {
-        "x": 1022,
-        "y": 240
+        "x": 1223,
+        "y": 291
       },
       "windows": [
         {
-          "address": "0x561034dbf320",
+          "address": "0x561034f28de0",
           "class": "kitty",
           "at": [
             141,
@@ -571,18 +1231,160 @@
           ],
           "focused": true
         }
-      ]
+      ],
+      "desktopFocus": {
+        "protocol": 1,
+        "capturing": true,
+        "surfaces": [
+          {
+            "requested": true,
+            "grabbed": true,
+            "windowActive": false,
+            "viewFocused": false,
+            "events": [
+              {
+                "event": "start",
+                "ms": 0,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "keyboard",
+                "ms": 1829,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "grab-cleared",
+                "ms": 3410,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "grab",
+                "ms": 3410,
+                "requested": true,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "request",
+                "ms": 3410,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 3410,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 3411,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 3411,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "keyboard",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              }
+            ]
+          }
+        ]
+      }
     },
     {
-      "time": 5.736,
-      "active": "0x561034dbf320",
+      "time": 6.019,
+      "active": "0x561034f28de0",
       "cursor": {
-        "x": 905,
-        "y": 395
+        "x": 1223,
+        "y": 291
       },
       "windows": [
         {
-          "address": "0x561034dbf320",
+          "address": "0x561034f28de0",
           "class": "kitty",
           "at": [
             141,
@@ -619,18 +1421,160 @@
           ],
           "focused": true
         }
-      ]
+      ],
+      "desktopFocus": {
+        "protocol": 1,
+        "capturing": true,
+        "surfaces": [
+          {
+            "requested": true,
+            "grabbed": true,
+            "windowActive": false,
+            "viewFocused": false,
+            "events": [
+              {
+                "event": "start",
+                "ms": 0,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "keyboard",
+                "ms": 1829,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "grab-cleared",
+                "ms": 3410,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "grab",
+                "ms": 3410,
+                "requested": true,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "request",
+                "ms": 3410,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 3410,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 3411,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 3411,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "keyboard",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              }
+            ]
+          }
+        ]
+      }
     },
     {
-      "time": 6.259,
-      "active": "0x561034dbf320",
+      "time": 6.567,
+      "active": "0x561034f28de0",
       "cursor": {
-        "x": 769,
-        "y": 588
+        "x": 1223,
+        "y": 291
       },
       "windows": [
         {
-          "address": "0x561034dbf320",
+          "address": "0x561034f28de0",
           "class": "kitty",
           "at": [
             141,
@@ -667,18 +1611,160 @@
           ],
           "focused": true
         }
-      ]
+      ],
+      "desktopFocus": {
+        "protocol": 1,
+        "capturing": true,
+        "surfaces": [
+          {
+            "requested": true,
+            "grabbed": true,
+            "windowActive": false,
+            "viewFocused": false,
+            "events": [
+              {
+                "event": "start",
+                "ms": 0,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "keyboard",
+                "ms": 1829,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "grab-cleared",
+                "ms": 3410,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "grab",
+                "ms": 3410,
+                "requested": true,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "request",
+                "ms": 3410,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 3410,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 3411,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 3411,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "keyboard",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              }
+            ]
+          }
+        ]
+      }
     },
     {
-      "time": 6.78,
-      "active": "0x561034dbf320",
+      "time": 7.116,
+      "active": "0x561034f28de0",
       "cursor": {
-        "x": 693,
-        "y": 687
+        "x": 1223,
+        "y": 291
       },
       "windows": [
         {
-          "address": "0x561034dbf320",
+          "address": "0x561034f28de0",
           "class": "kitty",
           "at": [
             141,
@@ -715,18 +1801,176 @@
           ],
           "focused": true
         }
-      ]
+      ],
+      "desktopFocus": {
+        "protocol": 1,
+        "capturing": true,
+        "surfaces": [
+          {
+            "requested": true,
+            "grabbed": true,
+            "windowActive": false,
+            "viewFocused": true,
+            "events": [
+              {
+                "event": "start",
+                "ms": 0,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "keyboard",
+                "ms": 1829,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "grab-cleared",
+                "ms": 3410,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "grab",
+                "ms": 3410,
+                "requested": true,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "request",
+                "ms": 3410,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 3410,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 3411,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 3411,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "keyboard",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 6977,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 6977,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              }
+            ]
+          }
+        ]
+      }
     },
     {
-      "time": 7.303,
-      "active": "0x561034dbf320",
+      "time": 7.663,
+      "active": "0x561034f28de0",
       "cursor": {
-        "x": 693,
-        "y": 687
+        "x": 1166,
+        "y": 298
       },
       "windows": [
         {
-          "address": "0x561034dbf320",
+          "address": "0x561034f28de0",
           "class": "kitty",
           "at": [
             141,
@@ -763,18 +2007,176 @@
           ],
           "focused": true
         }
-      ]
+      ],
+      "desktopFocus": {
+        "protocol": 1,
+        "capturing": true,
+        "surfaces": [
+          {
+            "requested": true,
+            "grabbed": true,
+            "windowActive": false,
+            "viewFocused": true,
+            "events": [
+              {
+                "event": "start",
+                "ms": 0,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "keyboard",
+                "ms": 1829,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "grab-cleared",
+                "ms": 3410,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "grab",
+                "ms": 3410,
+                "requested": true,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "request",
+                "ms": 3410,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 3410,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 3411,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 3411,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "keyboard",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 6977,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 6977,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              }
+            ]
+          }
+        ]
+      }
     },
     {
-      "time": 7.825,
-      "active": "0x561033f08cc0",
+      "time": 8.209,
+      "active": "0x561034f28de0",
       "cursor": {
-        "x": 762,
-        "y": 236
+        "x": 1004,
+        "y": 331
       },
       "windows": [
         {
-          "address": "0x561034dbf320",
+          "address": "0x561034f28de0",
           "class": "kitty",
           "at": [
             141,
@@ -783,26 +2185,6 @@
           "size": [
             998,
             518
-          ],
-          "tags": [],
-          "mapped": true,
-          "floating": true,
-          "hidden": false,
-          "monitor": 0,
-          "workspace": 1,
-          "fullscreen": 0,
-          "fullscreenClient": 0
-        },
-        {
-          "address": "0x561033f08cc0",
-          "class": "org.shittim.Files",
-          "at": [
-            422,
-            153
-          ],
-          "size": [
-            436,
-            382
           ],
           "tags": [],
           "mapped": true,
@@ -831,18 +2213,248 @@
           ],
           "focused": true
         }
-      ]
+      ],
+      "desktopFocus": {
+        "protocol": 1,
+        "capturing": true,
+        "surfaces": [
+          {
+            "requested": true,
+            "grabbed": true,
+            "windowActive": true,
+            "viewFocused": true,
+            "events": [
+              {
+                "event": "start",
+                "ms": 0,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "keyboard",
+                "ms": 1829,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "grab-cleared",
+                "ms": 3410,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "grab",
+                "ms": 3410,
+                "requested": true,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "request",
+                "ms": 3410,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 3410,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 3411,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 3411,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "keyboard",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 6977,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 6977,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "grab-cleared",
+                "ms": 8237,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "grab",
+                "ms": 8237,
+                "requested": true,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "request",
+                "ms": 8237,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 8237,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 8237,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 8237,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 8237,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 8237,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "keyboard",
+                "ms": 8238,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              }
+            ]
+          }
+        ]
+      }
     },
     {
-      "time": 8.348,
-      "active": "0x561033f08cc0",
+      "time": 8.758,
+      "active": "0x561034f28de0",
       "cursor": {
-        "x": 807,
-        "y": 177
+        "x": 1004,
+        "y": 331
       },
       "windows": [
         {
-          "address": "0x561034dbf320",
+          "address": "0x561034f28de0",
           "class": "kitty",
           "at": [
             141,
@@ -851,26 +2463,6 @@
           "size": [
             998,
             518
-          ],
-          "tags": [],
-          "mapped": true,
-          "floating": true,
-          "hidden": false,
-          "monitor": 0,
-          "workspace": 1,
-          "fullscreen": 0,
-          "fullscreenClient": 0
-        },
-        {
-          "address": "0x561033f08cc0",
-          "class": "org.shittim.Files",
-          "at": [
-            422,
-            153
-          ],
-          "size": [
-            436,
-            382
           ],
           "tags": [],
           "mapped": true,
@@ -899,18 +2491,248 @@
           ],
           "focused": true
         }
-      ]
+      ],
+      "desktopFocus": {
+        "protocol": 1,
+        "capturing": true,
+        "surfaces": [
+          {
+            "requested": true,
+            "grabbed": true,
+            "windowActive": true,
+            "viewFocused": true,
+            "events": [
+              {
+                "event": "start",
+                "ms": 0,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "keyboard",
+                "ms": 1829,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "grab-cleared",
+                "ms": 3410,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "grab",
+                "ms": 3410,
+                "requested": true,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "request",
+                "ms": 3410,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 3410,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 3411,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 3411,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "keyboard",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 6977,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 6977,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "grab-cleared",
+                "ms": 8237,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "grab",
+                "ms": 8237,
+                "requested": true,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "request",
+                "ms": 8237,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 8237,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 8237,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 8237,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 8237,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 8237,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "keyboard",
+                "ms": 8238,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              }
+            ]
+          }
+        ]
+      }
     },
     {
-      "time": 8.869,
-      "active": "0x561033f08cc0",
+      "time": 9.307,
+      "active": "0x561034f28de0",
       "cursor": {
-        "x": 807,
-        "y": 174
+        "x": 1004,
+        "y": 331
       },
       "windows": [
         {
-          "address": "0x561034dbf320",
+          "address": "0x561034f28de0",
           "class": "kitty",
           "at": [
             141,
@@ -921,29 +2743,6 @@
             518
           ],
           "tags": [],
-          "mapped": true,
-          "floating": true,
-          "hidden": false,
-          "monitor": 0,
-          "workspace": 1,
-          "fullscreen": 0,
-          "fullscreenClient": 0
-        },
-        {
-          "address": "0x561033f08cc0",
-          "class": "org.shittim.Files",
-          "at": [
-            8,
-            48
-          ],
-          "size": [
-            1264,
-            592
-          ],
-          "tags": [
-            "shittim-maximized",
-            "shittim-restore_422_153_436_382_1"
-          ],
           "mapped": true,
           "floating": true,
           "hidden": false,
@@ -970,18 +2769,248 @@
           ],
           "focused": true
         }
-      ]
+      ],
+      "desktopFocus": {
+        "protocol": 1,
+        "capturing": true,
+        "surfaces": [
+          {
+            "requested": true,
+            "grabbed": true,
+            "windowActive": true,
+            "viewFocused": true,
+            "events": [
+              {
+                "event": "start",
+                "ms": 0,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "keyboard",
+                "ms": 1829,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "grab-cleared",
+                "ms": 3410,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "grab",
+                "ms": 3410,
+                "requested": true,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "request",
+                "ms": 3410,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 3410,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 3411,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 3411,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "keyboard",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 6977,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 6977,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "grab-cleared",
+                "ms": 8237,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "grab",
+                "ms": 8237,
+                "requested": true,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "request",
+                "ms": 8237,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 8237,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 8237,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 8237,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 8237,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 8237,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "keyboard",
+                "ms": 8238,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              }
+            ]
+          }
+        ]
+      }
     },
     {
-      "time": 9.393,
-      "active": "0x561033f08cc0",
+      "time": 9.856,
+      "active": "0x561034f28de0",
       "cursor": {
-        "x": 1258,
-        "y": 44
+        "x": 1004,
+        "y": 331
       },
       "windows": [
         {
-          "address": "0x561034dbf320",
+          "address": "0x561034f28de0",
           "class": "kitty",
           "at": [
             141,
@@ -992,29 +3021,6 @@
             518
           ],
           "tags": [],
-          "mapped": true,
-          "floating": true,
-          "hidden": false,
-          "monitor": 0,
-          "workspace": 1,
-          "fullscreen": 0,
-          "fullscreenClient": 0
-        },
-        {
-          "address": "0x561033f08cc0",
-          "class": "org.shittim.Files",
-          "at": [
-            8,
-            48
-          ],
-          "size": [
-            1264,
-            592
-          ],
-          "tags": [
-            "shittim-maximized",
-            "shittim-restore_422_153_436_382_1"
-          ],
           "mapped": true,
           "floating": true,
           "hidden": false,
@@ -1041,18 +3047,248 @@
           ],
           "focused": true
         }
-      ]
+      ],
+      "desktopFocus": {
+        "protocol": 1,
+        "capturing": true,
+        "surfaces": [
+          {
+            "requested": true,
+            "grabbed": true,
+            "windowActive": true,
+            "viewFocused": true,
+            "events": [
+              {
+                "event": "start",
+                "ms": 0,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "keyboard",
+                "ms": 1829,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "grab-cleared",
+                "ms": 3410,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "grab",
+                "ms": 3410,
+                "requested": true,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "request",
+                "ms": 3410,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 3410,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 3411,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 3411,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "keyboard",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 6977,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 6977,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "grab-cleared",
+                "ms": 8237,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "grab",
+                "ms": 8237,
+                "requested": true,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "request",
+                "ms": 8237,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 8237,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 8237,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 8237,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 8237,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 8237,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "keyboard",
+                "ms": 8238,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              }
+            ]
+          }
+        ]
+      }
     },
     {
-      "time": 9.912,
-      "active": "0x561034dbf320",
+      "time": 10.401,
+      "active": "0x561034f28de0",
       "cursor": {
-        "x": 1254,
-        "y": 72
+        "x": 1131,
+        "y": 337
       },
       "windows": [
         {
-          "address": "0x561034dbf320",
+          "address": "0x561034f28de0",
           "class": "kitty",
           "at": [
             141,
@@ -1089,18 +3325,248 @@
           ],
           "focused": true
         }
-      ]
+      ],
+      "desktopFocus": {
+        "protocol": 1,
+        "capturing": true,
+        "surfaces": [
+          {
+            "requested": true,
+            "grabbed": true,
+            "windowActive": true,
+            "viewFocused": true,
+            "events": [
+              {
+                "event": "start",
+                "ms": 0,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "keyboard",
+                "ms": 1829,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "grab-cleared",
+                "ms": 3410,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "grab",
+                "ms": 3410,
+                "requested": true,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "request",
+                "ms": 3410,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 3410,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 3411,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 3411,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "keyboard",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 6977,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 6977,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "grab-cleared",
+                "ms": 8237,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "grab",
+                "ms": 8237,
+                "requested": true,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "request",
+                "ms": 8237,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 8237,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 8237,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 8237,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 8237,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 8237,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "keyboard",
+                "ms": 8238,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              }
+            ]
+          }
+        ]
+      }
     },
     {
-      "time": 10.435,
-      "active": "0x561034dbf320",
+      "time": 10.949,
+      "active": "0x561034f28de0",
       "cursor": {
-        "x": 1192,
-        "y": 126
+        "x": 1186,
+        "y": 332
       },
       "windows": [
         {
-          "address": "0x561034dbf320",
+          "address": "0x561034f28de0",
           "class": "kitty",
           "at": [
             141,
@@ -1137,18 +3603,248 @@
           ],
           "focused": true
         }
-      ]
+      ],
+      "desktopFocus": {
+        "protocol": 1,
+        "capturing": true,
+        "surfaces": [
+          {
+            "requested": true,
+            "grabbed": true,
+            "windowActive": true,
+            "viewFocused": true,
+            "events": [
+              {
+                "event": "start",
+                "ms": 0,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "keyboard",
+                "ms": 1829,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "grab-cleared",
+                "ms": 3410,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "grab",
+                "ms": 3410,
+                "requested": true,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "request",
+                "ms": 3410,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 3410,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 3411,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 3411,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "keyboard",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 6977,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 6977,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "grab-cleared",
+                "ms": 8237,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "grab",
+                "ms": 8237,
+                "requested": true,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "request",
+                "ms": 8237,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 8237,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 8237,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 8237,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 8237,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 8237,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "keyboard",
+                "ms": 8238,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              }
+            ]
+          }
+        ]
+      }
     },
     {
-      "time": 10.956,
-      "active": "0x561034dbf320",
+      "time": 11.497,
+      "active": "0x561034f28de0",
       "cursor": {
-        "x": 1192,
-        "y": 126
+        "x": 1153,
+        "y": 329
       },
       "windows": [
         {
-          "address": "0x561034dbf320",
+          "address": "0x561034f28de0",
           "class": "kitty",
           "at": [
             141,
@@ -1185,18 +3881,256 @@
           ],
           "focused": true
         }
-      ]
+      ],
+      "desktopFocus": {
+        "protocol": 1,
+        "capturing": true,
+        "surfaces": [
+          {
+            "requested": true,
+            "grabbed": true,
+            "windowActive": true,
+            "viewFocused": true,
+            "events": [
+              {
+                "event": "start",
+                "ms": 0,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "keyboard",
+                "ms": 1829,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "grab-cleared",
+                "ms": 3410,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "grab",
+                "ms": 3410,
+                "requested": true,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "request",
+                "ms": 3410,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 3410,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 3411,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 3411,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "keyboard",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 6977,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 6977,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "grab-cleared",
+                "ms": 8237,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "grab",
+                "ms": 8237,
+                "requested": true,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "request",
+                "ms": 8237,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 8237,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 8237,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 8237,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 8237,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 8237,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "keyboard",
+                "ms": 8238,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "desktop-press",
+                "ms": 11138,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              }
+            ]
+          }
+        ]
+      }
     },
     {
-      "time": 11.481,
-      "active": "0x561034dbf320",
+      "time": 12.045,
+      "active": "0x561034f28de0",
       "cursor": {
-        "x": 1192,
-        "y": 126
+        "x": 994,
+        "y": 334
       },
       "windows": [
         {
-          "address": "0x561034dbf320",
+          "address": "0x561034f28de0",
           "class": "kitty",
           "at": [
             141,
@@ -1233,55 +4167,325 @@
           ],
           "focused": true
         }
-      ]
-    },
-    {
-      "time": 12.006,
-      "active": "0x561034dbf320",
-      "cursor": {
-        "x": 1192,
-        "y": 126
-      },
-      "windows": [
-        {
-          "address": "0x561034dbf320",
-          "class": "kitty",
-          "at": [
-            141,
-            85
-          ],
-          "size": [
-            998,
-            518
-          ],
-          "tags": [],
-          "mapped": true,
-          "floating": true,
-          "hidden": false,
-          "monitor": 0,
-          "workspace": 1,
-          "fullscreen": 0,
-          "fullscreenClient": 0
-        }
       ],
-      "monitors": [
-        {
-          "id": 0,
-          "x": 0,
-          "y": 0,
-          "width": 1920,
-          "height": 1080,
-          "scale": 1.5,
-          "transform": 0,
-          "reserved": [
-            0,
-            40,
-            0,
-            72
-          ],
-          "focused": true
-        }
-      ]
+      "desktopFocus": {
+        "protocol": 1,
+        "capturing": false,
+        "surfaces": [
+          {
+            "requested": true,
+            "grabbed": true,
+            "windowActive": false,
+            "viewFocused": false,
+            "events": [
+              {
+                "event": "start",
+                "ms": 0,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 1828,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 1828,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "keyboard",
+                "ms": 1829,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "grab-cleared",
+                "ms": 3410,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "grab",
+                "ms": 3410,
+                "requested": true,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "request",
+                "ms": 3410,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 3410,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 3411,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 3411,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "keyboard",
+                "ms": 3411,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 6977,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 6977,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "grab-cleared",
+                "ms": 8237,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "grab",
+                "ms": 8237,
+                "requested": true,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "request",
+                "ms": 8237,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 8237,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 8237,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 8237,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 8237,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 8237,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": true
+              },
+              {
+                "event": "keyboard",
+                "ms": 8238,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "desktop-press",
+                "ms": 11138,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "grab-cleared",
+                "ms": 11885,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "grab",
+                "ms": 11885,
+                "requested": true,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "request",
+                "ms": 11885,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 11885,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "desktop-press",
+                "ms": 11885,
+                "requested": false,
+                "grabbed": false,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "grab",
+                "ms": 11885,
+                "requested": false,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "request",
+                "ms": 11885,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "view",
+                "ms": 11885,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": true
+              },
+              {
+                "event": "view",
+                "ms": 11886,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": true,
+                "viewFocused": false
+              },
+              {
+                "event": "keyboard",
+                "ms": 11886,
+                "requested": true,
+                "grabbed": true,
+                "windowActive": false,
+                "viewFocused": false
+              }
+            ]
+          }
+        ]
+      }
     }
   ]
 }
