@@ -10,6 +10,7 @@ TestCase {
     Component{id:windowFactory;FilesWindow{visible:false;width:440;height:326}}
     Component{id:spyFactory;SignalSpy{}}
     Component{id:controlFactory;Item{width:96;height:96;FileWindowControl{objectName:"test-control";width:24;height:24}}}
+    Component{id:frameFactory;Item{width:720;height:360;FileFrame{objectName:"test-frame";width:240;height:120;maximized:true}}}
     function init(){failOnWarning(/.*/)}
     function test_actual_native_window_loads_with_eight_resize_handles(){
         const model=setup(),window=createTemporaryObject(windowFactory,testCase,{browserModel:model})
@@ -45,9 +46,21 @@ TestCase {
             compare(design.scale,1);compare(design.width,view.width);compare(design.height,view.height)
             compare(button.width,before.width);compare(button.height,before.height)
             compare(grid.cellWidth,before.cellWidth);compare(grid.cellHeight,before.cellHeight)
-            compare(frame.edgeInset,0.5)
+            compare(frame.edgeInset,2.5)
         }
         view.maximized=false;compare(frame.edgeInset,2.5)
+    }
+    function test_maximized_frame_keeps_all_four_edges_visible(){
+        const host=createTemporaryObject(frameFactory,testCase),frame=findChild(host,"test-frame")
+        waitForRendering(frame)
+        const image=grabImage(host),ratio=Screen.devicePixelRatio
+        const near=Math.floor(frame.edgeInset*ratio),farX=Math.floor((frame.width-frame.edgeInset)*ratio),farY=Math.floor((frame.height-frame.edgeInset)*ratio)
+        const midX=Math.floor(frame.width*ratio/2),midY=Math.floor(frame.height*ratio/2)
+        // The inset must fit the full glow, not just the 1px border centerline.
+        verify(frame.edgeInset>=2.5)
+        for(const point of [[near,midY],[farX,midY],[midX,near],[midX,farY]]) {
+            verify(image.red(point[0],point[1])<80 && image.green(point[0],point[1])>80,"프레임 변이 잘리면 안 됨: "+point)
+        }
     }
     function test_window_control_paths_have_matching_visible_extent(){
         const host=createTemporaryObject(controlFactory,testCase),control=findChild(host,"test-control")

@@ -6,7 +6,8 @@ Shape {
     id: root
     objectName: "files-frame"
     property bool maximized: false
-    readonly property real edgeInset: maximized ? 0.5 : 2.5
+    // Keep the widest (5px) glow stroke inside the native window on every side.
+    readonly property real edgeInset: 2.5
     readonly property string outline: {
         const e=edgeInset,w=width-e,h=height-e,cut=maximized ? 0 : 6
         return "M "+(e+cut)+" "+e+" H "+(w-cut)+" L "+w+" "+(e+cut)+" V "+(h-cut)+" L "+(w-cut)+" "+h+" H "+e+" V "+(e+cut)+" Z"

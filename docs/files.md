@@ -58,6 +58,8 @@ Dock의 파일 아이콘, 바탕화면 Home/Projects/Trash, 기본 폴더 열기
 
 로컬 Qt 검사에서 100/125/150/200% 배율의 버튼 표시 폭과 창 확대 전후 고정 UI 크기를 확인했다. 실제 Hyprland의 GPU 표시와 상단 작업 영역은 노트북에서 확인해야 한다. Files 위에 숨긴 외부 제목 표시줄의 24px 예약 공간을 제거하려면 `bash scripts/setup-titlebars.sh --install-hyprbars`로 수정 플러그인을 다시 빌드한 뒤 Files 창을 닫고 다시 연다. 이 명령은 기존 hyprbars 사용 환경에서 실행한다.
 
+최대화 때도 프레임 경로를 네 변에서 2.5px 안쪽에 둔다. 5px 발광 선의 절반이 창 밖으로 잘리지 않도록 하며, 최대화의 각진 형태와 작업 영역 크기는 유지한다. 100/125/150/200% 배율의 Qt 렌더링 검사에서 위·아래·왼쪽·오른쪽 테두리를 각각 확인한다.
+
 ```bash
 bash scripts/verify-files.sh
 python3 scripts/files-client.py "$HOME"
