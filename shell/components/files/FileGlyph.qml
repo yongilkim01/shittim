@@ -4,17 +4,19 @@ import "../../ui"
 Canvas {
     property string glyph: "folder"
     property color ink: Theme.textSecondary
+    property bool windowControl: false
     onGlyphChanged: requestPaint()
     onInkChanged: requestPaint()
+    onWindowControlChanged: requestPaint()
     onWidthChanged: requestPaint()
     onHeightChanged: requestPaint()
     onPaint: {
         const c=getContext("2d"); c.reset(); c.scale(width/16,height/16)
-        c.strokeStyle=ink; c.fillStyle=ink; c.lineWidth=1.15; c.lineCap="square"; c.lineJoin="miter"
+        c.strokeStyle=ink; c.fillStyle=ink; c.lineWidth=windowControl ? 1.25 : 1.15; c.lineCap="square"; c.lineJoin="miter"
         function line(points) { c.beginPath(); c.moveTo(points[0],points[1]); for(let i=2;i<points.length;i+=2)c.lineTo(points[i],points[i+1]); c.stroke() }
-        if(glyph==="close") { line([5,5,11,11]); line([11,5,5,11]) }
-        else if(glyph==="minimize") line([4,9,12,9])
-        else if(glyph==="maximize") c.strokeRect(4.5,4.5,7,7)
+        if(glyph==="close") { const a=windowControl ? 3 : 5,b=windowControl ? 13 : 11; line([a,a,b,b]); line([b,a,a,b]) }
+        else if(glyph==="minimize") line(windowControl ? [3,9,13,9] : [4,9,12,9])
+        else if(glyph==="maximize") { if(windowControl)c.strokeRect(3.5,3.5,9,9);else c.strokeRect(4.5,4.5,7,7) }
         else if(glyph==="restore") { c.strokeRect(3.5,6.5,6,6); line([6,6,6,3.5,12.5,3.5,12.5,10,10,10]) }
         else if(glyph==="back") line([10,3,5,8,10,13])
         else if(glyph==="forward") line([6,3,11,8,6,13])

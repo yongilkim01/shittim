@@ -96,9 +96,9 @@ FocusScope {
         }
         Row {
             anchors.right:parent.right;anchors.rightMargin:7;y:8;spacing:2
-            FileButton { objectName:"files-minimize";glyph:"minimize";hint:"최소화";onClicked:root.minimizeRequested() }
-            FileButton { objectName:"files-maximize";glyph:root.maximized ? "restore" : "maximize";hint:"최대화 / 복원";onClicked:root.maximizeRequested() }
-            FileButton { objectName:"files-close";glyph:"close";hint:"닫기";onClicked:root.closeRequested() }
+            FileButton { objectName:"files-minimize";windowControl:true;glyph:"minimize";hint:"최소화";onClicked:root.minimizeRequested() }
+            FileButton { objectName:"files-maximize";windowControl:true;glyph:root.maximized ? "restore" : "maximize";hint:"최대화 / 복원";onClicked:root.maximizeRequested() }
+            FileButton { objectName:"files-close";windowControl:true;glyph:"close";hint:"닫기";onClicked:root.closeRequested() }
         }
         Rectangle { x:4;y:36;width:parent.width-8;height:1;color:"#0a303a" }
         FileButton { x:8;y:39;glyph:"back";hint:"뒤로";enabled:root.model.current!==null && root.model.current.position>0;onClicked:root.model.history(-1) }
