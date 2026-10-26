@@ -13,8 +13,8 @@ hl.config({
     } },
 })
 -- Right to left; actions use the existing Shittim window controller.
-hl.plugin.hyprbars.add_button({ bg_color = "rgba(00000000)", fg_color = "rgb(00d9f5)", size = 18, icon = "×", action = __CLOSE__ })
+hl.plugin.hyprbars.add_button({ bg_color = "rgba(00000000)", fg_color = "rgb(00d9f5)", size = 24, icon = "×", action = __CLOSE__ })
 hl.plugin.hyprbars.add_button({ bg_color = "rgba(00000000)", fg_color = "rgb(00d9f5)", size = 18, icon = "□", action = __MAXIMIZE__ })
-hl.plugin.hyprbars.add_button({ bg_color = "rgba(00000000)", fg_color = "rgb(00d9f5)", size = 18, icon = "−", action = __HIDE__ })
+hl.plugin.hyprbars.add_button({ bg_color = "rgba(00000000)", fg_color = "rgb(00d9f5)", size = 24, icon = "−", action = __HIDE__ })
 -- Apps without a custom headerbar can use the compositor titlebar on next launch.
 hl.env("GTK_CSD", "0")
