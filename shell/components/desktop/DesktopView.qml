@@ -14,7 +14,10 @@ FocusScope {
     signal requested(string operation,var values)
     signal positionsSaved(var positions)
     signal refreshRequested()
+    signal focusRequested()
     DesktopModel { id:selection; entries:root.entries; saved:root.saved; areaWidth:root.width; areaHeight:root.height; onPositionsChangedByUser: values=>root.positionsSaved(values) }
+    function takeFocus() { focusRequested(); forceActiveFocus() }
+    function releaseFocus() { menu.close(); prompt.close(); focus=false }
     function request(action) {
         menu.close()
         if (action === "rename" || action === "folder") { prompt.operation=action; prompt.open(); field.text=action === "rename" && selection.selected.length===1 ? (entries.find(entry=>entry.id===selection.selected[0]) || {}).name || "" : ""; field.forceActiveFocus(); field.selectAll() }
@@ -34,7 +37,7 @@ FocusScope {
     MouseArea {
         id:blank; anchors.fill:parent; acceptedButtons:Qt.LeftButton|Qt.RightButton
         property real startX:0; property real startY:0
-        onPressed: mouse=>{ root.forceActiveFocus(); startX=mouse.x; startY=mouse.y; if (!(mouse.modifiers&Qt.ControlModifier)) selection.selected=[] }
+        onPressed: mouse=>{ root.takeFocus(); startX=mouse.x; startY=mouse.y; if (!(mouse.modifiers&Qt.ControlModifier)) selection.selected=[] }
         onPositionChanged: mouse=>{ if (pressedButtons&Qt.LeftButton) selection.selectRect(Math.min(startX,mouse.x),Math.min(startY,mouse.y),Math.abs(mouse.x-startX),Math.abs(mouse.y-startY),Boolean(mouse.modifiers&Qt.ControlModifier)) }
         onClicked: mouse=>{ if (mouse.button===Qt.RightButton) { menu.x=Math.max(0,Math.min(root.width-210,mouse.x)); menu.y=Math.max(0,Math.min(root.height-300,mouse.y)); menu.open() } }
     }
@@ -70,7 +73,7 @@ FocusScope {
             MouseArea {
                 id:mouse; objectName:"desktop-icon-"+icon.modelData.id; anchors.fill:parent; acceptedButtons:Qt.LeftButton|Qt.RightButton
                 drag.target:icon; drag.threshold:8
-                onPressed: event=>{ root.forceActiveFocus(); selection.select(icon.modelData.id,Boolean(event.modifiers&Qt.ControlModifier)); icon.originX=icon.x; icon.originY=icon.y }
+                onPressed: event=>{ root.takeFocus(); selection.select(icon.modelData.id,Boolean(event.modifiers&Qt.ControlModifier)); icon.originX=icon.x; icon.originY=icon.y }
                 onReleased: event=>{
                     if (event.button===Qt.LeftButton) {
                         const dx=icon.x-icon.originX,dy=icon.y-icon.originY
@@ -87,7 +90,7 @@ FocusScope {
         }
     }
     Controls.Popup {
-        id:menu; width:210; padding:6; closePolicy:Controls.Popup.CloseOnEscape|Controls.Popup.CloseOnPressOutside
+        id:menu;objectName:"desktop-context-menu"; width:210; padding:6; closePolicy:Controls.Popup.CloseOnEscape|Controls.Popup.CloseOnPressOutside
         background:ControlFrame { fillColor:Theme.floatingSurface; strokeColor:Theme.accentDim }
         contentItem:Column {
             spacing:3
@@ -103,7 +106,7 @@ FocusScope {
         }
     }
     Controls.Popup {
-        id:prompt; property string operation:""; width:Math.min(340,root.width); height:112; anchors.centerIn:parent; modal:true; closePolicy:Controls.Popup.CloseOnEscape
+        id:prompt;objectName:"desktop-name-prompt"; property string operation:""; width:Math.min(340,root.width); height:112; anchors.centerIn:parent; modal:true; closePolicy:Controls.Popup.CloseOnEscape
         background:ControlFrame { fillColor:Theme.floatingSurface; strokeColor:Theme.accentDim }
         HudInput { id:field; x:10; y:10; width:prompt.width-20; height:36; onAccepted:submit.clicked() }
         HudButton { id:submit; x:10; y:58; width:120; height:32; text:"확인"; onClicked:{root.requested(prompt.operation,{ids:selection.selected,name:field.text});prompt.close()} }

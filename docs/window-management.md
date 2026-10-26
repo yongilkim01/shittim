@@ -55,3 +55,11 @@ bash scripts/share-window-diagnostics.sh --publish
 ## 개발 환경 검사 범위
 
 격리된 Linux 테스트에서 창별 최대화·복원·숨김·실패 복구·모니터 작업 영역 계산을 검사한다. Lua 포인터 관찰자는 실제 Lua 인터프리터에서 검사한다. Windows Qt에서는 Files 크기 변경이 다른 축의 크기를 바꾸거나 창 닫기 신호를 내지 않는지, 버튼/테두리와 기존 셸 UI를 검사한다. 실제 Hyprland 포커스·Wayland configure·플러그인 GPU 렌더링·다중 모니터 조작은 위 노트북 절차로 검증한다.
+
+## 2026-10-26 재현 로그 분석
+
+`diagnostics/windows-latest.json`의 첫 Files 창은 3.649초에 `(422,153)`·`436×382`, 포인터는 `(821,175)`였다. 4.170초에는 창 목록에서 빠졌다. 숨김이나 다른 작업 공간으로 이동한 상태가 아니다. 이 포인터는 Files 자체 최대화 버튼 안이면서, 높이 0으로 숨긴 hyprbars의 닫기 입력 범위 안이기도 하다. 기존 플러그인은 그리기에서는 `decorate=false`를 검사했지만 입력에서는 검사하지 않고 설정 높이 24px를 사용했다. `input-gate.cpp.inc`로 그리기·예약 공간과 입력의 활성 조건을 맞춘다. 재생성한 native 플러그인 설치가 필요하다.
+
+바탕화면은 기존에 항상 keyboard interactivity `OnDemand`였다. Hyprland 0.55/0.56의 `rawSurfaceFocus`는 바탕화면 surface에 키보드를 전달하면서 마지막 활성 앱을 유지하고, 마우스 클릭 경로는 클릭한 앱과 마지막 앱이 같으면 window refocus를 생략한다. 그 결과 `activewindow`가 Kitty여도 실제 키보드 surface는 바탕화면에 남을 수 있다. 바탕화면 입력은 명시적으로 선택·편집할 때만 활성화하고, 기존 셸 패널과 같은 `HyprlandFocusGrab`으로 외부 클릭에서 입력을 반환한다. 기본 상태와 입력 반환 후에는 interactivity `None`을 사용한다. 바탕화면 단축키·이름 변경 입력은 유지하며, 앱을 여는 동작은 실행 전에 grab을 해제한다. 공식 [surface 포커스 처리](https://github.com/hyprwm/Hyprland/blob/v0.56.0/src/desktop/state/FocusState.cpp#L201)와 [마우스 클릭 처리](https://github.com/hyprwm/Hyprland/blob/v0.56.0/src/managers/input/InputManager.cpp#L807)를 대조했다.
+
+노트북에서는 창을 닫는 정상 동작으로 Files를 종료한 뒤 셸과 플러그인을 갱신한다. 이후 같은 최대화 버튼의 왼쪽·가운데·오른쪽을 각각 눌러 보이지 않는 외부 닫기 버튼이 더 이상 반응하지 않는지 확인한다. Kitty → 빈 바탕화면 → 같은 Kitty와 Kitty → 바탕화면 아이콘 → 다른 앱 전환을 각각 검사한다. 로컬 버튼 geometry·입력 조건·DesktopView 검사는 실제 Wayland 입력 검증을 대신하지 않는다.

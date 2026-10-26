@@ -78,4 +78,30 @@ TestCase {
         view.trashAvailable=false
         mouseClick(findChild(view,"dock-trash"),15,15); compare(trash.count,1)
     }
+    function test_desktop_focus_is_explicit_and_released_without_losing_selection() {
+        const view=createTemporaryObject(desktopFactory,testCase,{entries:entries()})
+        const focus=createTemporaryObject(spyFactory,testCase,{target:view,signalName:"focusRequested"})
+        const requested=createTemporaryObject(spyFactory,testCase,{target:view,signalName:"requested"})
+        mouseClick(view,750,450);compare(focus.count,1);verify(view.activeFocus)
+        view.releaseFocus();verify(!view.activeFocus)
+        mouseClick(findChild(view,"desktop-icon-home"),30,30);compare(focus.count,2)
+        compare(view.model.selected[0],"home")
+        view.releaseFocus();verify(!view.activeFocus);compare(view.model.selected[0],"home")
+        keyClick(Qt.Key_C,Qt.ControlModifier);compare(requested.count,0)
+        view.takeFocus();compare(focus.count,3)
+        keyClick(Qt.Key_C,Qt.ControlModifier);compare(requested.count,1)
+        compare(requested.signalArguments[0][0],"copy")
+    }
+    function test_returning_input_closes_desktop_popups_without_applying_file_changes() {
+        const view=createTemporaryObject(desktopFactory,testCase,{entries:entries()})
+        const requested=createTemporaryObject(spyFactory,testCase,{target:view,signalName:"requested"})
+        mouseClick(view,750,450,Qt.RightButton)
+        const menu=findChild(view,"desktop-context-menu"),prompt=findChild(view,"desktop-name-prompt")
+        tryCompare(menu,"visible",true)
+        view.releaseFocus();tryCompare(menu,"visible",false);verify(!view.activeFocus)
+        view.takeFocus();view.model.selected=[entries()[1].id];view.request("rename")
+        tryCompare(prompt,"visible",true)
+        view.releaseFocus();tryCompare(prompt,"visible",false);verify(!view.activeFocus)
+        compare(requested.count,0)
+    }
 }
