@@ -6,17 +6,23 @@ Window {
         required property var browserModel
         property var iconSource: function(entry) { return "" }
         property bool managedMaximize: false
+        property bool controlBusy: false
         property bool maximized: window.visibility===Window.Maximized
         signal minimizeRequested()
         signal maximizeRequested()
         visible:true;title:(window.browserModel.current ? window.browserModel.current.name+" — " : "")+"Shittim Files"
         flags:Qt.Window|Qt.FramelessWindowHint|Qt.NoDropShadowWindowHint;color:"transparent"
-        width:Math.min(Screen.desktopAvailableWidth-24,Math.max(440,Math.min(860,Screen.width*0.34)))
-        height:Math.min(Screen.desktopAvailableHeight-32,width*326/440)
+        width:440;height:326
+        // Initial geometry only. A live height/width aspect binding fights compositor resizes.
+        Component.onCompleted: {
+            const initialWidth=Math.min(Screen.desktopAvailableWidth-24,Math.max(440,Math.min(860,Screen.width*0.34)))
+            width=initialWidth
+            height=Math.min(Screen.desktopAvailableHeight-32,initialWidth*326/440)
+        }
         minimumWidth:Math.min(400,Screen.desktopAvailableWidth-24);minimumHeight:Math.min(280,Screen.desktopAvailableHeight-32)
         FilesView {
-            id:view;anchors.fill:parent;model:window.browserModel;iconSource:window.iconSource;maximized:window.maximized;focus:true
-            onDragRequested:window.startSystemMove()
+            id:view;anchors.fill:parent;model:window.browserModel;iconSource:window.iconSource;maximized:window.maximized;windowControlBusy:window.controlBusy;focus:true
+            onDragRequested:if(!window.controlBusy)window.startSystemMove()
             onMinimizeRequested:window.minimizeRequested()
             onMaximizeRequested:{if(window.managedMaximize)window.maximizeRequested();else if(window.maximized)window.showNormal();else window.showMaximized()}
             onCloseRequested:window.close()

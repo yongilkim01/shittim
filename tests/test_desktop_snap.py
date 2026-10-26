@@ -19,7 +19,7 @@ get_monitors=function() return {{id=0,width=1920,height=1080,scale=1,transform=0
 timer=function(fn,opts) callback=fn; return {set_enabled=function() end} end,
 bind=function(key,fn,opts) assert(opts.non_consuming and opts.transparent and opts.ignore_mods); binds[opts.release and 'release' or 'press']=fn end,
 on=function() end,dispatch=function(action) table.insert(actions,action) end,
-dsp={window={resize=function(v) return v end,move=function(v) return v end,fullscreen=function(v) return v end}}}
+dsp={event=function(v) return {event=v} end,window={tag=function(v) return v end,resize=function(v) return v end,move=function(v) return v end,fullscreen=function(v) return v end}}}
 '''
         body=(ROOT/'config/desktop-snap.lua').read_text().replace('__SHITTIM_SNAP_COMMAND__','"snap"')
         checks='''
@@ -37,6 +37,13 @@ w.at={x=110,y=110}; pointer={x=130,y=130}; callback(); assert(#actions>=2 and ac
 binds.release()
 commands={}; pointer={x=130,y=130}; binds.press(); callback(); w.size={x=900,y=700}; callback(); binds.release()
 for _,cmd in ipairs(commands) do assert(not cmd:find('commit')) end
+-- A managed maximized window restores its own record while dragging, including after reload.
+commands={};actions={};w.tags={'shittim-maximized','shittim-restore_300_100_800_500_1'}
+w.at={x=8,y=48};w.size={x=1904,y=946};pointer={x=108,y=60};binds.press();callback()
+w.at={x=108,y=148};pointer={x=208,y=160};callback()
+assert(actions[1].x==800 and actions[1].y==500)
+assert(actions[3].tag=='-shittim-maximized' and actions[4].tag=='-shittim-restore_300_100_800_500_1')
+assert(actions[5].event=='shittim-window-state,0xabc');binds.release()
 '''
         result=subprocess.run(['lua','-'],input=prelude+body+checks,text=True,capture_output=True,timeout=5)
         self.assertEqual(result.returncode,0,result.stderr)

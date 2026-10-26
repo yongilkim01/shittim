@@ -24,6 +24,7 @@ Scope {
             title: window.title, appId: window.wayland ? window.wayland.appId : "",
             className: ipc.class || "", initialClass: ipc.initialClass || "",
             floating: Boolean(ipc.floating), fullscreen: Number(ipc.fullscreen || 0),
+            maximized: Number(ipc.fullscreen || 0)===1 || (ipc.tags || []).indexOf("shittim-maximized")>=0,
             monitor: Number(ipc.monitor), at: ipc.at || [0,0], size: ipc.size || [0,0],
             workspace: ipc.workspace ? ipc.workspace.name : "",
             hidden: ipc.workspace ? /^special:shittim-hidden-\d+-[0-3]-[0-3]-[0-9a-f]+$/.test(ipc.workspace.name) : false}
@@ -32,6 +33,7 @@ Scope {
     Component.onCompleted: {
         if (Hyprland.activeToplevel) recent = [Hyprland.activeToplevel.address]
         Hyprland.refreshToplevels()
+        workAreaRefresh.restart()
     }
     function close() { opened = false; cycling = false }
     function show(addresses, cycle, screen) {
@@ -86,8 +88,14 @@ Scope {
         }
         function onRawEvent(event) {
             if (event.name === "minimized" || event.name === "minimize") root.minimizeRequest(event.data)
-            if (["openwindow", "closewindow", "movewindow", "movewindowv2", "changefloatingmode", "fullscreen", "monitoradded", "monitorremoved"].indexOf(event.name) >= 0) refresh.restart()
+            if (["openwindow", "closewindow", "movewindow", "movewindowv2", "changefloatingmode", "fullscreen", "monitoradded", "monitorremoved"].indexOf(event.name) >= 0 || (event.name==="custom" && event.data.indexOf("shittim-window-state,")===0)) refresh.restart()
+            if (["monitoradded", "monitorremoved", "configreloaded", "fullscreen"].indexOf(event.name)>=0)workAreaRefresh.restart()
         }
+    }
+    Timer { id:workAreaRefresh;interval:700;onTriggered:if(!reflow.running)reflow.running=true }
+    Process {
+        id:reflow;command:["python3",Quickshell.shellDir+"/../scripts/window-service.py","reflow"]
+        onExited:Hyprland.refreshToplevels()
     }
     Connections { target: ControlState; function onOpenedChanged() { if (ControlState.opened) root.close() } }
     Connections { target: LauncherState; function onOpenedChanged() { if (LauncherState.opened) root.close() } }
@@ -105,6 +113,9 @@ Scope {
                 root.show([], 0)
                 root.error = reason === "CannotHideSpecialOrGroupedWindow" ? "고정·그룹·특수 워크스페이스 창은 숨기지 않습니다."
                     : reason === "WindowClosed" ? "창이 닫혔습니다. 다른 창을 선택하세요."
+                    : reason === "ExitFullscreenBeforeMaximize" ? "전체 화면을 해제한 뒤 최대화하세요."
+                    : reason === "CannotMaximizePinnedOrGroupedWindow" ? "고정·그룹 창은 먼저 고정 또는 그룹을 해제하세요."
+                    : reason === "InvalidRestoreGeometry" ? "이 창의 복원 위치를 읽지 못했습니다. 현재 창은 유지합니다."
                     : "창 명령이 실패했습니다. 창·모니터 상태를 확인하고 다시 선택하세요."
             }
             if (root.requests.length) requestTimer.restart()

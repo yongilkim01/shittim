@@ -22,7 +22,7 @@ class WindowActions(unittest.TestCase):
         def run(args, **kwargs):
             self.assertNotIn('shell', kwargs)
             if args[1] == '-j':
-                values = {'clients': [self.client], 'activewindow': self.client, 'monitors': [self.monitor], 'workspaces': self.workspaces}
+                values = {'clients': [self.client], 'activewindow': self.client, 'monitors': [self.monitor], 'workspaces': self.workspaces, 'decorations': []}
                 return Mock(stdout=json.dumps(values[args[2]]))
             self.commands.append(args)
             return Mock(stdout='ok\n')
@@ -76,8 +76,10 @@ class WindowActions(unittest.TestCase):
 
     def test_fullscreen_maximize_and_tiling_are_distinct(self):
         self.windows.action('maximize', 'abc'); self.windows.action('fullscreen', 'abc'); self.windows.action('tile', 'abc')
-        self.assertIn('mode="maximized"', self.commands[0][2]); self.assertIn('mode="fullscreen"', self.commands[1][2])
-        self.assertIn('window.float({action="toggle"', self.commands[2][2])
+        self.assertTrue(any('shittim-maximized' in command[2] for command in self.commands))
+        self.assertFalse(any('mode="maximized"' in command[2] for command in self.commands))
+        self.assertIn('mode="fullscreen"', self.commands[-2][2])
+        self.assertIn('window.float({action="toggle"', self.commands[-1][2])
         self.client['fullscreen'] = 2
         with self.assertRaisesRegex(ValueError, 'ExitFullscreenBeforeFit'): self.windows.action('fit', 'abc')
 

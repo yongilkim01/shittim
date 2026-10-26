@@ -7,6 +7,7 @@ FocusScope {
     required property var model
     property var iconSource: function(entry) { return "" }
     property bool maximized: false
+    property bool windowControlBusy: false
     property bool editingAddress: false
     property bool searching: false
     signal minimizeRequested()
@@ -82,8 +83,8 @@ FocusScope {
         }
         Row {
             anchors.right:parent.right;anchors.rightMargin:7;y:8;spacing:2
-            FileButton { objectName:"files-minimize";windowControl:true;glyph:"minimize";hint:"최소화";onClicked:root.minimizeRequested() }
-            FileButton { objectName:"files-maximize";windowControl:true;glyph:root.maximized ? "restore" : "maximize";hint:"최대화 / 복원";onClicked:root.maximizeRequested() }
+            FileButton { objectName:"files-minimize";windowControl:true;glyph:"minimize";hint:"최소화";enabled:!root.windowControlBusy;onClicked:root.minimizeRequested() }
+            FileButton { objectName:"files-maximize";windowControl:true;glyph:root.maximized ? "restore" : "maximize";hint:root.maximized ? "복원" : "최대화";enabled:!root.windowControlBusy;onClicked:root.maximizeRequested() }
             FileButton { objectName:"files-close";windowControl:true;glyph:"close";hint:"닫기";onClicked:root.closeRequested() }
         }
         Rectangle { x:4;y:36;width:parent.width-8;height:1;color:"#0a303a" }

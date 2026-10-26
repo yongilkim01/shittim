@@ -60,7 +60,7 @@ ShellRoot {
     Component.onCompleted:Hyprland.refreshToplevels()
     Connections {
         target:Hyprland
-        function onRawEvent(event) { if(["fullscreen","openwindow","closewindow","movewindow","movewindowv2"].indexOf(event.name)>=0)windowRefresh.restart() }
+        function onRawEvent(event) { if(["fullscreen","openwindow","closewindow","movewindow","movewindowv2","activewindowv2"].indexOf(event.name)>=0 || (event.name==="custom" && event.data.indexOf("shittim-window-state,")===0))windowRefresh.restart() }
     }
     Process {
         id:control
@@ -69,8 +69,9 @@ ShellRoot {
     }
     FilesWindow {
         id:window;browserModel:filesModel;iconSource:root.icon
+        controlBusy:control.running
         managedMaximize:true
-        maximized:root.ownWindow!==null && Number(root.ownWindow.lastIpcObject.fullscreen)===1
+        maximized:root.ownWindow!==null && (Number(root.ownWindow.lastIpcObject.fullscreen)===1 || (root.ownWindow.lastIpcObject.tags || []).indexOf("shittim-maximized")>=0)
         onMinimizeRequested:root.windowAction("hide")
         onMaximizeRequested:root.windowAction("maximize")
         onClosing:Qt.quit()

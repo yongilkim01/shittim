@@ -22,6 +22,7 @@ hl.window_rule({
     size = { "(monitor_w*0.34)", "(monitor_h*0.53)" },
     decorate = false, border_size = 0, rounding = 0, no_shadow = true,
 })
+hl.window_rule({ name = "shittim-maximized-frame", match = { tag = "shittim-maximized" }, rounding = 0 })
 hl.config({
     general = { resize_on_border = true, extend_border_grab_area = 8, hover_icon_on_border = true, border_size = 1, gaps_out = 4,
                 snap = { enabled = true, window_gap = 10, monitor_gap = 10 },
@@ -32,7 +33,8 @@ hl.config({
         glow = { enabled = true, range = 2, render_power = 3,
                  color = "rgba(00d9f518)", color_inactive = "rgba(00d9f50c)" },
     },
-    input = { follow_mouse = 0 },
+    -- Pointer motion reaches the hovered app; keyboard focus changes on click.
+    input = { follow_mouse = 2, float_switch_override_focus = 0, focus_on_close = 2 },
     cursor = { no_warps = true },
 })
 -- Dock geometry and input masks are managed by QML, without compositor stretching.
@@ -47,5 +49,5 @@ bind("SUPER + mouse:272", hl.dsp.window.drag(), { mouse = true })
 bind("SUPER + mouse:273", hl.dsp.window.resize(), { mouse = true })
 bind("SUPER + C", hl.dsp.window.close())
 bind("SUPER + V", hl.dsp.window.float({ action = "toggle" }))
-bind("SUPER + UP", hl.dsp.window.fullscreen({ mode = "maximized", action = "toggle" }))
+-- Super+Up is installed through the shared window controller below.
 bind("SUPER + F", hl.dsp.window.fullscreen({ mode = "fullscreen", action = "toggle" }))

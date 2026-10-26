@@ -32,7 +32,7 @@ bash scripts/verify-desktop-ux.sh --dry-run
 
 창 규칙은 시작 시 한 번 적용하므로 이후 특정 창을 Tiling으로 전환할 수 있다. 앱의 전체 화면·최대화 요청을 억제하거나 전체 화면 상태를 0으로 강제하는 규칙은 추가하지 않는다. 명시적인 `game` 콘텐츠 창도 일반 창 크기 규칙에서 제외한다. 게임이 콘텐츠 유형이나 전체 화면 의도를 늦게 알리는 경우에는 실제 게임에서 확인해야 한다.
 
-클릭 포커스(`input.follow_mouse=0`), 얇은 시안 활성 테두리, 테두리 크기 조절 및 커서, 모니터/창 사이 자석 정렬을 설정한다. `general.snap`은 **가까운 경계에 붙이는 정렬**이다. 화면 절반·사분면으로 자동 크기 변경하는 Windows식 Aero Snap은 구현하지 않았다.
+클릭 포커스는 `input.follow_mouse=2`, `float_switch_override_focus=0`으로 설정한다. 포인터 이벤트는 커서 아래 앱으로 전달하고 키보드 포커스는 클릭으로 바꾼다. 창을 닫으면 최근 사용한 창으로 포커스를 옮긴다. 얇은 시안 활성 테두리, 테두리 크기 조절 및 커서, 모니터/창 사이 자석 정렬을 유지한다. `general.snap`은 가까운 경계에 붙이는 정렬이며, 화면 절반·사분면·상단 최대화는 별도 `desktop-snap.lua`가 처리한다.
 
 모니터 사이 드래그를 허용하기 위해 창을 한 모니터 안에 영구 고정하지 않는다. Dock/창 목록에서 활성화할 때 모든 모니터 작업 영역 밖에 있는 일반 Floating 창은 다시 화면 안으로 정렬한다. 창 목록의 정렬 버튼은 바의 예약 영역·배율·회전·음수 좌표를 반영해 크기/위치를 복구한다. 전체 화면 창은 이 보정을 적용하지 않는다. 앱이 강제하는 최소 크기 때문에 작은 화면에서 완전히 맞추지 못할 수 있다.
 
@@ -67,7 +67,7 @@ Dock은 기존 고정 앱 순서를 유지하고 식별 가능한 실행 앱을 
 
 숨김은 실제 `window.move({workspace=...,follow=false})`로 창마다 별도의 `special:shittim-hidden-<원래 워크스페이스>-<내부 FS>-<클라이언트 FS>-<주소>`에 옮긴다. 일반 워크스페이스로 복원하고 포커스·Z 순서를 올린다. 원래 워크스페이스가 사라졌으면 현재 포커스된 모니터의 일반 워크스페이스를 사용한다. 제목·파일명·탭 정보 등을 디스크에 저장하지 않는다. Shittim 재시작 뒤에도 컴포지터의 실제 특수 워크스페이스 이름에서 복원 정보를 읽는다. 고정(pin)·그룹·사용자 특수 워크스페이스 창은 그룹/배치를 손상시키지 않도록 숨김을 거부한다.
 
-최대화(`mode="maximized"`)와 전체 화면(`mode="fullscreen"`)은 [0.55 공식 디스패처](https://wiki.hypr.land/0.55.0/Configuring/Basics/Dispatchers/)로 별도로 처리한다. 닫기는 `window.close()`의 정상 종료 요청이며 SIGKILL하지 않는다. 모든 제어는 검증한 16진 창 주소와 고정된 동작만 배열 인수로 `hyprctl`에 전달한다. 앱 제목을 Lua나 셸 명령으로 결합하지 않는다. `follow=false`, `release`, `non_consuming`, `ignore_mods`는 공식 v0.55.0 Lua 구현에서도 확인했다.
+최대화는 각 창의 기존 위치·크기·Floating 여부를 컴포지터의 전용 태그에 기록하고 실제 모니터 작업 영역에 맞추는 방식이다. 같은 작업 공간의 여러 창을 동시에 최대화해도 다른 창의 상태를 해제하지 않는다. 전체 화면만 [공식 디스패처](https://wiki.hypr.land/0.55.0/Configuring/Basics/Dispatchers/)의 `mode="fullscreen"`을 사용한다. 닫기는 `window.close()`의 정상 종료 요청이며 SIGKILL하지 않는다. 모든 제어는 검증한 16진 창 주소와 고정된 동작만 배열 인수로 `hyprctl`에 전달한다. 앱 제목을 Lua나 셸 명령으로 결합하지 않는다. `follow=false`, `release`, `non_consuming`, `ignore_mods`는 공식 v0.55.0 Lua 구현에서도 확인했다. 적용·회귀 검사와 제한은 [창 관리 검증](window-management.md)에 정리한다.
 
 **앱 자체 최소화 버튼은 공통 지원 완료가 아니다.** 확인한 Hyprland v0.55.0의 [`CWindow::onUpdateState`](https://github.com/hyprwm/Hyprland/blob/v0.55.0/src/desktop/view/Window.cpp)는 XDG/XWayland의 전체 화면·최대화 요청만 처리하고 `requestsMinimize`를 적용하지 않는다. [`ForeignToplevelWlr`](https://github.com/hyprwm/Hyprland/blob/v0.55.0/src/protocols/ForeignToplevelWlr.cpp)의 `minimized` IPC 이벤트는 지원하므로 해당 이벤트는 Shittim 숨김/복원에 연결한다. 이를 GTK/Chrome CSD 버튼의 최소화 이벤트와 혼동하지 않는다. Nemo용 GTK 제목 표시줄은 `:maximize,close`로 설정하며, 실제 숨김 버튼은 Shittim 창 목록에서 제공한다. Chrome 자체 최소화 버튼의 무응답이 이 제한에 해당할 수 있다.
 

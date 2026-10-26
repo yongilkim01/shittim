@@ -35,6 +35,7 @@ def patch_source(directory, config):
     modern = '#include <hyprland/src/desktop/state/WindowState.hpp>' in text
     maximized = ('Fullscreen::controller()->getFullscreenModes(m_pWindow.lock()).internal == Fullscreen::FSMODE_MAXIMIZED' if modern
                  else 'm_pWindow->m_fullscreenState.internal == FSMODE_MAXIMIZED')
+    maximized = '(' + maximized + ') || m_pWindow->m_ruleApplicator->m_tagKeeper.isTagged("shittim-maximized", true)'
     original = 'if ((!button.iconTex || button.iconTex->m_texID == 0) && !button.icon.empty()) {'
     foreground = 'auto fgcol = button.userfg ? button.fgcol : (button.bgcol.r + button.bgcol.g + button.bgcol.b < 1) ? CHyprColor(0xFFFFFFFF) : CHyprColor(0xFF000000);'
     begin = 'void CHyprBar::renderBarButtonsText('

@@ -126,6 +126,8 @@ FocusScope {
             Repeater {
                 model: [{label:"복원 / 활성화",op:"activate",available:root.target !== null},
                     {label:"최소화",op:"hide",available:root.target !== null && !root.target.hidden},
+                    {label:root.target && root.target.maximized ? "최대화 해제" : "최대화",op:"maximize",available:root.target !== null && !root.target.hidden && !(root.target.fullscreen & 2)},
+                    {label:root.target && (root.target.fullscreen & 2) ? "전체 화면 해제" : "전체 화면",op:"fullscreen",available:root.target !== null && !root.target.hidden},
                     {label:"새 창 열기",op:"new",available:true}, {label:"닫기",op:"close",available:root.target !== null},
                     {label:root.app && root.favorites.indexOf(root.app.id) >= 0 ? "Dock 고정 해제" : "Dock에 고정",op:root.app && root.favorites.indexOf(root.app.id) >= 0 ? "unpin" : "pin",available:true}]
                 HudButton { required property var modelData; objectName:"dock-action-"+modelData.op; width: popup.width - 20; height: 30; text: modelData.label; enabled: modelData.available; onClicked: root.actionRequested(modelData.op) }

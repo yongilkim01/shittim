@@ -42,7 +42,7 @@ FocusScope {
             Row {
                 anchors.right: parent.right; anchors.rightMargin: 7; anchors.verticalCenter: parent.verticalCenter; spacing: 3
                 MediaButton { objectName: "window-hide-" + row.modelData.address; icon: row.modelData.hidden ? "\uf06e" : "\uf068"; tooltipText: row.modelData.hidden ? "복원" : "숨기기"; onClicked: root.requested(row.modelData.hidden ? "activate" : "hide", row.modelData.address) }
-                MediaButton { objectName: "window-maximize-" + row.modelData.address; icon: "\uf2d0"; tooltipText: "최대화 / 복원"; enabled: !row.modelData.hidden; onClicked: root.requested("maximize", row.modelData.address) }
+                MediaButton { objectName: "window-maximize-" + row.modelData.address; icon: row.modelData.maximized ? "\uf2d2" : "\uf2d0"; tooltipText: row.modelData.maximized ? "복원" : "최대화"; enabled: !row.modelData.hidden && !(row.modelData.fullscreen & 2); onClicked: root.requested("maximize", row.modelData.address) }
                 MediaButton { icon: "\uf065"; tooltipText: "전체 화면 전환"; enabled: !row.modelData.hidden; onClicked: root.requested("fullscreen", row.modelData.address) }
                 MediaButton { icon: "\uf009"; tooltipText: "Floating / Tiling"; enabled: !row.modelData.hidden; onClicked: root.requested("tile", row.modelData.address) }
                 MediaButton { icon: "\uf0b2"; tooltipText: "현재 화면 안으로 정렬"; enabled: !row.modelData.hidden && row.modelData.floating && !row.modelData.fullscreen; onClicked: root.requested("fit", row.modelData.address) }

@@ -28,8 +28,8 @@ PanelWindow {
     WlrLayershell.keyboardFocus: expanded && DockState.mode !== "preview" ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
     mask: Region {
         item: view.stripItem
-        Region { item: view.popupItem; intersection: Intersection.Combine }
-        Region { item: view.errorItem; intersection: Intersection.Combine }
+        Region { item: view.popupItem.visible ? view.popupItem : null; intersection: Intersection.Combine }
+        // Status text has no actions and must not intercept clicks on apps behind it.
     }
     HyprlandFocusGrab { active: window.visible && window.expanded && DockState.mode !== "preview"; windows: [window]; onCleared: DockState.close() }
     onVisibleChanged: if (!visible && DockState.screen===screen) DockState.close()

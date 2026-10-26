@@ -10,7 +10,18 @@ local function emit(state, w, zone, monitor)
     end
 end
 local function valid(w)
-    return w and w.mapped and w.floating and not w.pinned and not w.group and w.workspace and w.workspace.id > 0 and w.fullscreen ~= 2 and w.fullscreen_client ~= 2
+    return w and w.mapped and w.floating and not w.pinned and not w.group and w.workspace and w.workspace.id > 0 and ((w.fullscreen or 0) & 2)==0 and ((w.fullscreen_client or 0) & 2)==0
+end
+local function clear_maximize(w)
+    local managed=false
+    for _,tag in ipairs(w.tags or {}) do if tag=="shittim-maximized" then managed=true end end
+    if not managed then return end
+    for _,tag in ipairs(w.tags or {}) do
+        if tag=="shittim-maximized" or tag:match("^shittim%-restore_(-?%d+)_(-?%d+)_(%d+)_(%d+)_[01]$") then
+            hl.dispatch(hl.dsp.window.tag({window=w,tag="-"..tag}))
+        end
+    end
+    hl.dispatch(hl.dsp.event("shittim-window-state,"..w.address))
 end
 local function region(p)
     for _,m in ipairs(hl.get_monitors()) do
@@ -54,17 +65,29 @@ local function update()
         return
     end
     local moved=math.abs(w.at.x-drag.at.x)+math.abs(w.at.y-drag.at.y)>6
-    if math.abs(w.size.x-drag.size.x)+math.abs(w.size.y-drag.size.y)>3 then previous[w.address]=nil; cancel(); return end
+    if math.abs(w.size.x-drag.size.x)+math.abs(w.size.y-drag.size.y)>3 then clear_maximize(w); previous[w.address]=nil; cancel(); return end
     if not moved then return end
     if math.abs(p.x-drag.pointer.x)+math.abs(p.y-drag.pointer.y)<6 then return end
     if not drag.moved and math.abs((w.at.x-drag.at.x)-(p.x-drag.pointer.x))+math.abs((w.at.y-drag.at.y)-(p.y-drag.pointer.y))>24 then return end
     drag.moved=true
     local old=previous[w.address]
+    local restore_tag
+    for _,tag in ipairs(w.tags or {}) do
+        local x,y,width,height=tag:match("^shittim%-restore_(-?%d+)_(-?%d+)_(%d+)_(%d+)_[01]$")
+        if x and tonumber(width)>0 and tonumber(height)>0 then
+            old={x=tonumber(x),y=tonumber(y),width=tonumber(width),height=tonumber(height)}
+            restore_tag=tag
+            break
+        end
+    end
     if old and not drag.restored then
         local ratio=math.max(0,math.min(1,(p.x-w.at.x)/math.max(w.size.x,1)))
         if w.fullscreen==1 then hl.dispatch(hl.dsp.window.fullscreen({window=w,mode="maximized",action="unset"})) end
         hl.dispatch(hl.dsp.window.resize({window=w,x=old.width,y=old.height,relative=false}))
         hl.dispatch(hl.dsp.window.move({window=w,x=math.floor(p.x-old.width*ratio),y=math.floor(p.y-18),relative=false}))
+        if restore_tag then
+            clear_maximize(w)
+        end
         drag.size={x=old.width,y=old.height}; drag.restored=true; previous[w.address]=nil
     end
     local zone,monitor=region(p)

@@ -61,7 +61,7 @@ class UX:
         for key, operation, options in [('ALT + Tab', 'next', '{}'), ('ALT + SHIFT + Tab', 'previous', '{}'),
                 ('ALT + Alt_L', 'commit', '{release=true,non_consuming=true,ignore_mods=true}'),
                 ('ALT + Alt_R', 'commit', '{release=true,non_consuming=true,ignore_mods=true}'),
-                ('SUPER + Tab', 'show', '{}'), ('SUPER + H', 'hide', '{}'), ('SUPER + CTRL + Home', 'fit', '{}')]:
+                ('SUPER + Tab', 'show', '{}'), ('SUPER + H', 'hide', '{}'), ('SUPER + UP', 'maximize', '{}'), ('SUPER + CTRL + Home', 'fit', '{}')]:
             text += '\nbind(' + json.dumps(key) + ', hl.dsp.exec_cmd(' + json.dumps(command + ' ' + operation, ensure_ascii=False) + '), ' + options + ')'
         # Force GTK3 client-side title bars where GTK itself supports decorations.
         snap = shlex.join(['quickshell','ipc','--path',str(self.files.root / 'shell/shell.qml'),'call','snap','event'])

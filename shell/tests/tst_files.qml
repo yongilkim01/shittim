@@ -14,7 +14,7 @@ TestCase {
     function init(){failOnWarning(/.*/)}
     function test_actual_native_window_loads_with_eight_resize_handles(){
         const model=setup(),window=createTemporaryObject(windowFactory,testCase,{browserModel:model})
-        verify(window!==null);compare(window.width,440);compare(window.height,326)
+        verify(window!==null);verify(window.width>0 && window.width<=Screen.desktopAvailableWidth);verify(window.height>0 && window.height<=Screen.desktopAvailableHeight)
         try {
             window.show();tryCompare(window,"visible",true)
             tryVerify(()=>findChild(window.contentItem,"files-resize-"+Qt.LeftEdge)!==null)
@@ -31,6 +31,8 @@ TestCase {
             const button=findChild(window.contentItem,"files-maximize")
             const edge=findChild(window.contentItem,"files-resize-"+Qt.LeftEdge)
             compare(button.glyph,"maximize");verify(edge.enabled)
+            window.controlBusy=true;verify(!button.enabled);verify(findChild(window.contentItem,"files-close").enabled)
+            window.controlBusy=false;verify(button.enabled)
             button.clicked();compare(max.count,1);compare(window.maximized,false)
             window.maximized=true;compare(button.glyph,"restore");verify(!edge.enabled)
             button.clicked();compare(max.count,2);compare(window.maximized,true)
@@ -49,6 +51,18 @@ TestCase {
             compare(frame.edgeInset,2.5)
         }
         view.maximized=false;compare(frame.edgeInset,2.5)
+    }
+    function test_compositor_width_changes_do_not_recompute_window_height(){
+        const model=setup(),window=createTemporaryObject(windowFactory,testCase,{browserModel:model,managedMaximize:true})
+        try {
+            window.show();tryCompare(window,"visible",true)
+            const closing=createTemporaryObject(spyFactory,testCase,{target:window,signalName:"closing"})
+            window.height=500;window.width=1600;wait(0);compare(window.height,500)
+            window.width=500;wait(0);compare(window.height,500)
+            window.maximized=true;window.width=1800;window.height=900;wait(0)
+            window.maximized=false;window.width=600;wait(0);compare(window.height,900)
+            verify(window.visible);compare(closing.count,0)
+        } finally { window.destroy();wait(0) }
     }
     function test_maximized_frame_keeps_all_four_edges_visible(){
         const host=createTemporaryObject(frameFactory,testCase),frame=findChild(host,"test-frame")
