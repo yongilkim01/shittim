@@ -43,6 +43,15 @@ bash scripts/verify-window-management.sh --watch 12
 
 결과는 `${XDG_STATE_HOME:-~/.local/state}/shittim/window-check.json`에 소유자만 읽고 쓸 수 있는 파일로 저장한다. 포커스 주소·커서 위치·창 class·geometry·최대화/숨김 상태·모니터 예약 영역만 기록하며, 창 제목·파일 경로·입력 내용은 수집하지 않는다. Git 추가나 업로드는 하지 않는다. 상태 검사는 실제 키 입력 성공 여부를 대신하지 않는다.
 
+파일을 다른 PC로 직접 옮기기 어려우면 이미 수집한 로그를 다음 명령으로 전송한다. 다시 재현할 필요가 없다.
+
+```bash
+git pull --ff-only
+bash scripts/share-window-diagnostics.sh --publish
+```
+
+이 명령은 기존 파일을 읽고 허용된 수치·상태 항목만 `diagnostics/windows-latest.json`으로 추출해 그 파일 하나만 커밋·푸시한다. 원본 로그·실행 중인 창은 변경하지 않는다. 다른 스테이징 변경·미전송 코드 커밋이 있으면 전송을 중단하며, 강제 푸시하지 않는다. `--publish` 없이 실행하면 추출 파일만 생성한다. 같은 보고서의 중복 커밋을 막고, 푸시만 실패했다면 같은 명령으로 다시 전송한다.
+
 ## 개발 환경 검사 범위
 
 격리된 Linux 테스트에서 창별 최대화·복원·숨김·실패 복구·모니터 작업 영역 계산을 검사한다. Lua 포인터 관찰자는 실제 Lua 인터프리터에서 검사한다. Windows Qt에서는 Files 크기 변경이 다른 축의 크기를 바꾸거나 창 닫기 신호를 내지 않는지, 버튼/테두리와 기존 셸 UI를 검사한다. 실제 Hyprland 포커스·Wayland configure·플러그인 GPU 렌더링·다중 모니터 조작은 위 노트북 절차로 검증한다.

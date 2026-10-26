@@ -127,7 +127,7 @@ def git(*args):
     return subprocess.check_output(['git', *args], cwd=ROOT, text=True, stderr=subprocess.STDOUT).strip()
 
 
-def publish():
+def publish(report=REPORT, message='chore: collect laptop login diagnostics'):
     if git('branch', '--show-current') != 'main':
         raise ValueError('main 브랜치에서 실행하세요. 진단 파일은 보존했습니다.')
     if git('diff', '--cached', '--name-only'):
@@ -140,13 +140,18 @@ def publish():
     git('fetch', 'origin', 'main')
     git('merge-base', '--is-ancestor', 'origin/main', 'HEAD')
     pending = git('diff', '--name-only', 'origin/main', 'HEAD')
-    if pending and pending != REPORT.as_posix():
+    if pending and pending != report.as_posix():
         raise ValueError('아직 업로드하지 않은 다른 변경 커밋이 있어 중단했습니다. 진단 파일은 보존했습니다.')
-    git('add', '--', REPORT.as_posix())
-    if git('diff', '--cached', '--name-only') != REPORT.as_posix():
+    git('add', '--', report.as_posix())
+    staged = git('diff', '--cached', '--name-only')
+    if staged and staged != report.as_posix():
         raise ValueError('진단 파일만 스테이징되었는지 확인할 수 없어 중단했습니다.')
-    git('commit', '-m', 'chore: collect laptop login diagnostics', '--', REPORT.as_posix())
-    print('[Shittim] 진단 파일 커밋 완료. origin/main으로 푸시합니다.', flush=True)
+    if staged:
+        git('commit', '-m', message, '--', report.as_posix())
+    elif not pending:
+        print('[Shittim] 같은 진단 파일이 이미 저장소에 있습니다. 다시 커밋하지 않았습니다.')
+        return
+    print('[Shittim] 진단 파일을 origin/main으로 푸시합니다.', flush=True)
     subprocess.run(['git', 'push', 'origin', 'HEAD:refs/heads/main'], cwd=ROOT, check=True)
     print('[Shittim] 진단 업로드 완료: ' + git('rev-parse', '--short', 'HEAD'))
 
