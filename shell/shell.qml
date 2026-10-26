@@ -26,4 +26,5 @@ ShellRoot {
 	AppMediaControls {}
 	WindowManager {}
 	SnapPreview {}
+	TitlebarTooltip {}
 }

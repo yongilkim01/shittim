@@ -21,7 +21,8 @@ def digest(path):
 
 
 def patch_id(config):
-    return hashlib.sha256((digest(config.root / 'native/titlebars/controls.hpp') + digest(Path(__file__))).encode()).hexdigest()[:16]
+    sources = ('controls.hpp', 'interaction.hpp', 'hover.cpp.inc')
+    return hashlib.sha256((''.join(digest(config.root / 'native/titlebars' / name) for name in sources) + digest(Path(__file__))).encode()).hexdigest()[:16]
 
 
 def identity(config):
@@ -63,7 +64,31 @@ def patch_source(directory, config):
     patched = includes + text[:start] + body + text[stop:]
     if modern:
         patched = patched.replace('#include "barDeco.hpp"', '#include "barDeco.hpp"\n#include <hyprland/src/managers/fullscreen/FullscreenController.hpp>', 1)
-    source.write_text(patched, encoding='utf-8')
+    hooks = {
+        'void CHyprBar::onMouseMove(Vector2D coords) {': '\n    updateShittimHover();',
+        'void CHyprBar::renderPass(PHLMONITOR pMonitor, const float& a) {': '\n    updateShittimHover();',
+        'CHyprBar::~CHyprBar() {': '\n    clearShittimHover();',
+        'void CHyprBar::onConfigReloaded() {': '\n    clearShittimHover();',
+    }
+    for hook, addition in hooks.items():
+        if patched.count(hook) != 1: raise ValueError('확인한 hyprbars 호버 갱신 구문과 다릅니다.')
+        patched = patched.replace(hook, hook + addition)
+    rectangle = 'g_pHyprOpenGL->renderRect(buttonBox, color, {.round = static_cast<int>(std::round(scaledButtonSize / 2.0)), .roundingPower = 2.F});'
+    if patched.count(rectangle) != 1: raise ValueError('확인한 hyprbars 버튼 배경 구문과 다릅니다.')
+    highlight = '''
+        if (m_shittimHoverIndex == static_cast<int>(i))
+            ShittimHUD::drawHoverFrame({buttonBox.x, buttonBox.y, buttonBox.w, buttonBox.h}, scale, a,
+                [](ShittimHUD::HoverRect r, ShittimHUD::HoverColor c) {
+                    g_pHyprOpenGL->renderRect(CBox{r.x, r.y, r.width, r.height}, CHyprColor{c.r, c.g, c.b, c.a}, {.round = 0});
+                });'''
+    patched = patched.replace(rectangle, rectangle + highlight)
+    patched = '#include "shittim-interaction.hpp"\n#include <format>\n' + patched
+    patched = patched.replace('#include "barDeco.hpp"', '#include "barDeco.hpp"\n#include <hyprland/src/managers/EventManager.hpp>', 1)
+    hit_flags = 'Desktop::View::RESERVED_EXTENTS | Desktop::View::INPUT_EXTENTS | Desktop::View::ALLOW_FLOATING'
+    under_cursor = ('Desktop::CViewHitTester{*Desktop::viewState()}.windowAt(g_pInputManager->getMouseCoordsInternal(), ' + hit_flags + ')' if modern
+                    else 'g_pCompositor->vectorToWindowUnified(g_pInputManager->getMouseCoordsInternal(), ' + hit_flags + ')') + ' == m_pWindow.lock()'
+    hover = (config.root / 'native/titlebars/hover.cpp.inc').read_text(encoding='utf-8').replace('__SHITTIM_MAXIMIZED__', maximized).replace('__SHITTIM_UNDER_CURSOR__', under_cursor)
+    source.write_text(patched + '\n' + hover, encoding='utf-8')
     header = directory / 'barDeco.hpp'
     text = header.read_text(encoding='utf-8')
     if text.count('  private:') != 1:
@@ -71,7 +96,11 @@ def patch_source(directory, config):
     cache = ('  private:\n'
              '    // Per-window textures keep maximized and normal windows independent.\n'
              '    struct SShittimControl { SP<Render::ITexture> texture; CHyprColor color = CHyprColor(0, 0, 0, 0); };\n'
-             '    std::array<SShittimControl, 4> m_shittimControls;\n')
+             '    std::array<SShittimControl, 4> m_shittimControls;\n'
+             '    int m_shittimHoverIndex = -1;\n'
+             '    std::string m_shittimHoverPayload;\n'
+             '    void updateShittimHover();\n'
+             '    void clearShittimHover();\n')
     header.write_text('#include <array>\n' + text.replace('  private:', cache), encoding='utf-8')
     main = directory / 'main.cpp'
     text = main.read_text(encoding='utf-8')
@@ -81,6 +110,7 @@ def patch_source(directory, config):
     replacement = '{"hyprbars", "Shittim vector controls; based on official hyprbars.", "Vaxry / Shittim", "' + identity(config) + '"}'
     main.write_text(text.replace(DESCRIPTION, replacement).replace(foreground, foreground + '\n        button.userfg = true;'), encoding='utf-8')
     shutil.copyfile(config.root / 'native/titlebars/controls.hpp', directory / 'shittim-controls.hpp')
+    shutil.copyfile(config.root / 'native/titlebars/interaction.hpp', directory / 'shittim-interaction.hpp')
 
 
 def query(*args):

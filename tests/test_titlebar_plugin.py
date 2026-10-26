@@ -135,11 +135,14 @@ class TitlebarPlugin(unittest.TestCase):
             PLUGIN.verify(self.config,[dict(name='hyprbars',version=self.data['renderer'])])
 
     @unittest.skipUnless(shutil.which('g++') and shutil.which('pkg-config'),'C++·Cairo 래스터 검사 도구 필요')
-    def test_actual_native_paths_at_four_scales(self):
+    def test_actual_native_paths_and_hover_publisher(self):
         flags=subprocess.run(['pkg-config','--cflags','--libs','cairo'],check=True,capture_output=True,text=True).stdout
         import shlex
         executable=self.home/'control-test'
         subprocess.run(['g++','-std=c++23',str(ROOT/'tests/titlebar-controls.cpp'),*shlex.split(flags),'-o',str(executable)],check=True,timeout=60)
+        subprocess.run([str(executable)],check=True,timeout=10)
+        executable=self.home/'hover-test'
+        subprocess.run(['g++','-std=c++23',str(ROOT/'tests/titlebar-hover.cpp'),*shlex.split(flags),'-o',str(executable)],check=True,timeout=60)
         subprocess.run([str(executable)],check=True,timeout=10)
 
 

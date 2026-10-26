@@ -10,11 +10,15 @@
 
 원본은 Hypr Development의 BSD 3-Clause 라이선스다. 다운로드 소스의 LICENSE를 보존하고 설치된 바이너리 옆에도 복사한다. 새로운 GitHub 저장소나 포크는 만들지 않는다. 설치 절차와 제한은 [공통 제목 표시줄](../../docs/titlebars.md)을 따른다.
 
+`interaction.hpp`는 버튼 내부의 각진 호버 테두리를 그린다. `hover.cpp.inc`는 실제 포인터 아래 창·버튼과 최대화 상태를 읽고, 상태가 바뀔 때만 `shittim_titlebar_hover` IPC 이벤트를 보낸다. 데이터는 `창주소,동작,모니터ID,모니터내X,Y,폭,높이`, 해제는 `창주소,leave`다. Shittim의 `TitlebarTipModel`이 이를 검증하고 `TitlebarTooltip`이 지연 설명을 표시한다. 다른 창의 늦은 leave 이벤트가 현재 설명을 지우지 않도록 창 주소를 비교한다. 세 소스 파일은 모두 렌더러 버전 해시에 포함된다.
+
 실제 경로의 CPU 검사:
 
 ```bash
 c++ -std=c++23 tests/titlebar-controls.cpp $(pkg-config --cflags --libs cairo) -o /tmp/shittim-controls-test
 /tmp/shittim-controls-test
+c++ -std=c++23 tests/titlebar-hover.cpp $(pkg-config --cflags --libs cairo) -o /tmp/shittim-hover-test
+/tmp/shittim-hover-test
 ```
 
 GPU 합성과 플러그인 ABI 확인을 대체하는 검사가 아니다.

@@ -1,5 +1,6 @@
 // CPU raster test of the actual paths used by the compositor plugin. No font or display needed.
 #include "../native/titlebars/controls.hpp"
+#include "../native/titlebars/interaction.hpp"
 #include <cassert>
 #include <algorithm>
 #include <array>
@@ -9,6 +10,17 @@
 struct Color { double r, g, b, a; };
 
 int main(int argc, char** argv) {
+    const ShittimHUD::HoverRect hit{100,40,24,24};
+    assert(ShittimHUD::contains(hit,100,40));
+    assert(!ShittimHUD::contains(hit,124,40));
+    assert(!ShittimHUD::contains(hit,110,64));
+    int hoverRects=0;
+    ShittimHUD::drawHoverFrame(hit,1,0.75,[&](ShittimHUD::HoverRect rect,ShittimHUD::HoverColor color){
+        ++hoverRects;assert(rect.x>=hit.x && rect.y>=hit.y);
+        assert(rect.x+rect.width<=hit.x+hit.width && rect.y+rect.height<=hit.y+hit.height);
+        assert(rect.width>0 && rect.height>0 && color.a>0 && color.a<=0.75);
+    });
+    assert(hoverRects==9);
     const std::array<std::string_view, 4> icons = {"−", "□", "×", "restore"};
     assert(!ShittimHUD::isControl("other"));
     assert(ShittimHUD::displayIcon("□", false) == "□");
