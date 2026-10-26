@@ -21,6 +21,19 @@ TestCase {
             findChild(window.contentItem,"files-minimize").clicked();compare(min.count,1)
         } finally { window.destroy();wait(0) }
     }
+    function test_managed_maximize_uses_controller_signal_and_real_state_for_restore_icon(){
+        const model=setup(),window=createTemporaryObject(windowFactory,testCase,{browserModel:model,managedMaximize:true,maximized:false})
+        try {
+            const max=createTemporaryObject(spyFactory,testCase,{target:window,signalName:"maximizeRequested"})
+            const button=findChild(window.contentItem,"files-maximize")
+            const edge=findChild(window.contentItem,"files-resize-"+Qt.LeftEdge)
+            compare(button.glyph,"maximize");verify(edge.enabled)
+            button.clicked();compare(max.count,1);compare(window.maximized,false)
+            window.maximized=true;compare(button.glyph,"restore");verify(!edge.enabled)
+            button.clicked();compare(max.count,2);compare(window.maximized,true)
+            window.maximized=false;compare(button.glyph,"maximize");verify(edge.enabled)
+        } finally { window.destroy();wait(0) }
+    }
     function listing(model,uri,entries){return {event:"listing",request:model.current.request,tab:model.current.id,uri:uri,name:"Home",parent:"file:///",writable:true,entries:entries || [],breadcrumbs:[],truncated:false}}
     function setup(){
         const model=createTemporaryObject(modelFactory,testCase)

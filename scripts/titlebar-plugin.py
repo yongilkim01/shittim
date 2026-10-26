@@ -31,15 +31,44 @@ def identity(config):
 def patch_source(directory, config):
     source = directory / 'barDeco.cpp'
     text = source.read_text(encoding='utf-8')
+    modern = '#include <hyprland/src/desktop/state/WindowState.hpp>' in text
+    maximized = ('Fullscreen::controller()->getFullscreenModes(m_pWindow.lock()).internal == Fullscreen::FSMODE_MAXIMIZED' if modern
+                 else 'm_pWindow->m_fullscreenState.internal == FSMODE_MAXIMIZED')
     original = 'if ((!button.iconTex || button.iconTex->m_texID == 0) && !button.icon.empty()) {'
-    scaled = ('if ((!button.iconTex || button.iconTex->m_texID == 0 || '
-              '(ShittimHUD::isControl(button.icon) && button.iconTex->m_size.x != std::ceil(scaledButtonSize))) && !button.icon.empty()) {')
-    if text.count(TEXT_RENDER) != 1 or text.count(original) != 1:
+    foreground = 'auto fgcol = button.userfg ? button.fgcol : (button.bgcol.r + button.bgcol.g + button.bgcol.b < 1) ? CHyprColor(0xFFFFFFFF) : CHyprColor(0xFF000000);'
+    begin = 'void CHyprBar::renderBarButtonsText('
+    end = 'void CHyprBar::draw('
+    if text.count(TEXT_RENDER) != 1 or text.count(original) != 1 or text.count(begin) != 1 or text.count(end) != 1 or text.count(foreground) != 1:
         raise ValueError('확인한 hyprbars 렌더링 소스와 다릅니다. 원본 플러그인을 유지했습니다.')
-    expression = ('ShittimHUD::isControl(button.icon) ? '
-                  'ShittimHUD::controlTexture(button.icon, scaledButtonSize, fgcol, '
+    setup = ('const auto controlIcon = ShittimHUD::displayIcon(button.icon, button.icon == "□" && (' + maximized + '));\n'
+             '        const int controlIndex = ShittimHUD::controlIndex(controlIcon);\n'
+             '        auto& iconTex = controlIndex >= 0 ? m_shittimControls[controlIndex].texture : button.iconTex;\n'
+             '        ' + foreground + '\n'
+             '        if (controlIndex >= 0 && m_shittimControls[controlIndex].color != fgcol) {\n'
+             '            iconTex = nullptr; m_shittimControls[controlIndex].color = fgcol;\n'
+             '        }\n'
+             '        if ((!iconTex || iconTex->m_texID == 0 || '
+             '(controlIndex >= 0 && iconTex->m_size.x != std::ceil(scaledButtonSize))) && !button.icon.empty()) {')
+    expression = ('controlIndex >= 0 ? '
+                  'ShittimHUD::controlTexture(controlIcon, scaledButtonSize, fgcol, '
                   '[](cairo_surface_t* surface) { return g_pHyprRenderer->createTexture(surface); }) : ' + TEXT_RENDER)
-    source.write_text('#include "shittim-controls.hpp"\n' + text.replace(TEXT_RENDER, expression).replace(original, scaled), encoding='utf-8')
+    start, stop = text.index(begin), text.index(end)
+    body = text[start:stop].replace(foreground, '').replace('button.iconTex', 'iconTex')
+    body = body.replace(original.replace('button.iconTex', 'iconTex'), setup).replace(TEXT_RENDER, expression)
+    includes = '#include "shittim-controls.hpp"\n'
+    patched = includes + text[:start] + body + text[stop:]
+    if modern:
+        patched = patched.replace('#include "barDeco.hpp"', '#include "barDeco.hpp"\n#include <hyprland/src/managers/fullscreen/FullscreenController.hpp>', 1)
+    source.write_text(patched, encoding='utf-8')
+    header = directory / 'barDeco.hpp'
+    text = header.read_text(encoding='utf-8')
+    if text.count('  private:') != 1:
+        raise ValueError('확인한 hyprbars 창별 텍스처 구조와 다릅니다.')
+    cache = ('  private:\n'
+             '    // Per-window textures keep maximized and normal windows independent.\n'
+             '    struct SShittimControl { SP<Render::ITexture> texture; CHyprColor color = CHyprColor(0, 0, 0, 0); };\n'
+             '    std::array<SShittimControl, 4> m_shittimControls;\n')
+    header.write_text('#include <array>\n' + text.replace('  private:', cache), encoding='utf-8')
     main = directory / 'main.cpp'
     text = main.read_text(encoding='utf-8')
     foreground = 'button.fgcol = parser.parsed();'

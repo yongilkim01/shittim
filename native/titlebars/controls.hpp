@@ -6,8 +6,20 @@
 
 // These paths are independent of font selection and Unicode glyph metrics.
 namespace ShittimHUD {
+inline int controlIndex(std::string_view icon) {
+    if (icon == "−") return 0;
+    if (icon == "□") return 1;
+    if (icon == "×") return 2;
+    if (icon == "restore") return 3;
+    return -1;
+}
+
 inline bool isControl(std::string_view icon) {
-    return icon == "−" || icon == "□" || icon == "×";
+    return controlIndex(icon) >= 0;
+}
+
+inline std::string_view displayIcon(std::string_view icon, bool maximized) {
+    return icon == "□" && maximized ? "restore" : icon;
 }
 
 inline void drawControl(cairo_t* cr, std::string_view icon, double slot) {
@@ -25,6 +37,15 @@ inline void drawControl(cairo_t* cr, std::string_view icon, double slot) {
         cairo_line_to(cr, right, slot / 2.0);
     } else if (icon == "□") {
         cairo_rectangle(cr, left + halfStroke, left + halfStroke, width - stroke, width - stroke);
+    } else if (icon == "restore") {
+        const double offset = width / 4.0;
+        const double side = width - offset - stroke;
+        cairo_rectangle(cr, left + halfStroke, left + offset + halfStroke, side, side);
+        cairo_move_to(cr, left + offset + halfStroke, left + offset - halfStroke);
+        cairo_line_to(cr, left + offset + halfStroke, left + halfStroke);
+        cairo_line_to(cr, right - halfStroke, left + halfStroke);
+        cairo_line_to(cr, right - halfStroke, right - offset - halfStroke);
+        cairo_line_to(cr, right - offset + halfStroke, right - offset - halfStroke);
     } else if (icon == "×") {
         const double inset = halfStroke / std::sqrt(2.0);
         cairo_move_to(cr, left + inset, left + inset);

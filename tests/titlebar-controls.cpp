@@ -9,12 +9,17 @@
 struct Color { double r, g, b, a; };
 
 int main(int argc, char** argv) {
-    const std::array<std::string_view, 3> icons = {"−", "□", "×"};
+    const std::array<std::string_view, 4> icons = {"−", "□", "×", "restore"};
     assert(!ShittimHUD::isControl("other"));
+    assert(ShittimHUD::displayIcon("□", false) == "□");
+    assert(ShittimHUD::displayIcon("□", true) == "restore");
+    assert(ShittimHUD::displayIcon("□", false) == "□"); // Another normal window keeps its own symbol.
+    assert(ShittimHUD::displayIcon("×", true) == "×");
     for (double scale : {1.0, 1.25, 1.5, 2.0}) {
-        std::array<int, 3> widths{};
+        std::array<int, 4> widths{};
         for (size_t i = 0; i < icons.size(); ++i) {
             assert(ShittimHUD::isControl(icons[i]));
+            assert(ShittimHUD::controlIndex(icons[i]) == static_cast<int>(i));
             int width = ShittimHUD::controlTexture(icons[i], 24.0 * scale, Color{0, 217.0 / 255.0, 245.0 / 255.0, 1}, [&](cairo_surface_t* surface) {
                 assert(cairo_surface_status(surface) == CAIRO_STATUS_SUCCESS);
                 int size = cairo_image_surface_get_width(surface), stride = cairo_image_surface_get_stride(surface);
@@ -25,7 +30,7 @@ int main(int argc, char** argv) {
                     if ((pixel >> 24) < 128) continue;
                     left = std::min(left, x); right = std::max(right, x);
                     top = std::min(top, y); bottom = std::max(bottom, y);
-                    assert((pixel & 0xff0000) == 0); // Same cyan foreground for all three symbols.
+                    assert((pixel & 0xff0000) == 0); // Same cyan foreground for all four symbols.
                 }
                 assert(left > 0 && right < size - 1 && top > 0 && bottom < size - 1);
                 assert(std::abs((left + right + 1) / 2.0 - 12.0 * scale) <= 0.5);
@@ -42,6 +47,6 @@ int main(int argc, char** argv) {
             assert(std::abs(width - 16.0 * scale) <= 1.0);
         }
         assert(*std::max_element(widths.begin(), widths.end()) - *std::min_element(widths.begin(), widths.end()) <= 1);
-        std::cout << "scale=" << scale << " widths=" << widths[0] << ',' << widths[1] << ',' << widths[2] << '\n';
+        std::cout << "scale=" << scale << " widths=" << widths[0] << ',' << widths[1] << ',' << widths[2] << ',' << widths[3] << '\n';
     }
 }
