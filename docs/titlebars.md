@@ -16,13 +16,13 @@ bash scripts/setup-titlebars.sh --install-hyprbars
 
 `hyprpm`은 현재 버전 헤더를 준비하고 플러그인을 빌드하므로 최초 실행에 시간이 걸릴 수 있다. 설치기를 root로 실행하지 않으며 패키지 명령에만 sudo를 사용한다. 다른 플러그인은 활성화하지 않는다. 이미 hyprbars가 등록되어 있으면 중복 add하지 않는다. 공식 호환 커밋으로 고정해 설치하므로 Hyprland 업그레이드 후에는 해당 커밋을 다시 확인해야 한다. 기존 저장소를 자동 삭제하거나 버전/ABI 검사 실패를 우회하지 않는다. 로드 실패 시 설치 출력을 확인한다.
 
-제목 표시줄 높이는 24px, 배경은 `#020f15`, 제목 글꼴은 Hack Nerd Font Mono다. 세 버튼은 모두 24px 칸·10px 간격·동일한 `#00d9f5`를 사용한다. 일반 문자 `− / □ / ×`의 글꼴별 크기·선 굵기 차이를 없애기 위해 직접 그린 **Shittim HUD Controls** 기호 글꼴을 사용한다. 세 기호는 동일한 900/1000 em 너비와 110/1000 em 선 굵기를 사용하므로 약 14px 너비·1.65px 선으로 표시된다. 최대화 기호에도 같은 크기·선 굵기·색을 적용한다.
+제목 표시줄 높이는 24px, 배경은 `#020f15`, 제목 글꼴은 Hack Nerd Font Mono다. 세 버튼은 모두 24px 칸·10px 간격·동일한 `#00d9f5`를 사용한다. 기호는 표준 유니코드 `−`(U+2212), `□`(U+25A1), `×`(U+00D7)다. 전용 영역 문자와 별도 기호 글꼴 의존성을 제거했다.
 
-[hyprbars 렌더링 코드](https://github.com/hyprwm/hyprland-plugins/blob/3aa21f2e0ca72412f1b434c3126f8f1fec3c716c/hyprbars/barDeco.cpp#L351)는 기호 글자 크기를 버튼 칸의 62%로 지정한다. 전용 기호는 일반 글자가 없는 희소한 전용 영역만 포함하며 시스템 sans와 한글 글꼴을 교체하지 않는다. `titlebar-tool.py setup`은 사용자 데이터 경로의 `fonts/shittim/`에 TTF를 백업/링크하고 `fc-cache` 후 `fc-match`로 세 기호가 실제 선택되는지 확인한다. 선택이 실패하면 기존 제목 표시줄 설정을 바꾸지 않는다. 설치된 Fontconfig만 사용하며 노트북에 FontTools를 설치할 필요는 없다.
+[hyprbars 렌더링 코드](https://github.com/hyprwm/hyprland-plugins/blob/3aa21f2e0ca72412f1b434c3126f8f1fec3c716c/hyprbars/barDeco.cpp#L351)는 기호 글자 크기를 버튼 칸의 62%로 지정한다. 버튼은 시스템 글꼴로 표시되므로 실제 기호의 너비와 선 굵기는 선택된 글꼴에 따른다. 제목 글꼴 설정과 버튼 기호 렌더링은 별개다.
 
-Linux의 격리된 Fontconfig에서 글꼴 링크·실제 기호 선택·반복 적용·실패 시 기존 설정 보존을 검사했다. 실제 Kitty의 GPU 합성과 배율별 시각적 일치는 노트북에서 확인한다. 최초 기호 글꼴 설치 뒤 실행 중인 컴포지터가 이전 글꼴 캐시를 유지해 빈 사각형이 보이면 작업을 저장하고 한 번 로그아웃·로그인한다.
+`titlebar-tool.py setup`은 기존 제목 표시줄 설정을 백업하고 갱신한다. 이전 버전이 만든 `fonts/shittim/ShittimHUDControls-Regular.ttf` 링크는 현재 저장소의 이전 글꼴 파일을 가리킬 때만 백업으로 이동한다. 사용자가 교체한 파일이나 다른 링크는 보존한다. 글꼴 도구 실행 없이 복구할 수 있으며 실제 Kitty의 기호 표시와 배율별 시각적 일치는 노트북에서 확인한다.
 
-설치된 공통 제목 표시줄의 변경은 `git pull`만으로 적용되지 않는다. 저장소 갱신 후 `bash scripts/apply-desktop-design.sh`로 기호 글꼴과 생성 설정을 갱신하고 Hyprland를 다시 읽힌다. `bash scripts/setup-titlebars.sh --verify`로 적용 설정·기호 글꼴·플러그인을 확인한다. 이 과정은 기존 플러그인을 재설치하지 않는다.
+설치된 공통 제목 표시줄의 변경은 `git pull`만으로 적용되지 않는다. 저장소 갱신 후 `bash scripts/apply-desktop-design.sh`로 생성 설정을 갱신하고 Hyprland를 다시 읽힌다. `bash scripts/setup-titlebars.sh --verify`로 적용 설정·플러그인을 확인한다. 이 과정은 기존 플러그인을 재설치하지 않는다.
 
 - `−`: 기존 Shittim Special Workspace 숨김. Dock에서 클릭해 복원한다.
 - `□`: 최대화/복원. 전체 화면과 별도 동작이다.
