@@ -10,14 +10,36 @@ FocusScope {
     property var iconSource: function(entry) { return "" }
     property string error: ""
     property bool busy: false
+    property int inputGeneration: 0
+    property bool inputHandoff: false
+    property bool handoffExited: false
     readonly property alias model: selection
     signal requested(string operation,var values)
     signal positionsSaved(var positions)
     signal refreshRequested()
     signal focusRequested()
+    signal focusRejected()
     DesktopModel { id:selection; entries:root.entries; saved:root.saved; areaWidth:root.width; areaHeight:root.height; onPositionsChangedByUser: values=>root.positionsSaved(values) }
-    function takeFocus() { focusRequested(); forceActiveFocus() }
-    function releaseFocus() { menu.close(); prompt.close(); focus=false }
+    function takeFocus() {
+        if (inputHandoff) { focusRejected(); return false }
+        focusRequested(); forceActiveFocus(); return true
+    }
+    function releaseFocus(handoff) {
+        ++inputGeneration
+        // The compositor can clear the grab before Qt delivers its queued press/release.
+        // Retire that entire gesture; only its release or a new pointer visit rearms input.
+        if (handoff) { inputHandoff=true; handoffExited=!pointerHover.hovered }
+        menu.close(); prompt.close(); focus=false
+    }
+    function finishHandoff() { inputHandoff=false; handoffExited=false }
+    HoverHandler {
+        id:pointerHover
+        onHoveredChanged: {
+            if (!root.inputHandoff) return
+            if (!hovered) root.handoffExited=true
+            else if (root.handoffExited && point.pressedButtons===Qt.NoButton) root.finishHandoff()
+        }
+    }
     function request(action) {
         menu.close()
         if (action === "rename" || action === "folder") { prompt.operation=action; prompt.open(); field.text=action === "rename" && selection.selected.length===1 ? (entries.find(entry=>entry.id===selection.selected[0]) || {}).name || "" : ""; field.forceActiveFocus(); field.selectAll() }
@@ -37,12 +59,16 @@ FocusScope {
     MouseArea {
         id:blank; anchors.fill:parent; acceptedButtons:Qt.LeftButton|Qt.RightButton
         property real startX:0; property real startY:0
-        onPressed: mouse=>{ root.takeFocus(); startX=mouse.x; startY=mouse.y; if (!(mouse.modifiers&Qt.ControlModifier)) selection.selected=[] }
-        onPositionChanged: mouse=>{ if (pressedButtons&Qt.LeftButton) selection.selectRect(Math.min(startX,mouse.x),Math.min(startY,mouse.y),Math.abs(mouse.x-startX),Math.abs(mouse.y-startY),Boolean(mouse.modifiers&Qt.ControlModifier)) }
-        onClicked: mouse=>{ if (mouse.button===Qt.RightButton) { menu.x=Math.max(0,Math.min(root.width-210,mouse.x)); menu.y=Math.max(0,Math.min(root.height-300,mouse.y)); menu.open() } }
+        property int generation:-1
+        property bool suppressed:false
+        readonly property bool validGesture:!suppressed && generation===root.inputGeneration
+        onPressed: mouse=>{ generation=root.inputGeneration; suppressed=!root.takeFocus(); if(suppressed)return; startX=mouse.x; startY=mouse.y; if (!(mouse.modifiers&Qt.ControlModifier)) selection.selected=[] }
+        onReleased:root.finishHandoff()
+        onPositionChanged: mouse=>{ if (validGesture && (pressedButtons&Qt.LeftButton)) selection.selectRect(Math.min(startX,mouse.x),Math.min(startY,mouse.y),Math.abs(mouse.x-startX),Math.abs(mouse.y-startY),Boolean(mouse.modifiers&Qt.ControlModifier)) }
+        onClicked: mouse=>{ if (validGesture && mouse.button===Qt.RightButton) { menu.x=Math.max(0,Math.min(root.width-210,mouse.x)); menu.y=Math.max(0,Math.min(root.height-300,mouse.y)); menu.open() } }
     }
     Rectangle {
-        visible:blank.pressed && (blank.pressedButtons&Qt.LeftButton) && Math.abs(blank.mouseX-blank.startX)+Math.abs(blank.mouseY-blank.startY)>4
+        visible:blank.validGesture && blank.pressed && (blank.pressedButtons&Qt.LeftButton) && Math.abs(blank.mouseX-blank.startX)+Math.abs(blank.mouseY-blank.startY)>4
         x:Math.min(blank.startX,blank.mouseX); y:Math.min(blank.startY,blank.mouseY)
         width:Math.abs(blank.mouseX-blank.startX); height:Math.abs(blank.mouseY-blank.startY)
         color:Theme.selectionFill; border.color:Theme.accent
@@ -72,17 +98,22 @@ FocusScope {
             HudText { x:3; y:56; width:parent.width-6; height:32; text:icon.modelData.name; font.pixelSize:10; horizontalAlignment:Text.AlignHCenter; wrapMode:Text.Wrap; maximumLineCount:2; style:Text.Outline; styleColor:Theme.background }
             MouseArea {
                 id:mouse; objectName:"desktop-icon-"+icon.modelData.id; anchors.fill:parent; acceptedButtons:Qt.LeftButton|Qt.RightButton
-                drag.target:icon; drag.threshold:8
-                onPressed: event=>{ root.takeFocus(); selection.select(icon.modelData.id,Boolean(event.modifiers&Qt.ControlModifier)); icon.originX=icon.x; icon.originY=icon.y }
+                property int generation:-1
+                property bool suppressed:false
+                readonly property bool validGesture:!suppressed && generation===root.inputGeneration
+                drag.target:validGesture ? icon : null; drag.threshold:8
+                onPressed: event=>{ generation=root.inputGeneration; suppressed=!root.takeFocus(); if(suppressed)return; selection.select(icon.modelData.id,Boolean(event.modifiers&Qt.ControlModifier)); icon.originX=icon.x; icon.originY=icon.y }
                 onReleased: event=>{
-                    if (event.button===Qt.LeftButton) {
+                    root.finishHandoff()
+                    if (!suppressed && event.button===Qt.LeftButton) {
                         const dx=icon.x-icon.originX,dy=icon.y-icon.originY
                         icon.x=Qt.binding(()=>icon.placement[0]); icon.y=Qt.binding(()=>icon.placement[1])
-                        if (Math.abs(dx)+Math.abs(dy)>4) selection.move(dx,dy)
+                        if (validGesture && Math.abs(dx)+Math.abs(dy)>4) selection.move(dx,dy)
                     }
                 }
-                onClicked: event=>{ if (event.button===Qt.RightButton) { const point=icon.mapToItem(root,event.x,event.y); menu.x=Math.max(0,Math.min(root.width-210,point.x)); menu.y=Math.max(0,Math.min(root.height-300,point.y)); menu.open() } }
-                onDoubleClicked: event=>{ if (event.button===Qt.LeftButton) root.request("open") }
+                onCanceled:{icon.x=Qt.binding(()=>icon.placement[0]);icon.y=Qt.binding(()=>icon.placement[1])}
+                onClicked: event=>{ if (validGesture && event.button===Qt.RightButton) { const point=icon.mapToItem(root,event.x,event.y); menu.x=Math.max(0,Math.min(root.width-210,point.x)); menu.y=Math.max(0,Math.min(root.height-300,point.y)); menu.open() } }
+                onDoubleClicked: event=>{ if (validGesture && event.button===Qt.LeftButton) root.request("open") }
             }
             DropArea { anchors.fill:parent; enabled:icon.modelData.directory
                 onDropped: drop=>{ if (drop.hasUrls && !(drop.source===icon)) { root.requested("drop",{target:icon.modelData.id,uris:drop.urls.map(url=>String(url))}); drop.acceptProposedAction() } }

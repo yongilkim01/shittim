@@ -73,3 +73,11 @@ bash scripts/share-window-diagnostics.sh --publish
 바탕화면은 기존에 항상 keyboard interactivity `OnDemand`였다. Hyprland 0.55/0.56의 `rawSurfaceFocus`는 바탕화면 surface에 키보드를 전달하면서 마지막 활성 앱을 유지하고, 마우스 클릭 경로는 클릭한 앱과 마지막 앱이 같으면 window refocus를 생략한다. 그 결과 `activewindow`가 Kitty여도 실제 키보드 surface는 바탕화면에 남을 수 있다. 바탕화면 입력은 명시적으로 선택·편집할 때만 활성화하고, 기존 셸 패널과 같은 `HyprlandFocusGrab`으로 외부 클릭에서 입력을 반환한다. 기본 상태와 입력 반환 후에는 interactivity `None`을 사용한다. 바탕화면 단축키·이름 변경 입력은 유지하며, 앱을 여는 동작은 실행 전에 grab을 해제한다. 공식 [surface 포커스 처리](https://github.com/hyprwm/Hyprland/blob/v0.56.0/src/desktop/state/FocusState.cpp#L201)와 [마우스 클릭 처리](https://github.com/hyprwm/Hyprland/blob/v0.56.0/src/managers/input/InputManager.cpp#L807)를 대조했다.
 
 노트북에서는 창을 닫는 정상 동작으로 Files를 종료한 뒤 셸과 플러그인을 갱신한다. 이후 같은 최대화 버튼의 왼쪽·가운데·오른쪽을 각각 눌러 보이지 않는 외부 닫기 버튼이 더 이상 반응하지 않는지 확인한다. Kitty → 빈 바탕화면 → 같은 Kitty와 Kitty → 바탕화면 아이콘 → 다른 앱 전환을 각각 검사한다. 로컬 버튼 geometry·입력 조건·DesktopView 검사는 실제 Wayland 입력 검증을 대신하지 않는다.
+
+## 후속 포커스 로그와 입력 순서 수정
+
+`2140552`로 전달된 노트북 로그는 최신 진단 API(`protocol:1`)가 실행 중임을 확인한다. 바탕화면 클릭 후 3410ms에 `grab-cleared`와 입력 해제가 기록되지만, 3411ms에 지연된 `desktop-press`가 들어와 즉시 grab을 다시 만든다. 8237ms와 11885ms에도 같은 순서가 반복된다. 해당 샘플의 포인터는 Kitty 영역 `(141,85)`·`998×518` 안이다. 외부 클릭 해제 자체가 없었던 것이 아니라, 해제에 사용된 클릭을 바탕화면의 새 클릭으로 다시 처리한 것이다.
+
+`DesktopView.releaseFocus(true)`는 진행 중인 제스처를 무효화하고 입력 반환 상태로 전환한다. 그 상태에서 뒤늦게 도착한 누름은 포커스·선택·드래그·더블클릭·메뉴 동작을 시작하지 않는다. 대응하는 버튼 해제를 처리하거나, 포인터가 바탕화면을 떠났다가 버튼을 누르지 않은 상태로 다시 들어오면 정상 입력을 재개한다. 고정 시간 지연이나 창 위치 추측은 사용하지 않는다. 진단에는 차단된 포커스 요청을 `press-ignored`로 남긴다.
+
+이 변경은 셸의 QML에만 적용하므로 native 제목 표시줄을 다시 빌드할 필요가 없다. 저장소 갱신 후 `systemctl --user restart shittim.service`로 적용한다. 로그와 같은 해제→지연 누름 순서, 아이콘/빈 영역의 우클릭·드래그 차단, 지연 누름이 없는 외부 클릭 뒤 재진입을 Qt 테스트에서 재현한다. 실제 노트북에서 Kitty 본문 클릭 후 입력과 바탕화면 선택·더블클릭·F2 이름 변경을 함께 확인한다.

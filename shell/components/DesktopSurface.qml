@@ -10,7 +10,7 @@ PanelWindow {
     id:window
     required property var modelData
     property bool inputActive: false
-    function releaseInput() { inputActive=false;if(view)view.releaseFocus() }
+    function releaseInput(handoff) { inputActive=false;if(view)view.releaseFocus(Boolean(handoff)) }
     Component.onCompleted: DesktopState.registerInput(trace)
     Component.onDestruction: DesktopState.unregisterInput(trace)
     screen:modelData
@@ -27,8 +27,8 @@ PanelWindow {
         windowActive:view.Window.active
         viewFocused:view.activeFocus
     }
-    HyprlandFocusGrab { id:inputGrab;active:window.visible && window.inputActive;windows:[window];onCleared:{trace.record("grab-cleared");window.releaseInput()} }
-    Connections { target:Hyprland;function onActiveToplevelChanged(){trace.record("active-window");if(window.inputActive)window.releaseInput()} }
+    HyprlandFocusGrab { id:inputGrab;active:window.visible && window.inputActive;windows:[window];onCleared:{trace.record("grab-cleared");window.releaseInput(true)} }
+    Connections { target:Hyprland;function onActiveToplevelChanged(){trace.record("active-window");if(window.inputActive)window.releaseInput(true)} }
     Image { anchors.fill:parent; source:LauncherState.assetSource("wallpapers/shittim-lake.png"); fillMode:Image.PreserveAspectCrop; asynchronous:true }
     DesktopView {
         id:view
@@ -36,6 +36,7 @@ PanelWindow {
         entries:DesktopState.entries; saved:DesktopState.positions[window.screen.name] || {}; error:DesktopState.error; busy:DesktopState.busy
         iconSource:LauncherState.iconSource
         onFocusRequested:{trace.record("desktop-press");window.inputActive=true}
+        onFocusRejected:trace.record("press-ignored")
         onRequested:(operation,values)=>{if(operation==="open" || operation==="open-desktop")window.releaseInput();DesktopState.send(operation,values)}
         onPositionsSaved:values=>DesktopState.save(window.screen.name,values)
         onRefreshRequested:DesktopState.refresh()

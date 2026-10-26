@@ -41,13 +41,13 @@ class WindowReport(unittest.TestCase):
         source['samples'][0]['desktopFocus'] = {'protocol': 1, 'capturing': False, 'secret': 'private-data',
             'surfaces': [{'requested': True, 'grabbed': False, 'windowActive': True, 'viewFocused': True,
                 'title': 'private-data', 'events': [{'event': 'desktop-press', 'ms': 52, 'windowActive': True,
-                    'keyboardText': 'private-data'}, {'event': 'private-data', 'ms': 60}]}]}
+                    'keyboardText': 'private-data'}, {'event': 'press-ignored', 'ms': 53}, {'event': 'private-data', 'ms': 60}]}]}
         output = TOOL.clean_report(source)
         self.assertNotIn('private-data', json.dumps(output))
         focus = output['samples'][0]['desktopFocus']
         self.assertEqual(focus['protocol'], 1)
         self.assertTrue(focus['surfaces'][0]['windowActive'])
-        self.assertEqual(len(focus['surfaces'][0]['events']), 1)
+        self.assertEqual(len(focus['surfaces'][0]['events']), 2)
         source['samples'][0]['desktopFocus']['surfaces'][0]['events'][0]['ms'] = -1
         with self.assertRaises(ValueError): TOOL.clean_report(source)
 

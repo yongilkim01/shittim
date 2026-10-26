@@ -17,7 +17,7 @@ DIAG = importlib.util.module_from_spec(SPEC); SPEC.loader.exec_module(DIAG)
 ADDRESS = re.compile(r'0x[0-9a-fA-F]{1,16}\Z')
 RESTORE = re.compile(r'shittim-restore_(-?\d{1,6})_(-?\d{1,6})_(\d{1,6})_(\d{1,6})_[01]\Z')
 FOCUS_FLAGS = ('requested', 'grabbed', 'windowActive', 'viewFocused')
-FOCUS_EVENTS = {'start', 'request', 'grab', 'keyboard', 'view', 'grab-cleared', 'active-window', 'desktop-press'}
+FOCUS_EVENTS = {'start', 'request', 'grab', 'keyboard', 'view', 'grab-cleared', 'active-window', 'desktop-press', 'press-ignored'}
 
 
 def clean_focus(value):

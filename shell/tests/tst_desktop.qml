@@ -104,4 +104,56 @@ TestCase {
         view.releaseFocus();tryCompare(prompt,"visible",false);verify(!view.activeFocus)
         compare(requested.count,0)
     }
+    function test_recorded_grab_clear_then_queued_press_does_not_reacquire_focus() {
+        const view=createTemporaryObject(desktopFactory,testCase,{entries:entries()})
+        const focus=createTemporaryObject(spyFactory,testCase,{target:view,signalName:"focusRequested"})
+        const ignored=createTemporaryObject(spyFactory,testCase,{target:view,signalName:"focusRejected"})
+        mouseClick(view,750,450);compare(focus.count,1)
+        // Laptop log at 3410/3411ms: cleared -> delayed desktop press -> keyboard leave.
+        for(let cycle=0;cycle<3;cycle++) {
+            view.releaseFocus(true);verify(!view.activeFocus)
+            mousePress(view,650,300)
+            compare(focus.count,cycle+1);compare(ignored.count,cycle+1);verify(!view.activeFocus)
+            mouseRelease(view,650,300);verify(!view.inputHandoff)
+            mouseClick(view,750,450);compare(focus.count,cycle+2);verify(view.activeFocus)
+        }
+    }
+    function test_replayed_icon_gesture_cannot_select_open_drag_or_show_a_menu() {
+        const view=createTemporaryObject(desktopFactory,testCase,{entries:entries()})
+        const focus=createTemporaryObject(spyFactory,testCase,{target:view,signalName:"focusRequested"})
+        const requested=createTemporaryObject(spyFactory,testCase,{target:view,signalName:"requested"})
+        const positions=createTemporaryObject(spyFactory,testCase,{target:view,signalName:"positionsSaved"})
+        mouseClick(view,750,450)
+        const home=findChild(view,"desktop-icon-home")
+        view.model.selected=[entries()[1].id]
+        view.releaseFocus(true)
+        mousePress(home,30,30);mouseMove(home,65,55)
+        compare(focus.count,1);compare(view.model.selected[0],entries()[1].id)
+        mouseRelease(home,65,55);compare(positions.count,0);compare(requested.count,0)
+        view.releaseFocus(true)
+        mouseClick(home,30,30,Qt.RightButton)
+        verify(!findChild(view,"desktop-context-menu").visible);compare(focus.count,1)
+        // A later genuine gesture still selects and opens the same icon.
+        mouseDoubleClickSequence(home,30,30);tryCompare(requested,"count",1)
+        compare(requested.signalArguments[0][0],"open")
+    }
+    function test_handoff_during_an_existing_press_invalidates_its_click() {
+        const view=createTemporaryObject(desktopFactory,testCase,{entries:entries()})
+        mousePress(view,750,450,Qt.RightButton)
+        view.releaseFocus(true)
+        mouseRelease(view,750,450,Qt.RightButton)
+        verify(!findChild(view,"desktop-context-menu").visible)
+        verify(!view.activeFocus);verify(!view.inputHandoff)
+        mouseClick(view,750,450,Qt.RightButton)
+        tryCompare(findChild(view,"desktop-context-menu"),"visible",true)
+    }
+    function test_no_replayed_press_rearms_on_a_new_pointer_visit() {
+        const view=createTemporaryObject(desktopFactory,testCase,{entries:entries()})
+        const focus=createTemporaryObject(spyFactory,testCase,{target:view,signalName:"focusRequested"})
+        mouseClick(view,750,450);view.releaseFocus(true)
+        // Some outside-click routes send the press straight to the other application.
+        mouseMove(testCase,950,600);tryCompare(view,"handoffExited",true)
+        mouseMove(view,650,300);tryCompare(view,"inputHandoff",false)
+        mouseClick(view,650,300);compare(focus.count,2);verify(view.activeFocus)
+    }
 }
