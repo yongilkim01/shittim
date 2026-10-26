@@ -6,7 +6,7 @@ require_arch
 shittim_mode=${SHITTIM_ARGS[0]:-}
 case $shittim_mode in ''|--install-hyprbars|--disable|--verify) ;; *) die '지원하지 않는 인자입니다.' ;; esac
 if (( SHITTIM_DRY_RUN )); then
-    info '선택 기능: 공식 hyprbars를 현재 Hyprland와 일치하는 버전으로 설치·로드하고 공통 제목 표시줄을 구성합니다.'
+    info '선택 기능: 공식 hyprbars의 고정 소스에 Shittim 벡터 기호 렌더러를 적용해 빌드·로드합니다.'
     info '--install-hyprbars에서만 빌드 도구 설치와 공식 Git 저장소 다운로드·빌드를 요청합니다. AUR은 사용하지 않습니다.'
     info '일반 install.sh에는 플러그인 설치를 추가하지 않습니다. 실제 파일·패키지·세션은 변경하지 않았습니다.'
     exit 0
@@ -27,7 +27,7 @@ fi
 # Check the running compositor, not just the installed package version, before any changes.
 shittim_revision=$(python3 "$SHITTIM_ROOT/scripts/titlebar-tool.py" revision)
 if [[ $shittim_mode == --install-hyprbars ]]; then
-    info '공식 hyprbars 소스를 다운로드·빌드합니다. 플러그인은 Hyprland 안에서 실행됩니다.'
+    info '공식 hyprbars 소스에 저장소의 벡터 기호 수정을 적용해 빌드합니다. 플러그인은 Hyprland 안에서 실행됩니다.'
     info '빌드 도구는 공식 패키지로 설치하며 pacman과 hyprpm의 확인 문구를 읽고 진행하세요.'
     require_command sudo
     sudo pacman -S --needed -- base-devel cmake cpio hyprpm
@@ -38,11 +38,11 @@ if [[ $shittim_mode == --install-hyprbars ]]; then
     if [[ $shittim_plugins != *'Plugin hyprbars'* ]]; then
         hyprpm add https://github.com/hyprwm/hyprland-plugins "$shittim_revision"
     fi
+    python3 "$SHITTIM_ROOT/scripts/titlebar-tool.py" build
 fi
-hyprpm enable hyprbars
-hyprpm reload
 python3 "$SHITTIM_ROOT/scripts/titlebar-tool.py" setup
 config_tool autostart
+python3 "$SHITTIM_ROOT/scripts/titlebar-tool.py" load
 hyprctl reload
 python3 "$SHITTIM_ROOT/scripts/titlebar-tool.py" verify
 info '제목 표시줄의 −는 Shittim 숨김, □는 최대화/복원, X는 정상 닫기입니다. 제목 표시줄을 드래그해 창을 이동합니다.'

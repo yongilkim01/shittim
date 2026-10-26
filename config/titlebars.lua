@@ -1,5 +1,5 @@
 -- Managed by Shittim. Optional compositor decorations, not a QML overlay.
-hl.on("hyprland.start", function() hl.exec_cmd("hyprpm reload") end)
+hl.on("hyprland.start", function() hl.exec_cmd(__LOAD__) end)
 if not (hl.plugin and hl.plugin.hyprbars and hl.plugin.hyprbars.add_button) then return end
 hl.config({
     plugin = { hyprbars = {
@@ -13,7 +13,7 @@ hl.config({
     } },
 })
 -- Right to left; actions use the existing Shittim window controller.
--- Standard Unicode symbols use the system font; no private-use font is required.
+-- Standard symbols select vector paths in the Shittim renderer; stock hyprbars uses its system font.
 hl.plugin.hyprbars.add_button({ bg_color = "rgba(00000000)", fg_color = "rgb(00d9f5)", size = 24, icon = "×", action = __CLOSE__ })
 hl.plugin.hyprbars.add_button({ bg_color = "rgba(00000000)", fg_color = "rgb(00d9f5)", size = 24, icon = "□", action = __MAXIMIZE__ })
 hl.plugin.hyprbars.add_button({ bg_color = "rgba(00000000)", fg_color = "rgb(00d9f5)", size = 24, icon = "−", action = __HIDE__ })

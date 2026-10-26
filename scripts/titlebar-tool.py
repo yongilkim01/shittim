@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Opt-in hyprbars configuration; never downloads or installs a compositor plugin."""
+"""Opt-in titlebar setup; only the explicit build action downloads plugin source."""
 import argparse
 import importlib.util
 import json
@@ -10,6 +10,8 @@ import sys
 
 SPEC = importlib.util.spec_from_file_location('shittim_config', Path(__file__).with_name('config-tool.py'))
 files = importlib.util.module_from_spec(SPEC); SPEC.loader.exec_module(files)
+SPEC_PLUGIN = importlib.util.spec_from_file_location('shittim_titlebar_plugin', Path(__file__).with_name('titlebar-plugin.py'))
+plugin = importlib.util.module_from_spec(SPEC_PLUGIN); SPEC_PLUGIN.loader.exec_module(plugin)
 # Official hyprland-plugins/hyprpm.toml commit pins for released Hyprland 0.55/0.56.
 # https://github.com/hyprwm/hyprland-plugins/blob/main/hyprpm.toml
 COMPATIBLE = {commit: '3aa21f2e0ca72412f1b434c3126f8f1fec3c716c' for commit in (
@@ -38,6 +40,7 @@ def revision(version):
 
 def source(config):
     text = (config.root / 'config/titlebars.lua').read_text(encoding='utf-8')
+    text = text.replace('__LOAD__', json.dumps(shlex.join(['/usr/bin/python3', str(config.root / 'scripts/titlebar-tool.py'), 'load']), ensure_ascii=False))
     for action in ('close', 'maximize', 'hide'):
         command = shlex.join(['/usr/bin/bash', str(config.root / 'scripts/windows.sh'), action])
         text = text.replace('__' + action.upper() + '__', json.dumps(command, ensure_ascii=False))
@@ -46,7 +49,7 @@ def source(config):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', choices=['revision', 'setup', 'disable', 'verify'])
+    parser.add_argument('action', choices=['revision', 'setup', 'disable', 'verify', 'build', 'load'])
     parser.add_argument('--dry-run', action='store_true')
     args = parser.parse_args()
     if args.action == 'revision':
@@ -54,12 +57,20 @@ def main():
         print(revision(json.loads(result.stdout))); return
     config = files.Config(dry=args.dry_run)
     destination = config.config / 'hypr/shittim-titlebars.lua'
+    if args.action in ('build', 'load'):
+        if config.dry:
+            files.say('벡터 제목 표시줄 ' + args.action + ' 계획. 파일·세션은 변경하지 않았습니다.'); return
+        version = plugin.query('version')
+        if args.action == 'build': plugin.build(config, version, revision(version))
+        else: plugin.load(config, version)
+        return
     if args.action == 'setup':
         config.write(destination, source(config))
         remove_legacy_controls(config)
     elif args.action == 'disable':
         if destination.is_file() and 'Managed by Shittim' not in destination.read_text(encoding='utf-8'):
             raise ValueError('Shittim에서 생성하지 않은 제목 표시줄 설정은 이동하지 않습니다.')
+        if not config.dry: plugin.unload_custom(config, plugin.query('plugin', 'list'))
         config.backup(destination)
     else:
         if not destination.is_file() or destination.read_text(encoding='utf-8') != source(config):
@@ -67,6 +78,7 @@ def main():
         result = subprocess.run(['hyprctl', '-j', 'plugin', 'list'], check=True, capture_output=True, text=True, timeout=5)
         if not any(plugin.get('name') == 'hyprbars' for plugin in json.loads(result.stdout)):
             raise ValueError('hyprbars가 로드되지 않았습니다. hyprpm reload 결과를 확인하세요.')
+        plugin.verify(config, json.loads(result.stdout))
         result = subprocess.run(['hyprctl', '-j', 'configerrors'], check=True, capture_output=True, text=True, timeout=5)
         errors = [str(error).strip() for error in json.loads(result.stdout) if str(error).strip()]
         if errors:

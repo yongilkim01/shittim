@@ -92,8 +92,9 @@ chmod +x "$FIXTURE_ROOT/bin/hyprpm"
             install = 'sudo pacman -S --needed -- base-devel cmake cpio hyprpm'
             self.assertIn(install, calls)
             self.assertLess(calls.index(install), calls.index('hyprpm list'))
-            self.assertIn('hyprpm enable hyprbars', calls)
+            self.assertIn('python load', calls)
             self.assertIn('python verify', calls)
+            self.assertLess(calls.index('python build'), calls.index('python load'))
 
     def test_only_confirmed_running_commits_choose_a_plugin_revision(self):
         for commit, expected in TOOL.COMPATIBLE.items():
@@ -115,7 +116,7 @@ chmod +x "$FIXTURE_ROOT/bin/hyprpm"
             self.assertNotIn('__HIDE__', source)
             code = '''local buttons,events,environment,options={},{},{},nil
 hl={plugin={},on=function(event,callback) events[event]=callback end,
-exec_cmd=function(command) assert(command=='hyprpm reload') end,
+exec_cmd=function(command) assert(command:match('/scripts/titlebar%-tool.py.* load$')) end,
 env=function(k,v) environment[k]=v end,
 config=function(v) options=v end}
 local setup=assert(load([==[SOURCE]==]))
