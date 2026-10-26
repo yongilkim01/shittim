@@ -20,6 +20,8 @@ bash scripts/setup-titlebars.sh --install-hyprbars
 
 최대화된 창의 가운데 버튼은 겹친 두 사각형의 복원 아이콘으로 바뀌며 복원 후 다시 `□`가 된다. 창별 실제 compositor 최대화 상태를 읽고 텍스처도 창별로 저장해, 최대화된 Kitty 옆의 일반 Chrome 창까지 복원 아이콘으로 바뀌지 않도록 한다. 단축키·Dock·제목 표시줄 어느 경로로 최대화해도 같은 상태를 사용한다. 0.55는 창의 fullscreen state, 0.56은 공식 Fullscreen Controller를 조회한다.
 
+`decorate=false`인 Shittim Files 등 자체 장식 창에서는 hyprbars의 예약 높이도 0으로 처리한다. 외부 제목 표시줄을 그리지 않으면서 24px만 비워 두던 상단 여백을 제거하며, 실제 상단 바·Dock 예약 영역과 사용자 작업 공간 설정은 유지한다. 이 수정도 플러그인 재빌드가 필요하다.
+
 [원본 hyprbars](https://github.com/hyprwm/hyprland-plugins/blob/3aa21f2e0ca72412f1b434c3126f8f1fec3c716c/hyprbars/barDeco.cpp#L351)는 기호를 버튼 크기의 62%인 sans 글자로 그린다. 기본 플러그인만 쓰면 글리프별 면적 차이로 최소화·닫기가 작게 보일 수 있다. 이번 수정은 그 경로를 세 기호에 한해 Cairo 벡터 경로로 대체한다. Lua의 `fg_color` 처리에서 빠진 사용자 색상 플래그도 설정해 실제 지정 색상을 사용한다. 생성 텍스처는 기존 GPU 렌더링·위치·투명도·클릭 처리에 그대로 연결하며 필요한 크기가 바뀔 때 갱신한다.
 
 빌드한 `.so`와 원본 BSD 3-Clause 라이선스는 `${XDG_DATA_HOME:-~/.local/share}/shittim/titlebars/`의 버전별 경로에 저장한다. 로드 전에 바이너리 SHA-256, Hyprland 커밋·ABI, 수정 코드 버전을 확인한다. 빌드 완료 후에만 기본 hyprbars를 비활성화하고 수정본 하나를 로드한다. 로드 실패 시 이전 수정본 또는 기본 플러그인 복구를 시도하며 실패를 출력한다. 검증은 실제 로드된 버전이 `shittim-vector-1-...`인지 확인한다. 기본 글꼴 렌더러만 쓰는 경우에는 별도 주의를 출력한다.

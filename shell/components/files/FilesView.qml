@@ -9,7 +9,6 @@ FocusScope {
     property bool maximized: false
     property bool editingAddress: false
     property bool searching: false
-    readonly property real contentScale: Math.max(0.8,Math.min(1.5,width/440,height/326))
     signal minimizeRequested()
     signal maximizeRequested()
     signal closeRequested()
@@ -56,21 +55,8 @@ FocusScope {
         event.accepted=true
     }
     Item {
-        id: design; width:root.width/root.contentScale; height:root.height/root.contentScale
-        scale:root.contentScale; transformOrigin:Item.TopLeft
-        Canvas {
-            anchors.fill:parent
-            onWidthChanged: requestPaint(); onHeightChanged: requestPaint()
-            onPaint: {
-                const c=getContext("2d"), e=2.5,w=width-e,h=height-e,cut=6
-                c.clearRect(0,0,width,height); c.beginPath()
-                c.moveTo(e+cut,e);c.lineTo(w-cut,e);c.lineTo(w,e+cut);c.lineTo(w,h-cut);c.lineTo(w-cut,h);c.lineTo(e,h);c.lineTo(e,e+cut);c.closePath()
-                const gradient=c.createLinearGradient(0,0,w,h);gradient.addColorStop(0,"#000b10");gradient.addColorStop(1,"#011721")
-                c.fillStyle=gradient;c.fill();c.strokeStyle=Theme.accent
-                c.globalAlpha=0.06;c.lineWidth=5;c.stroke();c.globalAlpha=0.16;c.lineWidth=3;c.stroke()
-                c.globalAlpha=1;c.lineWidth=1;c.strokeStyle="#009fad";c.stroke()
-            }
-        }
+        id: design; objectName:"files-design"; width:root.width; height:root.height
+        FileFrame { anchors.fill:parent; maximized:root.maximized }
         MouseArea { x:5;y:4;width:parent.width-10;height:30; onPressed:root.dragRequested(); onDoubleClicked:root.maximizeRequested() }
         Flickable {
             x:10;y:11;width:Math.max(80,parent.width-114);height:25;contentWidth:tabs.width;clip:true;boundsBehavior:Flickable.StopAtBounds

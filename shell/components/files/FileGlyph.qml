@@ -1,16 +1,25 @@
 import QtQuick
 import "../../ui"
 
-Canvas {
+Item {
+    id: root
     property string glyph: "folder"
     property color ink: Theme.textSecondary
     property bool windowControl: false
-    onGlyphChanged: requestPaint()
-    onInkChanged: requestPaint()
-    onWindowControlChanged: requestPaint()
+    onGlyphChanged: canvas.requestPaint()
+    onInkChanged: canvas.requestPaint()
+    onWindowControlChanged: canvas.requestPaint()
+    Loader {
+        anchors.fill: parent; active: root.windowControl
+        sourceComponent: FileWindowControl { glyph: root.glyph; ink: root.ink }
+    }
+    Canvas {
+    id: canvas; anchors.fill: parent; visible: !root.windowControl
     onWidthChanged: requestPaint()
     onHeightChanged: requestPaint()
     onPaint: {
+        if(root.windowControl)return
+        const glyph=root.glyph,ink=root.ink,windowControl=false
         const c=getContext("2d"); c.reset(); c.scale(width/16,height/16)
         c.strokeStyle=ink; c.fillStyle=ink; c.lineWidth=windowControl ? 1.25 : 1.15; c.lineCap="square"; c.lineJoin="miter"
         function line(points) { c.beginPath(); c.moveTo(points[0],points[1]); for(let i=2;i<points.length;i+=2)c.lineTo(points[i],points[i+1]); c.stroke() }
@@ -35,5 +44,6 @@ Canvas {
         else if(glyph==="music") {line([6,12,6,3,13,2,13,11]);c.strokeRect(3,11,3,3);c.strokeRect(10,10,3,3)}
         else if(glyph==="network") {c.strokeRect(6,2,4,4);line([8,6,8,9,3,9,3,11]);line([8,9,13,9,13,11]);c.strokeRect(1,11,4,3);c.strokeRect(11,11,4,3)}
         else {line([2,5,2,14,14,14,14,5,8,5,6,2,2,2,2,5])}
+    }
     }
 }

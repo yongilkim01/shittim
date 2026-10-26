@@ -40,6 +40,10 @@ def patch_source(directory, config):
     end = 'void CHyprBar::draw('
     if text.count(TEXT_RENDER) != 1 or text.count(original) != 1 or text.count(begin) != 1 or text.count(end) != 1 or text.count(foreground) != 1:
         raise ValueError('확인한 hyprbars 렌더링 소스와 다릅니다. 원본 플러그인을 유지했습니다.')
+    reserved = 'm_hidden || !ENABLED ? 0 : HEIGHT'
+    if text.count(reserved) != 1:
+        raise ValueError('확인한 hyprbars 공간 예약 소스와 다릅니다. 원본 플러그인을 유지했습니다.')
+    text = text.replace(reserved, 'm_hidden || !ENABLED || !m_pWindow.lock() || !m_pWindow->m_ruleApplicator->decorate().valueOrDefault() ? 0 : HEIGHT')
     setup = ('const auto controlIcon = ShittimHUD::displayIcon(button.icon, button.icon == "□" && (' + maximized + '));\n'
              '        const int controlIndex = ShittimHUD::controlIndex(controlIcon);\n'
              '        auto& iconTex = controlIndex >= 0 ? m_shittimControls[controlIndex].texture : button.iconTex;\n'
