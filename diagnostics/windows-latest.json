@@ -1,0 +1,1287 @@
+{
+  "schema": 1,
+  "settings": {
+    "input:follow_mouse": 2,
+    "input:float_switch_override_focus": 0
+  },
+  "samples": [
+    {
+      "time": 0.0,
+      "active": "0x561034dbf320",
+      "cursor": {
+        "x": 903,
+        "y": 232
+      },
+      "windows": [
+        {
+          "address": "0x561034dbf320",
+          "class": "kitty",
+          "at": [
+            141,
+            85
+          ],
+          "size": [
+            998,
+            518
+          ],
+          "tags": [],
+          "mapped": true,
+          "floating": true,
+          "hidden": false,
+          "monitor": 0,
+          "workspace": 1,
+          "fullscreen": 0,
+          "fullscreenClient": 0
+        }
+      ],
+      "monitors": [
+        {
+          "id": 0,
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "scale": 1.5,
+          "transform": 0,
+          "reserved": [
+            0,
+            40,
+            0,
+            72
+          ],
+          "focused": true
+        }
+      ]
+    },
+    {
+      "time": 0.52,
+      "active": "0x561034dbf320",
+      "cursor": {
+        "x": 903,
+        "y": 232
+      },
+      "windows": [
+        {
+          "address": "0x561034dbf320",
+          "class": "kitty",
+          "at": [
+            141,
+            85
+          ],
+          "size": [
+            998,
+            518
+          ],
+          "tags": [],
+          "mapped": true,
+          "floating": true,
+          "hidden": false,
+          "monitor": 0,
+          "workspace": 1,
+          "fullscreen": 0,
+          "fullscreenClient": 0
+        }
+      ],
+      "monitors": [
+        {
+          "id": 0,
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "scale": 1.5,
+          "transform": 0,
+          "reserved": [
+            0,
+            40,
+            0,
+            72
+          ],
+          "focused": true
+        }
+      ]
+    },
+    {
+      "time": 1.043,
+      "active": "0x561034dbf320",
+      "cursor": {
+        "x": 1005,
+        "y": 142
+      },
+      "windows": [
+        {
+          "address": "0x561034dbf320",
+          "class": "kitty",
+          "at": [
+            141,
+            85
+          ],
+          "size": [
+            998,
+            518
+          ],
+          "tags": [],
+          "mapped": true,
+          "floating": true,
+          "hidden": false,
+          "monitor": 0,
+          "workspace": 1,
+          "fullscreen": 0,
+          "fullscreenClient": 0
+        }
+      ],
+      "monitors": [
+        {
+          "id": 0,
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "scale": 1.5,
+          "transform": 0,
+          "reserved": [
+            0,
+            40,
+            0,
+            72
+          ],
+          "focused": true
+        }
+      ]
+    },
+    {
+      "time": 1.565,
+      "active": "0x561034dbf320",
+      "cursor": {
+        "x": 1119,
+        "y": 202
+      },
+      "windows": [
+        {
+          "address": "0x561034dbf320",
+          "class": "kitty",
+          "at": [
+            141,
+            85
+          ],
+          "size": [
+            998,
+            518
+          ],
+          "tags": [],
+          "mapped": true,
+          "floating": true,
+          "hidden": false,
+          "monitor": 0,
+          "workspace": 1,
+          "fullscreen": 0,
+          "fullscreenClient": 0
+        }
+      ],
+      "monitors": [
+        {
+          "id": 0,
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "scale": 1.5,
+          "transform": 0,
+          "reserved": [
+            0,
+            40,
+            0,
+            72
+          ],
+          "focused": true
+        }
+      ]
+    },
+    {
+      "time": 2.086,
+      "active": "0x561034dbf320",
+      "cursor": {
+        "x": 738,
+        "y": 691
+      },
+      "windows": [
+        {
+          "address": "0x561034dbf320",
+          "class": "kitty",
+          "at": [
+            141,
+            85
+          ],
+          "size": [
+            998,
+            518
+          ],
+          "tags": [],
+          "mapped": true,
+          "floating": true,
+          "hidden": false,
+          "monitor": 0,
+          "workspace": 1,
+          "fullscreen": 0,
+          "fullscreenClient": 0
+        }
+      ],
+      "monitors": [
+        {
+          "id": 0,
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "scale": 1.5,
+          "transform": 0,
+          "reserved": [
+            0,
+            40,
+            0,
+            72
+          ],
+          "focused": true
+        }
+      ]
+    },
+    {
+      "time": 2.604,
+      "active": "0x561034dbf320",
+      "cursor": {
+        "x": 679,
+        "y": 680
+      },
+      "windows": [
+        {
+          "address": "0x561034dbf320",
+          "class": "kitty",
+          "at": [
+            141,
+            85
+          ],
+          "size": [
+            998,
+            518
+          ],
+          "tags": [],
+          "mapped": true,
+          "floating": true,
+          "hidden": false,
+          "monitor": 0,
+          "workspace": 1,
+          "fullscreen": 0,
+          "fullscreenClient": 0
+        }
+      ],
+      "monitors": [
+        {
+          "id": 0,
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "scale": 1.5,
+          "transform": 0,
+          "reserved": [
+            0,
+            40,
+            0,
+            72
+          ],
+          "focused": true
+        }
+      ]
+    },
+    {
+      "time": 3.126,
+      "active": "0x561034ead540",
+      "cursor": {
+        "x": 927,
+        "y": 312
+      },
+      "windows": [
+        {
+          "address": "0x561034dbf320",
+          "class": "kitty",
+          "at": [
+            141,
+            85
+          ],
+          "size": [
+            998,
+            518
+          ],
+          "tags": [],
+          "mapped": true,
+          "floating": true,
+          "hidden": false,
+          "monitor": 0,
+          "workspace": 1,
+          "fullscreen": 0,
+          "fullscreenClient": 0
+        },
+        {
+          "address": "0x561034ead540",
+          "class": "org.shittim.Files",
+          "at": [
+            422,
+            153
+          ],
+          "size": [
+            436,
+            382
+          ],
+          "tags": [],
+          "mapped": true,
+          "floating": true,
+          "hidden": false,
+          "monitor": 0,
+          "workspace": 1,
+          "fullscreen": 0,
+          "fullscreenClient": 0
+        }
+      ],
+      "monitors": [
+        {
+          "id": 0,
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "scale": 1.5,
+          "transform": 0,
+          "reserved": [
+            0,
+            40,
+            0,
+            72
+          ],
+          "focused": true
+        }
+      ]
+    },
+    {
+      "time": 3.649,
+      "active": "0x561034ead540",
+      "cursor": {
+        "x": 821,
+        "y": 175
+      },
+      "windows": [
+        {
+          "address": "0x561034dbf320",
+          "class": "kitty",
+          "at": [
+            141,
+            85
+          ],
+          "size": [
+            998,
+            518
+          ],
+          "tags": [],
+          "mapped": true,
+          "floating": true,
+          "hidden": false,
+          "monitor": 0,
+          "workspace": 1,
+          "fullscreen": 0,
+          "fullscreenClient": 0
+        },
+        {
+          "address": "0x561034ead540",
+          "class": "org.shittim.Files",
+          "at": [
+            422,
+            153
+          ],
+          "size": [
+            436,
+            382
+          ],
+          "tags": [],
+          "mapped": true,
+          "floating": true,
+          "hidden": false,
+          "monitor": 0,
+          "workspace": 1,
+          "fullscreen": 0,
+          "fullscreenClient": 0
+        }
+      ],
+      "monitors": [
+        {
+          "id": 0,
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "scale": 1.5,
+          "transform": 0,
+          "reserved": [
+            0,
+            40,
+            0,
+            72
+          ],
+          "focused": true
+        }
+      ]
+    },
+    {
+      "time": 4.17,
+      "active": "0x561034dbf320",
+      "cursor": {
+        "x": 814,
+        "y": 170
+      },
+      "windows": [
+        {
+          "address": "0x561034dbf320",
+          "class": "kitty",
+          "at": [
+            141,
+            85
+          ],
+          "size": [
+            998,
+            518
+          ],
+          "tags": [],
+          "mapped": true,
+          "floating": true,
+          "hidden": false,
+          "monitor": 0,
+          "workspace": 1,
+          "fullscreen": 0,
+          "fullscreenClient": 0
+        }
+      ],
+      "monitors": [
+        {
+          "id": 0,
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "scale": 1.5,
+          "transform": 0,
+          "reserved": [
+            0,
+            40,
+            0,
+            72
+          ],
+          "focused": true
+        }
+      ]
+    },
+    {
+      "time": 4.693,
+      "active": "0x561034dbf320",
+      "cursor": {
+        "x": 999,
+        "y": 210
+      },
+      "windows": [
+        {
+          "address": "0x561034dbf320",
+          "class": "kitty",
+          "at": [
+            141,
+            85
+          ],
+          "size": [
+            998,
+            518
+          ],
+          "tags": [],
+          "mapped": true,
+          "floating": true,
+          "hidden": false,
+          "monitor": 0,
+          "workspace": 1,
+          "fullscreen": 0,
+          "fullscreenClient": 0
+        }
+      ],
+      "monitors": [
+        {
+          "id": 0,
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "scale": 1.5,
+          "transform": 0,
+          "reserved": [
+            0,
+            40,
+            0,
+            72
+          ],
+          "focused": true
+        }
+      ]
+    },
+    {
+      "time": 5.214,
+      "active": "0x561034dbf320",
+      "cursor": {
+        "x": 1022,
+        "y": 240
+      },
+      "windows": [
+        {
+          "address": "0x561034dbf320",
+          "class": "kitty",
+          "at": [
+            141,
+            85
+          ],
+          "size": [
+            998,
+            518
+          ],
+          "tags": [],
+          "mapped": true,
+          "floating": true,
+          "hidden": false,
+          "monitor": 0,
+          "workspace": 1,
+          "fullscreen": 0,
+          "fullscreenClient": 0
+        }
+      ],
+      "monitors": [
+        {
+          "id": 0,
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "scale": 1.5,
+          "transform": 0,
+          "reserved": [
+            0,
+            40,
+            0,
+            72
+          ],
+          "focused": true
+        }
+      ]
+    },
+    {
+      "time": 5.736,
+      "active": "0x561034dbf320",
+      "cursor": {
+        "x": 905,
+        "y": 395
+      },
+      "windows": [
+        {
+          "address": "0x561034dbf320",
+          "class": "kitty",
+          "at": [
+            141,
+            85
+          ],
+          "size": [
+            998,
+            518
+          ],
+          "tags": [],
+          "mapped": true,
+          "floating": true,
+          "hidden": false,
+          "monitor": 0,
+          "workspace": 1,
+          "fullscreen": 0,
+          "fullscreenClient": 0
+        }
+      ],
+      "monitors": [
+        {
+          "id": 0,
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "scale": 1.5,
+          "transform": 0,
+          "reserved": [
+            0,
+            40,
+            0,
+            72
+          ],
+          "focused": true
+        }
+      ]
+    },
+    {
+      "time": 6.259,
+      "active": "0x561034dbf320",
+      "cursor": {
+        "x": 769,
+        "y": 588
+      },
+      "windows": [
+        {
+          "address": "0x561034dbf320",
+          "class": "kitty",
+          "at": [
+            141,
+            85
+          ],
+          "size": [
+            998,
+            518
+          ],
+          "tags": [],
+          "mapped": true,
+          "floating": true,
+          "hidden": false,
+          "monitor": 0,
+          "workspace": 1,
+          "fullscreen": 0,
+          "fullscreenClient": 0
+        }
+      ],
+      "monitors": [
+        {
+          "id": 0,
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "scale": 1.5,
+          "transform": 0,
+          "reserved": [
+            0,
+            40,
+            0,
+            72
+          ],
+          "focused": true
+        }
+      ]
+    },
+    {
+      "time": 6.78,
+      "active": "0x561034dbf320",
+      "cursor": {
+        "x": 693,
+        "y": 687
+      },
+      "windows": [
+        {
+          "address": "0x561034dbf320",
+          "class": "kitty",
+          "at": [
+            141,
+            85
+          ],
+          "size": [
+            998,
+            518
+          ],
+          "tags": [],
+          "mapped": true,
+          "floating": true,
+          "hidden": false,
+          "monitor": 0,
+          "workspace": 1,
+          "fullscreen": 0,
+          "fullscreenClient": 0
+        }
+      ],
+      "monitors": [
+        {
+          "id": 0,
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "scale": 1.5,
+          "transform": 0,
+          "reserved": [
+            0,
+            40,
+            0,
+            72
+          ],
+          "focused": true
+        }
+      ]
+    },
+    {
+      "time": 7.303,
+      "active": "0x561034dbf320",
+      "cursor": {
+        "x": 693,
+        "y": 687
+      },
+      "windows": [
+        {
+          "address": "0x561034dbf320",
+          "class": "kitty",
+          "at": [
+            141,
+            85
+          ],
+          "size": [
+            998,
+            518
+          ],
+          "tags": [],
+          "mapped": true,
+          "floating": true,
+          "hidden": false,
+          "monitor": 0,
+          "workspace": 1,
+          "fullscreen": 0,
+          "fullscreenClient": 0
+        }
+      ],
+      "monitors": [
+        {
+          "id": 0,
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "scale": 1.5,
+          "transform": 0,
+          "reserved": [
+            0,
+            40,
+            0,
+            72
+          ],
+          "focused": true
+        }
+      ]
+    },
+    {
+      "time": 7.825,
+      "active": "0x561033f08cc0",
+      "cursor": {
+        "x": 762,
+        "y": 236
+      },
+      "windows": [
+        {
+          "address": "0x561034dbf320",
+          "class": "kitty",
+          "at": [
+            141,
+            85
+          ],
+          "size": [
+            998,
+            518
+          ],
+          "tags": [],
+          "mapped": true,
+          "floating": true,
+          "hidden": false,
+          "monitor": 0,
+          "workspace": 1,
+          "fullscreen": 0,
+          "fullscreenClient": 0
+        },
+        {
+          "address": "0x561033f08cc0",
+          "class": "org.shittim.Files",
+          "at": [
+            422,
+            153
+          ],
+          "size": [
+            436,
+            382
+          ],
+          "tags": [],
+          "mapped": true,
+          "floating": true,
+          "hidden": false,
+          "monitor": 0,
+          "workspace": 1,
+          "fullscreen": 0,
+          "fullscreenClient": 0
+        }
+      ],
+      "monitors": [
+        {
+          "id": 0,
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "scale": 1.5,
+          "transform": 0,
+          "reserved": [
+            0,
+            40,
+            0,
+            72
+          ],
+          "focused": true
+        }
+      ]
+    },
+    {
+      "time": 8.348,
+      "active": "0x561033f08cc0",
+      "cursor": {
+        "x": 807,
+        "y": 177
+      },
+      "windows": [
+        {
+          "address": "0x561034dbf320",
+          "class": "kitty",
+          "at": [
+            141,
+            85
+          ],
+          "size": [
+            998,
+            518
+          ],
+          "tags": [],
+          "mapped": true,
+          "floating": true,
+          "hidden": false,
+          "monitor": 0,
+          "workspace": 1,
+          "fullscreen": 0,
+          "fullscreenClient": 0
+        },
+        {
+          "address": "0x561033f08cc0",
+          "class": "org.shittim.Files",
+          "at": [
+            422,
+            153
+          ],
+          "size": [
+            436,
+            382
+          ],
+          "tags": [],
+          "mapped": true,
+          "floating": true,
+          "hidden": false,
+          "monitor": 0,
+          "workspace": 1,
+          "fullscreen": 0,
+          "fullscreenClient": 0
+        }
+      ],
+      "monitors": [
+        {
+          "id": 0,
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "scale": 1.5,
+          "transform": 0,
+          "reserved": [
+            0,
+            40,
+            0,
+            72
+          ],
+          "focused": true
+        }
+      ]
+    },
+    {
+      "time": 8.869,
+      "active": "0x561033f08cc0",
+      "cursor": {
+        "x": 807,
+        "y": 174
+      },
+      "windows": [
+        {
+          "address": "0x561034dbf320",
+          "class": "kitty",
+          "at": [
+            141,
+            85
+          ],
+          "size": [
+            998,
+            518
+          ],
+          "tags": [],
+          "mapped": true,
+          "floating": true,
+          "hidden": false,
+          "monitor": 0,
+          "workspace": 1,
+          "fullscreen": 0,
+          "fullscreenClient": 0
+        },
+        {
+          "address": "0x561033f08cc0",
+          "class": "org.shittim.Files",
+          "at": [
+            8,
+            48
+          ],
+          "size": [
+            1264,
+            592
+          ],
+          "tags": [
+            "shittim-maximized",
+            "shittim-restore_422_153_436_382_1"
+          ],
+          "mapped": true,
+          "floating": true,
+          "hidden": false,
+          "monitor": 0,
+          "workspace": 1,
+          "fullscreen": 0,
+          "fullscreenClient": 0
+        }
+      ],
+      "monitors": [
+        {
+          "id": 0,
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "scale": 1.5,
+          "transform": 0,
+          "reserved": [
+            0,
+            40,
+            0,
+            72
+          ],
+          "focused": true
+        }
+      ]
+    },
+    {
+      "time": 9.393,
+      "active": "0x561033f08cc0",
+      "cursor": {
+        "x": 1258,
+        "y": 44
+      },
+      "windows": [
+        {
+          "address": "0x561034dbf320",
+          "class": "kitty",
+          "at": [
+            141,
+            85
+          ],
+          "size": [
+            998,
+            518
+          ],
+          "tags": [],
+          "mapped": true,
+          "floating": true,
+          "hidden": false,
+          "monitor": 0,
+          "workspace": 1,
+          "fullscreen": 0,
+          "fullscreenClient": 0
+        },
+        {
+          "address": "0x561033f08cc0",
+          "class": "org.shittim.Files",
+          "at": [
+            8,
+            48
+          ],
+          "size": [
+            1264,
+            592
+          ],
+          "tags": [
+            "shittim-maximized",
+            "shittim-restore_422_153_436_382_1"
+          ],
+          "mapped": true,
+          "floating": true,
+          "hidden": false,
+          "monitor": 0,
+          "workspace": 1,
+          "fullscreen": 0,
+          "fullscreenClient": 0
+        }
+      ],
+      "monitors": [
+        {
+          "id": 0,
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "scale": 1.5,
+          "transform": 0,
+          "reserved": [
+            0,
+            40,
+            0,
+            72
+          ],
+          "focused": true
+        }
+      ]
+    },
+    {
+      "time": 9.912,
+      "active": "0x561034dbf320",
+      "cursor": {
+        "x": 1254,
+        "y": 72
+      },
+      "windows": [
+        {
+          "address": "0x561034dbf320",
+          "class": "kitty",
+          "at": [
+            141,
+            85
+          ],
+          "size": [
+            998,
+            518
+          ],
+          "tags": [],
+          "mapped": true,
+          "floating": true,
+          "hidden": false,
+          "monitor": 0,
+          "workspace": 1,
+          "fullscreen": 0,
+          "fullscreenClient": 0
+        }
+      ],
+      "monitors": [
+        {
+          "id": 0,
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "scale": 1.5,
+          "transform": 0,
+          "reserved": [
+            0,
+            40,
+            0,
+            72
+          ],
+          "focused": true
+        }
+      ]
+    },
+    {
+      "time": 10.435,
+      "active": "0x561034dbf320",
+      "cursor": {
+        "x": 1192,
+        "y": 126
+      },
+      "windows": [
+        {
+          "address": "0x561034dbf320",
+          "class": "kitty",
+          "at": [
+            141,
+            85
+          ],
+          "size": [
+            998,
+            518
+          ],
+          "tags": [],
+          "mapped": true,
+          "floating": true,
+          "hidden": false,
+          "monitor": 0,
+          "workspace": 1,
+          "fullscreen": 0,
+          "fullscreenClient": 0
+        }
+      ],
+      "monitors": [
+        {
+          "id": 0,
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "scale": 1.5,
+          "transform": 0,
+          "reserved": [
+            0,
+            40,
+            0,
+            72
+          ],
+          "focused": true
+        }
+      ]
+    },
+    {
+      "time": 10.956,
+      "active": "0x561034dbf320",
+      "cursor": {
+        "x": 1192,
+        "y": 126
+      },
+      "windows": [
+        {
+          "address": "0x561034dbf320",
+          "class": "kitty",
+          "at": [
+            141,
+            85
+          ],
+          "size": [
+            998,
+            518
+          ],
+          "tags": [],
+          "mapped": true,
+          "floating": true,
+          "hidden": false,
+          "monitor": 0,
+          "workspace": 1,
+          "fullscreen": 0,
+          "fullscreenClient": 0
+        }
+      ],
+      "monitors": [
+        {
+          "id": 0,
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "scale": 1.5,
+          "transform": 0,
+          "reserved": [
+            0,
+            40,
+            0,
+            72
+          ],
+          "focused": true
+        }
+      ]
+    },
+    {
+      "time": 11.481,
+      "active": "0x561034dbf320",
+      "cursor": {
+        "x": 1192,
+        "y": 126
+      },
+      "windows": [
+        {
+          "address": "0x561034dbf320",
+          "class": "kitty",
+          "at": [
+            141,
+            85
+          ],
+          "size": [
+            998,
+            518
+          ],
+          "tags": [],
+          "mapped": true,
+          "floating": true,
+          "hidden": false,
+          "monitor": 0,
+          "workspace": 1,
+          "fullscreen": 0,
+          "fullscreenClient": 0
+        }
+      ],
+      "monitors": [
+        {
+          "id": 0,
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "scale": 1.5,
+          "transform": 0,
+          "reserved": [
+            0,
+            40,
+            0,
+            72
+          ],
+          "focused": true
+        }
+      ]
+    },
+    {
+      "time": 12.006,
+      "active": "0x561034dbf320",
+      "cursor": {
+        "x": 1192,
+        "y": 126
+      },
+      "windows": [
+        {
+          "address": "0x561034dbf320",
+          "class": "kitty",
+          "at": [
+            141,
+            85
+          ],
+          "size": [
+            998,
+            518
+          ],
+          "tags": [],
+          "mapped": true,
+          "floating": true,
+          "hidden": false,
+          "monitor": 0,
+          "workspace": 1,
+          "fullscreen": 0,
+          "fullscreenClient": 0
+        }
+      ],
+      "monitors": [
+        {
+          "id": 0,
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080,
+          "scale": 1.5,
+          "transform": 0,
+          "reserved": [
+            0,
+            40,
+            0,
+            72
+          ],
+          "focused": true
+        }
+      ]
+    }
+  ]
+}
