@@ -15,6 +15,29 @@ TOOL = importlib.util.module_from_spec(SPEC); SPEC.loader.exec_module(TOOL)
 
 
 class Titlebars(unittest.TestCase):
+    @unittest.skipUnless(shutil.which('fc-match') and shutil.which('fc-cache'), '실제 Fontconfig 기호 선택 검사')
+    def test_original_control_font_is_selected_for_all_three_symbols(self):
+        with tempfile.TemporaryDirectory() as directory:
+            home=Path(directory)
+            fontconfig=home/'fonts.conf'
+            fontconfig.write_text('<fontconfig><dir>'+str(home/'data/fonts')+'</dir><cachedir>'+str(home/'cache')+'</cachedir></fontconfig>')
+            with patch.dict(os.environ,HOME=str(home),XDG_CONFIG_HOME=str(home/'config'),XDG_DATA_HOME=str(home/'data'),XDG_STATE_HOME=str(home/'state'),FONTCONFIG_FILE=str(fontconfig)):
+                config=TOOL.files.Config(ROOT,home)
+                TOOL.install_controls(config);TOOL.verify_controls(config)
+                self.assertTrue((config.data/'fonts/shittim'/TOOL.CONTROL_FONT).is_symlink())
+                TOOL.install_controls(config)
+                self.assertFalse(config.backups.exists())
+
+    def test_failed_font_selection_preserves_previous_titlebar_configuration(self):
+        with tempfile.TemporaryDirectory() as directory:
+            home=Path(directory)
+            with patch.dict(os.environ,HOME=str(home),XDG_CONFIG_HOME=str(home/'config'),XDG_DATA_HOME=str(home/'data'),XDG_STATE_HOME=str(home/'state')):
+                config=TOOL.files.Config(ROOT,home)
+                target=config.config/'hypr/shittim-titlebars.lua';target.parent.mkdir(parents=True);target.write_text('previous configuration')
+                with patch.object(TOOL.files,'Config',return_value=config),patch.object(TOOL.sys,'argv',['titlebar-tool.py','setup']),patch.object(TOOL.subprocess,'run',return_value=Mock(stdout='Other font')):
+                    with self.assertRaisesRegex(ValueError,'전용 기호'):TOOL.main()
+                self.assertEqual(target.read_text(),'previous configuration')
+
     @unittest.skipUnless(os.name != 'nt' and shutil.which('bash'), '격리된 Linux Bash 설치 흐름 검사')
     def test_install_bootstraps_missing_hyprpm_before_requiring_it(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -87,9 +110,9 @@ assert(options==nil and #buttons==0 and events['hyprland.start'])
 events['hyprland.start']()
 hl.plugin.hyprbars={add_button=function(button) table.insert(buttons,button) end}
 setup()
-assert(#buttons==3 and buttons[1].icon=='×' and buttons[2].icon=='□' and buttons[3].icon=='−')
+assert(#buttons==3 and buttons[1].icon==utf8.char(0x10FF02) and buttons[2].icon==utf8.char(0x10FF01) and buttons[3].icon==utf8.char(0x10FF00))
 assert(buttons[1].bg_color=='rgba(00000000)' and buttons[1].fg_color=='rgb(00d9f5)')
-assert(buttons[1].size==24 and buttons[2].size==18 and buttons[3].size==24)
+assert(buttons[1].size==24 and buttons[2].size==24 and buttons[3].size==24)
 assert(options.plugin.hyprbars.bar_button_padding==10 and options.plugin.hyprbars.bar_padding==12)
 assert(buttons[1].action:match(' close$') and buttons[2].action:match(' maximize$') and buttons[3].action:match(' hide$'))
 assert(options.plugin.hyprbars.bar_part_of_window and options.plugin.hyprbars.bar_height==24)
@@ -121,7 +144,7 @@ assert(environment.GTK_CSD=='0')
             with patch.dict(os.environ, HOME=str(home), XDG_CONFIG_HOME=str(home / '.config'), XDG_STATE_HOME=str(home / '.local/state')):
                 config = TOOL.files.Config(ROOT, home)
                 config.write(config.config / 'hypr/shittim-titlebars.lua', TOOL.source(config))
-                with patch.object(TOOL.files, 'Config', return_value=config), patch.object(TOOL.sys, 'argv', ['titlebar-tool.py', 'verify']):
+                with patch.object(TOOL.files, 'Config', return_value=config), patch.object(TOOL.sys, 'argv', ['titlebar-tool.py', 'verify']), patch.object(TOOL,'verify_controls'):
                     with patch.object(TOOL.subprocess, 'run', return_value=Mock(stdout='[]')):
                         with self.assertRaisesRegex(ValueError, '로드되지'): TOOL.main()
                     for errors in (['bad plugin option'], ['', '  ']):
