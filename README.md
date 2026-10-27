@@ -26,6 +26,8 @@ Kitty·Nemo·Chrome의 공통 제목 표시줄과 최소화·최대화·닫기 �
 
 원본 배치의 전용 [Shittim Files](docs/files.md)와 Dock·앱 제목 표시줄·아이콘·Chrome 색상 테마 적용은 [데스크톱 디자인](docs/desktop-design.md)을 따른다. 기존 설치는 `bash scripts/apply-desktop-design.sh`로 갱신한다.
 
+Google Meet 등 브라우저 화상회의의 마이크·카메라·화면 공유는 [화상회의·화면 공유](docs/meetings.md)를 따른다. Hyprland 포털의 모니터·창 선택 창을 그대로 쓰고, 사용 중인 마이크·카메라·화면 공유는 TopBar 와 Control Center «Meeting» 에 표시된다. 점검은 `bash scripts/verify-meeting.sh`.
+
 설치된 Arch Linux x86_64에서 네트워크 연결과 일반 사용자 계정, `git`, `sudo` 및 해당 사용자의 sudo 권한을 먼저 준비한다. Arch 설치 ISO/chroot나 root 계정에서 실행하지 않는다. TTY 로그인 비밀번호는 유지하며 디스플레이 매니저와 자동 로그인은 설치하지 않는다.
 
 ```bash
@@ -224,7 +226,7 @@ git pull --ff-only
 | 밝기·미디어 단축키 | `brightnessctl`, `playerctl` |
 | 한글 입력 | `fcitx5`, `fcitx5-hangul`, `fcitx5-gtk`, `fcitx5-qt`, `fcitx5-configtool` |
 | 폰트 | `ttf-hack-nerd`, `ttf-d2coding-nerd`, `fontconfig` |
-| 데스크톱 통합 | `xdg-desktop-portal-hyprland`, `xdg-desktop-portal-gtk`, `polkit-kde-agent`, `wl-clipboard`, `xdg-utils`, `xdg-user-dirs` |
+| 데스크톱 통합 | `xdg-desktop-portal-hyprland`, `xdg-desktop-portal-gtk`, `qt6-wayland`, `polkit-kde-agent`, `wl-clipboard`, `xdg-utils`, `xdg-user-dirs` |
 | 설치·검증 도구 | `python`, `lua`, `util-linux`, `procps-ng`, `dbus` |
 
 수집된 Hyprland 설정의 파일 관리자(SUPER+E), 런처(SUPER+R), 밝기·미디어 키에 필요한 [Dolphin](https://archlinux.org/packages/extra/x86_64/dolphin/), [Fuzzel](https://archlinux.org/packages/extra/x86_64/fuzzel/), [brightnessctl](https://archlinux.org/packages/extra/x86_64/brightnessctl/), [playerctl](https://archlinux.org/packages/extra/x86_64/playerctl/)도 설치 목록에 포함한다. 설치와 검증은 같은 `scripts/packages.txt`를 읽는다.

@@ -47,6 +47,7 @@ xdg-desktop-portal
 xorg-xwayland
 xdg-desktop-portal-hyprland
 xdg-desktop-portal-gtk
+qt6-wayland
 xdg-utils
 xdg-user-dirs
 wl-clipboard

@@ -5,6 +5,7 @@ import "../../ui"
 ColumnLayout {
 	id: root
 	required property var audio
+	property var microphone: null
 	spacing: Theme.spaceS
 	LevelControl {
 		Layout.fillWidth: true; title: "볼륨"; glyph: "\uf028"; detail: root.audio.deviceName
@@ -24,6 +25,7 @@ ColumnLayout {
 		}
 	}
 	HudText { visible: root.audio.outputs.length === 0; text: "사용 가능한 출력 장치가 없습니다."; color: Theme.textMuted }
+	MicrophoneSection { microphone: root.microphone; visible: root.microphone !== null; Layout.fillWidth: true; Layout.topMargin: Theme.spaceM }
 	HudText { text: "애플리케이션"; textStyle: "section"; color: Theme.accent; Layout.topMargin: Theme.spaceM }
 	Repeater {
 		model: root.audio.streams

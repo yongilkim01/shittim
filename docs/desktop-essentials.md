@@ -80,7 +80,7 @@ Chrome 단축키는 현재 Shittim IPC의 `media launch`를 이용한다. Shell�
 
 Hyprland 전용 `xdg-desktop-portal/hyprland-portals.conf`에서 기본·파일 선택은 GTK, ScreenCast·Screenshot은 Hyprland를 명시한다. [공식 포털 선택 규칙](https://flatpak.github.io/xdg-desktop-portal/docs/portals.conf.html)을 사용하며 wlr/GNOME/KDE 백엔드를 새로 설치하지 않는다. 이미 있는 다른 데스크톱의 패키지·서비스는 제거하지 않는다. 기존 session-services.sh가 Wayland·Hyprland·XDG 데스크톱 환경을 D-Bus/systemd에 전달한다.
 
-현재 파일 선택·화면 공유를 끊지 않도록 포털 서비스를 자동 restart하지 않는다. 작업 저장 후 한 번 로그아웃·로그인한다. `verify-desktop.sh`는 포털 D-Bus 객체와 서비스 상태를 읽지만 실제 브라우저 파일 대화상자·공유 스트림 성공을 주장하지 않는다. Control Center의 미구현 Screen Cast 타일을 작동하는 것처럼 활성화하지 않는다. 공유는 Chrome 등 포털 클라이언트에서 시작한다.
+현재 파일 선택·화면 공유를 끊지 않도록 포털 서비스를 자동 restart하지 않는다. 작업 저장 후 한 번 로그아웃·로그인한다. `verify-desktop.sh`는 포털 D-Bus 객체와 서비스 상태를 읽지만 실제 브라우저 파일 대화상자·공유 스트림 성공을 주장하지 않는다. Control Center의 Meeting 타일은 공유 상태를 보여 주기만 한다. 공유는 Chrome 등 포털 클라이언트에서 시작한다([화상회의·화면 공유](meetings.md)).
 
 캡처는 기존 control-service.py를 확장해 Control Center Screenshot과 같은 경로를 쓴다. 생성된 파일명만 사용하고 slurp 좌표를 검증한 뒤 `grim -g`에 별도 인수로 전달한다. `PICTURES/Screenshots`에 저장하고 wl-copy로 PNG를 복사한다. 취소 시 캡처하지 않는다. 캡처 프로세스 시간 초과는 종료·회수하고, 저장 성공 후 복사 실패는 Control Center에 별도로 표시한다.
 

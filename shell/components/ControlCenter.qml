@@ -28,7 +28,7 @@ PanelWindow {
 		fillColor: Qt.rgba(Theme.background.r, Theme.background.g, Theme.background.b, 0.97)
 		ControlContent {
 			id: content; anchors.fill: parent
-			audio: AudioState; network: NetworkState; battery: BatteryState; bluetooth: BluetoothState; brightness: BrightnessState; power: PowerState; capture: CaptureState; metrics: SystemMetricsState
+			audio: AudioState; network: NetworkState; battery: BatteryState; bluetooth: BluetoothState; brightness: BrightnessState; power: PowerState; capture: CaptureState; metrics: SystemMetricsState; microphone: MicrophoneState; camera: CameraState; screenShare: ScreenShareState
 			notifications: NotificationState
 			page: ControlState.page
 			onNavigate: destination => ControlState.page = destination

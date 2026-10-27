@@ -22,3 +22,6 @@ singleton BluetoothState 1.0 BluetoothState.qml
 singleton PowerState 1.0 PowerState.qml
 singleton SystemMetricsState 1.0 SystemMetricsState.qml
 singleton CaptureState 1.0 CaptureState.qml
+singleton MicrophoneState 1.0 MicrophoneState.qml
+singleton CameraState 1.0 CameraState.qml
+singleton ScreenShareState 1.0 ScreenShareState.qml

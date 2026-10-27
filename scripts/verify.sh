@@ -55,6 +55,10 @@ if [[ -n ${HYPRLAND_INSTANCE_SIGNATURE:-} ]]; then
         shittim_failures=$((shittim_failures + 1))
     fi
 else info '현재 TTY입니다. Hyprland·Shittim·입력기는 다음 그래픽 로그인에서 확인하세요.'; fi
+# Static outside Hyprland: portal/audio/camera runtime checks need the graphical session.
+shittim_meeting_flags=()
+[[ -n ${HYPRLAND_INSTANCE_SIGNATURE:-} ]] || shittim_meeting_flags+=(--static)
+python3 "$SHITTIM_ROOT/scripts/meeting-check.py" "${shittim_meeting_flags[@]}" || { warn '화상회의·화면 공유 환경: bash scripts/verify-meeting.sh 출력의 [실패] 항목을 확인하세요.'; shittim_failures=$((shittim_failures + 1)); }
 fc-match 'Hack Nerd Font Mono'
 fc-match D2Coding
 (( shittim_failures == 0 )) || die "검증 실패: $shittim_failures. 표시된 항목을 수정한 뒤 다시 실행하세요."

@@ -29,7 +29,8 @@ function message(code) {
         NotReady:"어댑터 전원 또는 하드웨어 차단 상태를 확인하세요.",
         TimeoutError:"요청 시간이 초과되었습니다. 장치 상태를 확인하세요.",
         ClipboardCopyFailed:"캡처는 저장했지만 클립보드 복사에 실패했습니다.",
-        ScreenshotFailed:"스크린샷을 저장하지 못했습니다."
+        ScreenshotFailed:"스크린샷을 저장하지 못했습니다.",
+        CameraServiceUnavailable:"카메라 상태를 읽지 못했습니다. 다시 연결을 누르거나 scripts/verify-meeting.sh로 확인하세요."
     }
     return messages[code] || "요청을 완료하지 못했습니다. 상태를 확인하고 다시 시도하세요."
 }

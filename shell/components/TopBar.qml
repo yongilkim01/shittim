@@ -124,6 +124,11 @@ PanelWindow {
 			Row {
 				id: statuses; objectName: "barStatuses"
 				spacing: Theme.spaceXL
+				DeviceActivity {
+					anchors.verticalCenter: parent.verticalCenter
+					microphone: MicrophoneState; camera: CameraState; screenShare: ScreenShareState
+					onDetailsRequested: ControlState.show(bar, statusArea, "devices")
+				}
 				Network { compact: true; anchors.verticalCenter: parent.verticalCenter }
 				Volume { compact: true; anchors.verticalCenter: parent.verticalCenter; onControlCenterRequested: ControlState.toggle(bar,statusArea) }
 				Battery { compact: true; anchors.verticalCenter: parent.verticalCenter }

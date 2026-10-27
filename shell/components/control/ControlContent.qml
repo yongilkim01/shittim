@@ -13,6 +13,10 @@ FocusScope {
 	required property var power
 	required property var capture
 	required property var metrics
+	// Optional so views and tests that predate meeting devices keep working.
+	property var microphone: null
+	property var camera: null
+	property var screenShare: null
 	readonly property bool consuming:visible && Window.window!==null && Window.window.visible
 	readonly property var currentService:page==="bluetooth" ? bluetooth : page==="brightness" ? brightness : page==="power" ? power : page==="settings" ? metrics : capture
 	readonly property string actionError:page==="overview" ? [brightness.error,bluetooth.error,capture.error].filter((text,index,list)=>text && list.indexOf(text)===index).join("\n") : currentService.error
@@ -76,17 +80,18 @@ FocusScope {
 			Loader {
 				id: pageLoader; width: viewport.width
 				sourceComponent: root.page === "wifi" ? wifiPage : root.page === "bluetooth" ? bluetoothPage
-					: root.page === "audio" ? audioPage : root.page === "brightness" ? brightnessPage
+					: root.page === "audio" ? audioPage : root.page === "devices" ? devicesPage : root.page === "brightness" ? brightnessPage
 					: root.page === "power" ? powerPage : root.page === "settings" ? settingsPage : overviewPage
 				onLoaded: viewport.contentY = 0
 			}
 		}
 	}
 	Connections { target: root.bluetooth; function onPromptChanged() { pin.clear(); if (pin.visible) pin.forceActiveFocus() } }
-	Component { id: overviewPage; ControlOverview { audio: root.audio; network: root.network; battery: root.battery; bluetooth: root.bluetooth; brightness: root.brightness; capture: root.capture; notifications: root.notifications; onNavigate: destination => root.navigate(destination) } }
+	Component { id: overviewPage; ControlOverview { audio: root.audio; network: root.network; battery: root.battery; bluetooth: root.bluetooth; brightness: root.brightness; capture: root.capture; microphone: root.microphone; camera: root.camera; screenShare: root.screenShare; notifications: root.notifications; onNavigate: destination => root.navigate(destination) } }
 	Component { id: wifiPage; WifiPage { network: root.network } }
 	Component { id: bluetoothPage; BluetoothPage { bluetooth: root.bluetooth } }
-	Component { id: audioPage; AudioPage { audio: root.audio } }
+	Component { id: audioPage; AudioPage { audio: root.audio; microphone: root.microphone } }
+	Component { id: devicesPage; DevicesPage { microphone: root.microphone; camera: root.camera; screenShare: root.screenShare; onNavigate: destination => root.navigate(destination) } }
 	Component { id: brightnessPage; BrightnessPage { brightness: root.brightness } }
 	Component { id: powerPage; PowerPage { battery: root.battery; power: root.power } }
 	Component { id: settingsPage; SettingsPage { metrics: root.metrics; onNavigate: destination => root.navigate(destination) } }

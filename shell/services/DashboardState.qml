@@ -25,7 +25,7 @@ Scope {
     }
     function toggle(window, item) { if (opened && anchorWindow === window) close(); else show(window,item) }
     function select(destination) {
-        if (["system", "apps", "bluetooth", "display", "network", "audio", "power", "settings"].indexOf(destination) >= 0) page = destination
+        if (["system", "apps", "bluetooth", "display", "network", "audio", "devices", "power", "settings"].indexOf(destination) >= 0) page = destination
     }
     DashboardModel { id: metrics }
     Process {

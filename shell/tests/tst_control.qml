@@ -23,6 +23,35 @@ TestCase {
 		function selectOutput(node) { sink = node }
 	}
 	QtObject {
+		id: microphoneFixture
+		property bool available: false
+		property bool validVolume: false
+		property bool muted: false
+		property bool inUse: false
+		property string deviceName: "입력 장치 없음"
+		property var source: null
+		property var inputs: []
+		property var applications: []
+		function setVolume(value) {}
+		function toggleMute() { muted = !muted }
+		function selectInput(node) { source = node }
+	}
+	QtObject {
+		id: cameraFixture
+		property bool ready: true
+		property bool present: cameras.length > 0
+		property bool inUse: cameras.some(camera => camera.users.length > 0)
+		property string error: ""
+		property var cameras: []
+		property int restarted: 0
+		function restart() { restarted += 1 }
+	}
+	QtObject {
+		id: shareFixture
+		property int count: 0
+		property bool active: count > 0
+	}
+	QtObject {
 		id: networkFixture
         function retain(consumer) {}
         function release(consumer) {}
@@ -103,6 +132,15 @@ TestCase {
 			onNavigate: destination => page = destination
 		}
 	}
+	Component {
+		id: meetingFactory
+		ControlContent {
+			width: 440; height: 720
+			audio: audioFixture; network: networkFixture; battery: batteryFixture; bluetooth: systemFixture; brightness: systemFixture; power: systemFixture; capture: systemFixture; metrics: systemFixture
+			microphone: microphoneFixture; camera: cameraFixture; screenShare: shareFixture
+			onNavigate: destination => page = destination
+		}
+	}
 	Component { id: levelFactory; LevelControl { width: 380; value: 0.5 } }
 	SignalSpy { id: closeSpy; signalName: "closeRequested" }
 	function init() { failOnWarning(/.*/) }
@@ -111,6 +149,61 @@ TestCase {
 		audioFixture.available = false; audioFixture.validVolume = false; audioFixture.outputs = []; audioFixture.streams = []; audioFixture.sink = null
 		systemFixture.adapter = null; systemFixture.adapters = []; systemFixture.devices = []; systemFixture.backlight = null; systemFixture.backlights = []; systemFixture.profiles = []
 		systemFixture.prompt = null; systemFixture.error = ""; systemFixture.busy = false; closeSpy.target = null; closeSpy.clear()
+		microphoneFixture.available = false; microphoneFixture.validVolume = false; microphoneFixture.muted = false; microphoneFixture.inUse = false
+		microphoneFixture.source = null; microphoneFixture.inputs = []; microphoneFixture.applications = []
+		cameraFixture.ready = true; cameraFixture.cameras = []; cameraFixture.error = ""; cameraFixture.restarted = 0; shareFixture.count = 0
+	}
+	function meetingFixtures() {
+		microphoneFixture.inputs = [{name: "test-mic", description: "검사용 마이크", nickname: "", ready: true, audio: {volume: 0.6, muted: false}}]
+		microphoneFixture.source = microphoneFixture.inputs[0]; microphoneFixture.available = true; microphoneFixture.validVolume = true
+		microphoneFixture.deviceName = "검사용 마이크"; microphoneFixture.inUse = true; microphoneFixture.applications = ["Google Chrome"]
+		cameraFixture.cameras = [{node: "video0", name: "검사용 카메라", users: ["chrome"], error: ""}]
+		shareFixture.count = 1
+	}
+	function test_meetingPages_data() {
+		return ["overview", "audio", "devices"].map(page => ({tag: page, page: page}))
+	}
+	function test_meetingPages(data) {
+		for (const populated of [false, true]) {
+			if (populated) meetingFixtures()
+			const content = createTemporaryObject(meetingFactory, testCase, {page: data.page})
+			verify(content !== null)
+			wait(20)
+		}
+	}
+	function test_devicesPageReportsObservedStateOnly() {
+		const content = createTemporaryObject(meetingFactory, testCase, {page: "devices"})
+		compare(findChild(content, "devicesMicrophoneStatus").text, "입력 장치 없음")
+		compare(findChild(content, "devicesCameraEmpty").visible, true)
+		compare(findChild(content, "devicesShareStatus").text, "공유하지 않음")
+		cameraFixture.ready = false
+		compare(findChild(content, "devicesCameraEmpty").visible, false)
+		meetingFixtures()
+		verify(findChild(content, "devicesMicrophoneStatus").text.indexOf("사용 중") === 0)
+		verify(findChild(content, "devicesMicrophoneStatus").text.indexOf("Google Chrome") > 0)
+		compare(findChild(content, "devicesShareStatus").text, "공유 중")
+		microphoneFixture.muted = true
+		verify(findChild(content, "devicesMicrophoneStatus").text.indexOf("음소거") === 0)
+	}
+	function test_meetingTileOpensDevicesAndShowsActivity() {
+		const content = createTemporaryObject(meetingFactory, testCase, {width: 337, height: 293})
+		const tile = findChild(content, "quick-devices")
+		compare(tile.active, false)
+		shareFixture.count = 1
+		compare(tile.active, true)
+		compare(tile.hint, "화면 공유 중")
+		mouseClick(tile, tile.width / 2, tile.height / 2)
+		compare(content.page, "devices")
+	}
+	function test_audioPageMicrophoneControls() {
+		meetingFixtures()
+		const content = createTemporaryObject(meetingFactory, testCase, {page: "audio"})
+		const level = findChild(content, "microphoneLevel")
+		verify(level !== null)
+		compare(level.available, true)
+		compare(level.muted, false)
+		microphoneFixture.toggleMute()
+		compare(level.muted, true)
 	}
 	function populatedFixtures() {
 		audioFixture.outputs = [{name: "test-output", description: "검사용 출력 장치", nickname: "", ready: true, audio: {volume: 0.7, muted: false}}]
@@ -192,12 +285,12 @@ TestCase {
 	}
 	function test_referenceGridAndUnavailableControls() {
 		const content = createTemporaryObject(contentFactory, testCase, {width: 337, height: 293})
-		const cast = findChild(content, "quick-cast")
+		const meeting = findChild(content, "quick-devices")
 		const settings = findChild(content, "quick-settings")
-		verify(cast !== null && settings !== null)
-		compare(cast.x, 18); compare(cast.y, 173)
+		verify(meeting !== null && settings !== null)
+		compare(meeting.x, 18); compare(meeting.y, 173)
 		compare(settings.x, 230); compare(settings.y, 232)
-		compare(cast.interactive, false)
+		compare(meeting.interactive, true)
 		compare(findChild(content, "quick-dnd").interactive, false)
 		compare(findChild(content, "quick-dark").interactive, false)
 		compare(findChild(content, "overviewVolume").width, 217)

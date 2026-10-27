@@ -51,7 +51,7 @@ PanelWindow {
         id: controls
         ControlContent {
             embedded: true
-            audio: AudioState; network: NetworkState; battery: BatteryState; bluetooth: BluetoothState; brightness: BrightnessState; power: PowerState; capture: CaptureState; metrics: SystemMetricsState; notifications: NotificationState
+            audio: AudioState; network: NetworkState; battery: BatteryState; bluetooth: BluetoothState; brightness: BrightnessState; power: PowerState; capture: CaptureState; metrics: SystemMetricsState; microphone: MicrophoneState; camera: CameraState; screenShare: ScreenShareState; notifications: NotificationState
             page: DashboardState.page === "network" ? "wifi" : DashboardState.page === "display" ? "brightness" : DashboardState.page
             onNavigate: destination => DashboardState.select(destination === "wifi" ? "network" : destination === "brightness" ? "display" : destination)
             onCloseRequested: DashboardState.close()

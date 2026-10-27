@@ -2,7 +2,7 @@
 
 상단 바 오른쪽의 네트워크·배터리·시계 영역을 클릭하면 클릭한 모니터의 오른쪽 위에 열린다. 같은 영역을 다시 클릭하거나 바깥 영역 클릭, Escape로 닫는다. 볼륨 아이콘의 기존 좌클릭 음소거·5% 휠 조절은 유지하며 **우클릭**으로 패널을 연다. 모니터마다 바를 만들고 Control Center는 한 곳에만 표시한다.
 
-개요 화면은 사용자가 지정한 원본 이미지의 **5번 패널**을 따른다. 원본에서 프레임을 337×293px로 측정했다. 상단은 Wi-Fi / Bluetooth / Night Light 3열, 중앙은 볼륨·밝기 한 줄씩, 하단은 Screen Cast / Do Not Disturb / Dark Mode와 Power / Screenshot / Settings의 3열×2행이다. 상단 타일은 92~93×70px, 하단은 92~93×49px이며 절단 모서리와 1px 프레임을 쓴다. 개요에는 별도 헤더·상태 카드·설명문을 넣지 않는다. 좁은 화면에서는 열 수를 바꾸지 않고 비율을 축소하며, 높이가 부족하면 스크롤한다.
+개요 화면은 사용자가 지정한 원본 이미지의 **5번 패널**을 따른다. 원본에서 프레임을 337×293px로 측정했다. 상단은 Wi-Fi / Bluetooth / Night Light 3열, 중앙은 볼륨·밝기 한 줄씩, 하단은 Meeting / Do Not Disturb / Dark Mode와 Power / Screenshot / Settings의 3열×2행이다. 상단 타일은 92~93×70px, 하단은 92~93×49px이며 절단 모서리와 1px 프레임을 쓴다. 개요에는 별도 헤더·상태 카드·설명문을 넣지 않는다. 좁은 화면에서는 열 수를 바꾸지 않고 비율을 축소하며, 높이가 부족하면 스크롤한다.
 
 ![원본과 Qt QML 렌더링 비교](control-center-comparison.png)
 
@@ -12,7 +12,7 @@
 - 볼륨 아이콘: 클릭 음소거, 우클릭 오디오 상세. 밝기 아이콘: 밝기 상세.
 - Power: 배터리·전원 프로필 상세. Settings: 모든 상세 화면과 실제 CPU·RAM·가동 시간.
 - Screenshot: `grim`이 있으면 활성화. 패널을 숨기고 XDG 사진 디렉터리의 `Screenshots/shittim-날짜-시간.png`에 저장한다. 저장된 화면은 자동으로 Git에 추가하지 않는다.
-- Night Light, Screen Cast, Do Not Disturb, Dark Mode 전환은 **미지원**이므로 비활성화하고 이유를 툴팁으로 표시한다. 현재 고정 HUD 테마를 시스템 테마 전환 기능으로 표시하지 않는다.
+- Meeting 타일은 [회의 장치](meetings.md) 페이지를 연다. Night Light, Do Not Disturb, Dark Mode 전환은 **미지원**이므로 비활성화하고 이유를 툴팁으로 표시한다. 현재 고정 HUD 테마를 시스템 테마 전환 기능으로 표시하지 않는다.
 
 ## 구현과 API
 
