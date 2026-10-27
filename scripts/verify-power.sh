@@ -29,9 +29,11 @@ if systemctl --user is-enabled --quiet hypridle.service 2>/dev/null; then
     warn '기존 hypridle.service 가 켜져 있습니다. 두 개가 동시에 돌지 않도록 Shittim 은 그쪽이 실행 중이면 적용하지 않습니다.'
 fi
 if [[ -n ${HYPRLAND_INSTANCE_SIGNATURE:-} ]]; then
-    systemctl --user is-active --quiet shittim-idle.service || fail 'shittim-idle.service 비활성: systemctl --user start shittim-idle.service'
     shittim_status=${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/shittim/power-status.json
-    if [[ -f $shittim_status ]]; then
+    # Like shittim.service in verify.sh: a freshly installed unit starts at the next login, so this is not a failure.
+    if ! systemctl --user is-active --quiet shittim-idle.service; then
+        warn '현재 세션에서 shittim-idle.service 가 아직 실행되지 않았습니다. 다음 로그인부터 자동 실행되며, 지금 켜려면: systemctl --user start shittim-idle.service'
+    elif [[ -f $shittim_status ]]; then
         python3 - "$shittim_status" <<'PY' || fail '자동 잠금 정책이 적용되지 않았습니다.'
 import json, sys, time
 data = json.load(open(sys.argv[1], encoding='utf-8'))
