@@ -7,7 +7,8 @@ Google Meet 같은 브라우저 회의를 Shittim 에서 쓰기 위한 공통 �
 | 영역 | 구현 | 위치 |
 |---|---|---|
 | 오디오 서버 | PipeWire · pipewire-pulse · WirePlumber 사용자 서비스 (기존) | `scripts/install-packages.sh` |
-| 화면 공유 포털 | ScreenCast·Screenshot=hyprland, 나머지=gtk 명시 선택 (기존). 공유 대상 선택은 xdph 의 `hyprland-share-picker` 를 그대로 쓴다 | `config/hyprland-portals.conf` → `~/.config/xdg-desktop-portal/hyprland-portals.conf` |
+| 화면 공유 포털 | ScreenCast·Screenshot=hyprland, 나머지=gtk 명시 선택 (기존). 공유 대상 선택 창은 Shittim HUD 선택 창(아래) | `config/hyprland-portals.conf` → `~/.config/xdg-desktop-portal/hyprland-portals.conf` |
+| 공유 선택 창 | xdph `custom_picker_binary` 로 `scripts/share-picker.sh` → `shell/share-picker.qml`(Quickshell, HUD). 시작 실패 시 기본 `hyprland-share-picker` 로 자동 전환. `allow_token_by_default = true` | `~/.config/hypr/xdph.conf` (Shittim 관리 표시가 없는 기존 파일은 덮어쓰지 않음) |
 | 선택 창 표시 | `qt6-wayland` 추가 — `hyprland-share-picker`(Qt6) 가 XWayland 대신 Wayland 로 뜬다 | `scripts/packages.txt` |
 | Chrome | 플래그를 **추가하지 않는다**. 프로필·쿠키·비밀번호·확장·권한을 건드리지 않는다 | `scripts/meeting-check.py` 가 위험 플래그만 검사 |
 | 마이크 | 기본 입력 장치 볼륨·음소거·선택, 녹음 중인 앱 목록 | `shell/services/MicrophoneState.qml` |
@@ -40,6 +41,23 @@ Google Meet 같은 브라우저 회의를 Shittim 에서 쓰기 위한 공통 �
 - **오디오 페이지**: 출력 장치 아래에 입력 장치 볼륨·음소거·선택을 추가했다.
 - 기존 `XF86AudioMicMute` 키는 그대로 기본 입력을 음소거한다.
 
+### 공유 선택 창
+
+xdph 기본 선택 창(Qt 위젯, 밝은 회색)은 HUD 와 맞지 않아 Shittim 선택 창으로 바꿨다. 포털이 공유 요청마다 `scripts/share-picker.sh` 를 실행하고, 이 스크립트가 별도 Quickshell 인스턴스(`shell/share-picker.qml`)를 띄운다.
+
+- 화면 탭: 모니터마다 미리보기 한 장(`ScreencopyView`, 정지 화면)과 이름·해상도. 창 탭: 창 제목·앱 클래스.
+- 클릭 또는 Enter = 그 대상을 공유. Esc·바깥 클릭·취소 = 공유 안 함. 아무것도 자동 선택하지 않는다.
+- «같은 앱이 다시 요청하면 이 선택을 그대로 사용» 은 기본으로 켜져 있다(포털 restore token).
+- 포털과 주고받는 형식은 xdph 1.4.1 과 최신판이 같다(`[SELECTION]r/screen:<이름>`, `window:<번호>`). xdph 1.4.1 은 모니터 목록을 넘기지 않아 Quickshell 의 화면 목록을 쓴다.
+- 영역(Region) 공유는 넣지 않았다. 필요하면 `~/.config/hypr/xdph.conf` 를 지우면 기본 선택 창으로 돌아간다.
+- HUD 선택 창이 시작하지 못하면 기본 선택 창이 대신 뜬다. 공유 기능 자체는 막히지 않는다.
+
+**선택 창이 두 번 뜨던 이유**: Chrome 은 자기 공유 창의 미리보기용으로 한 번, «공유» 를 누를 때 한 번, 포털에 두 번 요청한다. 두 번째 요청에 첫 선택을 재사용하려면 restore token 이 허용돼야 하는데 xdph 기본값은 꺼짐이다. `allow_token_by_default = true` 와 위 기본 체크로 한 번만 고르게 했다. 토큰은 그 앱이 같은 공유를 다시 요청할 때만 쓰이며, Shittim 이 공유를 시작하지는 않는다. 한 번만 뜨는지는 실장비 확인 대상 ❓.
+
+### 탭을 옮길 때 뜨는 작은 회의 창
+
+Chrome 이 Meet 에 기본으로 켜 둔 **자동 PIP(Picture-in-Picture)** 다([Google 공지](https://workspaceupdates.googleblog.com/2024/08/picture-in-picture-in-google-meet-will-open-when-switching-tabs.html)). Shittim 은 Chrome 프로필 설정을 바꾸지 않으므로 사용자가 끈다: Meet 탭 주소창 왼쪽 «사이트 정보» 아이콘 → «자동 PIP 모드»(Automatic picture-in-picture) 끄기. 사이트 설정에서 «차단» 으로 두면 계속 유지된다. Meet 메뉴의 수동 PIP 는 그대로 쓸 수 있다.
+
 ## Chrome
 
 현재 Chrome 은 Wayland 세션에서 Ozone 플랫폼을 자동 선택하고(Chrome 140 부터 `--ozone-platform-hint=auto` 기본, [보도](https://www.omgubuntu.co.uk/2025/08/chrome-140-wayland-auto-detection-linux)) PipeWire 화면 캡처도 기본으로 켜져 있다. 그래서 `chrome-flags.conf` 를 만들지 않는다. 런처·Dock·Super+B 는 기존 `google-chrome.desktop` 을 그대로 실행한다.
@@ -55,7 +73,7 @@ Google Meet 같은 브라우저 회의를 Shittim 에서 쓰기 위한 공통 �
 `./install.sh` 가 그대로 처리한다. 새 단계는 없다.
 
 1. `install-packages`: `qt6-wayland` 가 공식 패키지 목록에 추가되어 함께 설치된다. 나머지 오디오·포털 패키지는 이미 목록에 있다.
-2. `setup-desktop`: 포털 선택 파일 설치(기존, 백업 포함).
+2. `setup-desktop`: 포털 선택 파일 설치(기존, 백업 포함), `~/.config/hypr/xdph.conf`(공유 선택 창). Shittim 표시가 없는 기존 `xdph.conf` 는 유지하고 안내만 한다.
 3. `verify`: `meeting-check.py` 를 실행한다. TTY 에서는 패키지·설정만(`--static`), Hyprland 안에서는 전부.
 
 포털·PipeWire 서비스를 restart 하지 않는다. 진행 중인 공유나 통화를 끊지 않기 위해서다. 포털 선택 파일을 처음 설치했다면 로그아웃·로그인 뒤에 적용된다.
@@ -66,7 +84,10 @@ Google Meet 같은 브라우저 회의를 Shittim 에서 쓰기 위한 공통 �
 cd ~/projects/shittim
 git pull --ff-only
 sudo pacman -S --needed qt6-wayland
+bash scripts/setup-desktop.sh
 systemctl --user restart shittim.service
+# 화면 공유 중이 아닐 때만: xdph 는 시작할 때 xdph.conf 를 읽는다
+systemctl --user restart xdg-desktop-portal-hyprland
 bash scripts/verify-meeting.sh
 ```
 

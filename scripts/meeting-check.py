@@ -97,6 +97,35 @@ def check_backends(report, share=Path('/usr/share/xdg-desktop-portal/portals')):
         report.add('실패', 'hyprland-share-picker 가 없습니다. xdg-desktop-portal-hyprland 설치를 확인하세요.')
 
 
+def xdph_settings(text):
+    """screencopy:* values from xdph.conf (hyprlang subset: `screencopy { key = value }`)."""
+    settings, section = {}, None
+    for line in text.splitlines():
+        line = line.split('#', 1)[0].strip()
+        if line.endswith('{'):
+            section = line[:-1].strip()
+        elif line == '}':
+            section = None
+        elif '=' in line and section == 'screencopy':
+            key, value = line.split('=', 1)
+            settings[key.strip()] = value.strip()
+    return settings
+
+
+def check_picker(report, config_home):
+    path = config_home / 'hypr/xdph.conf'
+    settings = xdph_settings(path.read_text(encoding='utf-8', errors='replace')) if path.is_file() else {}
+    picker = settings.get('custom_picker_binary', '')
+    if not picker:
+        report.add('주의', f'Shittim 공유 선택 창 미사용({path}) — 기본 선택 창이 뜹니다. bash scripts/setup-desktop.sh')
+    elif not os.access(picker, os.X_OK):
+        report.add('실패', f'공유 선택 창 실행 파일이 없거나 실행 권한이 없습니다: {picker}')
+    else:
+        report.add('정상', f'공유 선택 창: {picker}')
+    if settings.get('allow_token_by_default', '').lower() not in ('true', '1', 'yes', 'on'):
+        report.add('주의', 'allow_token_by_default 꺼짐 — Chrome 공유 때 선택 창이 두 번 뜰 수 있습니다.')
+
+
 def source_type_names(mask):
     return [name for bit, name in SOURCE_TYPES.items() if mask & bit]
 
@@ -287,6 +316,7 @@ def main(argv=None):
     print('== 데스크톱 포털')
     check_portal_config(report, config_home)
     check_backends(report)
+    check_picker(report, config_home)
     live = not options.static and bool(os.environ.get('HYPRLAND_INSTANCE_SIGNATURE'))
     clients = None
     if live:

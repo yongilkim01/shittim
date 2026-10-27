@@ -3,6 +3,7 @@ import importlib.util
 import io
 import json
 import os
+import subprocess
 from pathlib import Path
 import tempfile
 import unittest
@@ -171,6 +172,92 @@ class ChromeAndDevices(unittest.TestCase):
             CHECK.run(['pacman', '-Q', '--', 'pipewire'])
         self.assertNotIn('shell', runner.call_args.kwargs)
         self.assertIsInstance(runner.call_args.args[0], list)
+
+
+DESKTOP = load('desktop_tool_meeting', 'scripts/desktop-tool.py')
+
+
+class PickerConfig(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(); self.addCleanup(self.temp.cleanup)
+        base = Path(self.temp.name); self.root = base / 'repo with spaces'; self.home = base / 'home'
+        self.root.mkdir(); self.home.mkdir()
+        self.env = patch.dict(os.environ, HOME=str(self.home), XDG_CONFIG_HOME=str(self.home / '.config'),
+                              XDG_STATE_HOME=str(self.home / '.local/state'), HYPRLAND_INSTANCE_SIGNATURE='')
+        self.env.start(); self.addCleanup(self.env.stop)
+        for relative in ['config/hyprland-portals.conf', 'dotfiles/hypr/shittim-lock.conf']:
+            path = self.root / relative; path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text((ROOT / relative).read_text(encoding='utf-8'), encoding='utf-8')
+        self.desktop = DESKTOP.Desktop(DESKTOP.files.Config(self.root, self.home))
+        self.xdph = self.home / '.config/hypr/xdph.conf'
+
+    def setup_desktop(self):
+        with patch.object(self.desktop, 'installed', return_value=set(DESKTOP.APPLICATIONS)), patch.object(DESKTOP.subprocess, 'run'), \
+                redirect_stdout(io.StringIO()) as output:
+            try:
+                self.desktop.setup()
+            except OSError:
+                if os.name == 'nt': self.skipTest('Windows 심볼릭 링크 권한 없음')
+                raise
+        return output.getvalue()
+
+    def test_managed_xdph_config_points_to_wrapper_and_allows_tokens(self):
+        self.setup_desktop()
+        settings = CHECK.xdph_settings(self.xdph.read_text(encoding='utf-8'))
+        self.assertEqual(settings['custom_picker_binary'], str(self.root.resolve() / 'scripts/share-picker.sh'))
+        self.assertEqual(settings['allow_token_by_default'], 'true')
+        first = self.xdph.read_text(encoding='utf-8')
+        self.setup_desktop()
+        self.assertEqual(first, self.xdph.read_text(encoding='utf-8'))
+
+    def test_user_xdph_config_is_never_overwritten(self):
+        self.xdph.parent.mkdir(parents=True)
+        self.xdph.write_text('screencopy {\n    max_fps = 30\n}\n', encoding='utf-8')
+        output = self.setup_desktop()
+        self.assertEqual(self.xdph.read_text(encoding='utf-8'), 'screencopy {\n    max_fps = 30\n}\n')
+        self.assertIn('기존 사용자 xdph.conf 유지', output)
+
+    def test_check_picker_reports_default_picker_and_token(self):
+        report = CHECK.Report()
+        with redirect_stdout(io.StringIO()) as output:
+            CHECK.check_picker(report, self.home / '.config')
+        self.assertEqual(report.failures, 0)
+        self.assertEqual(report.warnings, 2)
+        self.assertIn('기본 선택 창', output.getvalue())
+
+    def test_xdph_settings_ignore_other_sections_and_comments(self):
+        text = '# c\ngeneral {\n    custom_picker_binary = /wrong\n}\nscreencopy {\n    allow_token_by_default = true # yes\n}\n'
+        self.assertEqual(CHECK.xdph_settings(text), {'allow_token_by_default': 'true'})
+
+
+@unittest.skipIf(os.name == 'nt', 'bash wrapper needs POSIX')
+class PickerWrapper(unittest.TestCase):
+    """share-picker.sh with fake quickshell/hyprland-share-picker on PATH."""
+    def run_wrapper(self, quickshell_body, *args):
+        with tempfile.TemporaryDirectory() as directory:
+            bin_dir = Path(directory) / 'bin'; bin_dir.mkdir()
+            for name, body in (('quickshell', quickshell_body), ('hyprland-share-picker', 'echo "[SELECTION]/screen:FALLBACK $*"')):
+                path = bin_dir / name
+                path.write_text('#!/usr/bin/env bash\n' + body + '\n'); path.chmod(0o755)
+            environment = dict(os.environ, PATH=str(bin_dir) + os.pathsep + os.environ.get('PATH', ''), XDG_RUNTIME_DIR=directory)
+            result = subprocess.run(['bash', str(ROOT / 'scripts/share-picker.sh'), *args], capture_output=True, text=True, env=environment, timeout=20)
+            leftovers = list(Path(directory).glob('shittim-share-picker.*'))
+        return result, leftovers
+
+    def test_selection_is_printed_once_with_newline(self):
+        result, leftovers = self.run_wrapper('[[ $SHITTIM_PICKER_ALLOW_TOKEN == 1 ]] && printf "[SELECTION]r/screen:eDP-1\\n" > "$SHITTIM_PICKER_OUTPUT"; echo noise', '--allow-token')
+        self.assertEqual((result.returncode, result.stdout), (0, '[SELECTION]r/screen:eDP-1\n'))
+        self.assertEqual(leftovers, [])
+
+    def test_cancel_prints_nothing_and_fails(self):
+        result, leftovers = self.run_wrapper('printf "[CANCEL]\\n" > "$SHITTIM_PICKER_OUTPUT"')
+        self.assertEqual((result.returncode, result.stdout), (1, ''))
+        self.assertEqual(leftovers, [])
+
+    def test_crashed_hud_picker_falls_back_to_official_picker(self):
+        result, leftovers = self.run_wrapper('exit 3', '--allow-token')
+        self.assertEqual(result.stdout, '[SELECTION]/screen:FALLBACK --allow-token\n')
+        self.assertEqual(leftovers, [])
 
 
 if __name__ == '__main__':

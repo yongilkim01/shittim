@@ -46,6 +46,18 @@ def mime_text(original, defaults):
     return output.getvalue()
 
 
+XDPH_MARKER = '# Managed by Shittim: screen-share picker.'
+
+
+def xdph_text(root):
+    # Restore tokens let Chrome reuse the user's choice for its preview and the actual share (one prompt, not two).
+    return (XDPH_MARKER + ' Delete this file to return to the default picker.\n'
+            'screencopy {\n'
+            '    custom_picker_binary = ' + str(root / 'scripts/share-picker.sh') + '\n'
+            '    allow_token_by_default = true\n'
+            '}\n')
+
+
 def key_id(value):
     return '+'.join(sorted(part.strip().upper() for part in value.split('+')))
 
@@ -139,6 +151,11 @@ class Desktop:
             self.files.write(path, mime_text(path.read_text(encoding='utf-8') if path.is_file() else '', defaults))
         portal = self.files.root / 'config/hyprland-portals.conf'
         self.files.write(self.files.config / 'xdg-desktop-portal/hyprland-portals.conf', portal.read_text(encoding='utf-8'))
+        xdph = self.files.config / 'hypr/xdph.conf'
+        if xdph.is_file() and not xdph.read_text(encoding='utf-8', errors='replace').startswith(XDPH_MARKER):
+            files.say('기존 사용자 xdph.conf 유지: ' + str(xdph) + ' — Shittim 공유 선택 창을 쓰려면 이 파일을 옮긴 뒤 다시 실행하세요.')
+        else:
+            self.files.write(xdph, xdph_text(self.files.root))
         self.files.link(self.files.root / 'dotfiles/hypr/shittim-lock.conf', self.files.config / 'hypr/shittim-lock.conf')
         bindings, conflicts = self.bindings(replace)
         self.files.write(self.files.config / 'hypr/shittim-desktop.lua', self.lua(bindings))
@@ -146,6 +163,7 @@ class Desktop:
         if not self.files.dry:
             subprocess.run(['luac', '-p', str(self.files.config / 'hypr/shittim-desktop.lua')], check=True)
         files.say('클립보드 기록과 자동 잠금은 켜지 않았습니다. 포털은 다음 로그인부터 새 설정을 사용합니다.')
+        files.say('공유 선택 창은 화면 공유를 하지 않을 때 systemctl --user restart xdg-desktop-portal-hyprland 로 바로 적용할 수 있습니다.')
 
     def verify(self, live=False):
         if self.files.dry:
@@ -162,6 +180,12 @@ class Desktop:
             path = self.files.config / name
             if not path.is_file() or path.read_text(encoding='utf-8') != expected:
                 errors.append('설정 불일치: ' + str(path))
+        xdph = self.files.config / 'hypr/xdph.conf'
+        xdph_current = xdph.read_text(encoding='utf-8', errors='replace') if xdph.is_file() else ''
+        if not xdph_current:
+            errors.append('공유 선택 창 설정 누락: ' + str(xdph))
+        elif xdph_current.startswith(XDPH_MARKER) and xdph_current != xdph_text(self.files.root):
+            errors.append('설정 불일치: ' + str(xdph))
         if not (self.files.config / 'hypr/shittim-lock.conf').is_file():
             errors.append('화면 잠금 설정 누락')
         available = self.installed()
