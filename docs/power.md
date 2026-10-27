@@ -51,7 +51,18 @@ bash scripts/verify-power.sh
 
 `shittim-idle.service` 는 다음 로그인부터 Hyprland 시작 때 함께 실행되고 Hyprland 종료 때 멈춘다.
 
-## 노트북 수동 검사 (실제 잠금·절전 포함 — 작업 저장 후)
+## 노트북 실기 검사 (실제 잠금·절전 포함 — 작업 저장 후)
+
+아래 항목을 한 번에 진행하는 안내 스크립트가 있다. 각 단계에서 할 일을 보여 주고 결과는 스크립트가 직접 확인한다(`hyprctl locked`·DPMS·창 목록·inhibitor·절전 시간). 비밀번호 입력, 덮개 여닫기, 어댑터 뽑기와 화면에서만 보이는 것(오류 문구, 모든 모니터, TopBar 아이콘)은 사람이 하고 y/n 으로 답한다. 설정은 검사 중에만 짧게 바꾸고 끝나면(Ctrl+C 로 중단해도) 원래 파일 그대로 되돌린다. 자동 절전은 검사 내내 꺼 둔다.
+
+```bash
+bash ~/projects/shittim/scripts/test-power.sh                 # 잠금·자동 잠금·화면 끄기·절전 방지·전원 감지
+bash ~/projects/shittim/scripts/test-power.sh --with-suspend  # + 실제 절전 · 덮개 절전 (복귀 직후 잠김 확인)
+```
+
+각 단계는 `s` 로 건너뛸 수 있다. 결과는 화면과 `~/.local/state/shittim/power-test-<시각>.txt` 에 남는다.
+
+손으로 할 때의 순서:
 
 1. **수동 잠금**: Super+L → HUD 잠금 화면. 틀린 비밀번호 → «비밀번호가 올바르지 않습니다». 맞는 비밀번호 + Enter → 데스크톱 복귀, 창 그대로.
 2. **중복 잠금**: 잠긴 상태에서 다른 TTY 로 `bash ~/projects/shittim/scripts/lock-screen.sh` → 아무 일도 없어야 한다(`pgrep -c hyprlock` = 1).

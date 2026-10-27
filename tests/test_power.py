@@ -22,6 +22,7 @@ def load(name, path):
 POLICY = load('power_policy', 'scripts/power-policy.py')
 IDLE = load('idle_service', 'scripts/idle-service.py')
 DESKTOP = load('desktop_tool_power', 'scripts/desktop-tool.py')
+GUIDE = load('test_power_guide', 'scripts/test-power.py')
 
 
 class Settings(unittest.TestCase):
@@ -244,6 +245,54 @@ class LockScreen(unittest.TestCase):
     def test_repository_path_with_hash_is_refused(self):
         with self.assertRaises(ValueError):
             DESKTOP.lock_text(Path('/tmp/a#b'))
+
+
+class Guide(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(); self.addCleanup(self.temp.cleanup)
+        base = Path(self.temp.name)
+        self.env = patch.dict(os.environ, XDG_CONFIG_HOME=str(base / 'config'), XDG_RUNTIME_DIR=str(base / 'run'), XDG_STATE_HOME=str(base / 'state'))
+        self.env.start(); self.addCleanup(self.env.stop)
+        self.personal = base / 'config/shittim/power.json'
+
+    def test_settings_restore_puts_back_the_exact_file_or_removes_it(self):
+        settings = GUIDE.Settings()
+        settings.set('ac', lock=1, screenOff=2)
+        self.assertEqual(json.loads(self.personal.read_text())['ac']['lock'], 1)
+        settings.restore()
+        self.assertFalse(self.personal.exists())
+        POLICY.update('battery', 'lock', '10', ROOT)
+        original = self.personal.read_bytes()
+        settings = GUIDE.Settings()
+        settings.set('battery', lock=1, suspend=0)
+        settings.restore()
+        self.assertEqual(self.personal.read_bytes(), original)
+
+    def test_resume_without_lock_is_a_failure(self):
+        tester = GUIDE.Tester(ask=lambda prompt: '', out=lambda text: None)
+        clock = iter([0, 100, 100])
+        with patch.object(GUIDE, 'slept_seconds', side_effect=lambda: next(clock)),              patch.object(GUIDE, 'locked', return_value=False):
+            tester.suspend()
+        name, outcome, detail = tester.results[-1]
+        self.assertEqual(outcome, 'FAIL')
+        self.assertIn('보안', detail)
+
+    def test_interrupted_run_restores_settings_and_keep_awake(self):
+        tester = GUIDE.Tester(ask=lambda prompt: '', out=lambda text: None)
+        calls = []
+        def boom(source):
+            tester.settings.set('ac', lock=1); tester.keep_awake_on = True
+            raise KeyboardInterrupt
+        with patch.object(tester, 'check_service', return_value={'source': 'ac', 'hasBattery': False}),              patch.object(tester, 'manual_lock'), patch.object(tester, 'control_center_lock'),              patch.object(tester, 'auto_lock_and_screen_off', side_effect=boom),              patch.object(tester, 'ipc', side_effect=lambda function: calls.append(function) or (0, '')):
+            with self.assertRaises(KeyboardInterrupt):
+                tester.run(False)
+        self.assertFalse(self.personal.exists())
+        self.assertEqual(calls, ['toggleKeepAwake'])
+
+    def test_requires_hyprland_session(self):
+        with patch.dict(os.environ, HYPRLAND_INSTANCE_SIGNATURE=''):
+            self.assertEqual(GUIDE.main([]), 1)
+        self.assertEqual(GUIDE.main(['--reboot']), 2)
 
 
 @unittest.skipUnless(shutil.which('bash') and os.name != 'nt', 'Linux Bash 필요')
