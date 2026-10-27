@@ -127,7 +127,7 @@ PanelWindow {
 				DeviceActivity {
 					id: deviceActivity
 					anchors.verticalCenter: parent.verticalCenter
-					microphone: MicrophoneState; camera: CameraState; screenShare: ScreenShareState
+					microphone: MicrophoneState; camera: CameraState; screenShare: ScreenShareState; idle: PowerPolicyState
 					iconFor: name => { const entry = DesktopEntries.heuristicLookup(name); return entry && entry.icon ? Quickshell.iconPath(entry.icon, true) : "" }
 					onDetailsRequested: ControlState.show(bar, statusArea, "devices")
 				}

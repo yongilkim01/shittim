@@ -103,12 +103,12 @@ def collect():
     add('자동 실행 중지 파일', '있음' if (config / 'shittim/disable-autostart').exists() else '없음')
     add('설치 상태 검증', command(['bash', str(ROOT / 'scripts/verify.sh')], timeout=30))
     add('Hyprland 설정 오류', command(['hyprctl', '-j', 'configerrors']))
-    units = ['shittim.service', 'shittim-fcitx5.service', 'shittim-polkit.service']
+    units = ['shittim.service', 'shittim-fcitx5.service', 'shittim-polkit.service', 'shittim-idle.service']
     add('사용자 서비스 상태', command(['systemctl', '--user', 'show', *units,
         '-p', 'Id', '-p', 'ActiveState', '-p', 'SubState', '-p', 'Result', '-p', 'ExecMainStatus']))
     add('사용자 서비스 정의', command(['systemctl', '--user', 'cat', *units]))
     add('사용자 서비스 로그', command(['journalctl', '--user', '-b', '--no-pager', '-n', '100',
-        '-u', units[0], '-u', units[1], '-u', units[2]]))
+        *[argument for unit in units for argument in ('-u', unit)]]))
     add('tty1 로그인 서비스 로그', command(['journalctl', '-b', '--no-pager', '-n', '80', '-u', 'getty@tty1.service']))
     add('현재 사용자 Hyprland journal', command(['journalctl', '-b', '--no-pager', '-n', '100',
         '_UID=' + str(os.getuid()), '_COMM=Hyprland', '_COMM=start-hyprland']))

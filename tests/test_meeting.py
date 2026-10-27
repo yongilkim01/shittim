@@ -185,7 +185,7 @@ class PickerConfig(unittest.TestCase):
         self.env = patch.dict(os.environ, HOME=str(self.home), XDG_CONFIG_HOME=str(self.home / '.config'),
                               XDG_STATE_HOME=str(self.home / '.local/state'), HYPRLAND_INSTANCE_SIGNATURE='')
         self.env.start(); self.addCleanup(self.env.stop)
-        for relative in ['config/hyprland-portals.conf', 'dotfiles/hypr/shittim-lock.conf']:
+        for relative in ['config/hyprland-portals.conf', 'config/templates/shittim-lock.conf.in']:
             path = self.root / relative; path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text((ROOT / relative).read_text(encoding='utf-8'), encoding='utf-8')
         self.desktop = DESKTOP.Desktop(DESKTOP.files.Config(self.root, self.home))

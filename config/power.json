@@ -1,0 +1,5 @@
+{
+  "version": 1,
+  "battery": {"lock": 5, "screenOff": 10, "suspend": 0, "lid": "system"},
+  "ac": {"lock": 5, "screenOff": 15, "suspend": 0, "lid": "system"}
+}

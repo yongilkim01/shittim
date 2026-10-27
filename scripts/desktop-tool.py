@@ -58,6 +58,14 @@ def xdph_text(root):
             '}\n')
 
 
+def lock_text(root):
+    # Hyprlang values run to the end of the line and '#' starts a comment; refuse paths that would break either.
+    if any(character in str(root) for character in '#\n\r'):
+        raise ValueError('저장소 경로에 #·줄바꿈이 있어 잠금 화면 설정을 만들 수 없습니다.')
+    template = (root / 'config/templates/shittim-lock.conf.in').read_text(encoding='utf-8')
+    return template.replace('@ROOT_SH@', shlex.quote(str(root))).replace('@ROOT@', str(root))
+
+
 def key_id(value):
     return '+'.join(sorted(part.strip().upper() for part in value.split('+')))
 
@@ -156,13 +164,13 @@ class Desktop:
             files.say('기존 사용자 xdph.conf 유지: ' + str(xdph) + ' — Shittim 공유 선택 창을 쓰려면 이 파일을 옮긴 뒤 다시 실행하세요.')
         else:
             self.files.write(xdph, xdph_text(self.files.root))
-        self.files.link(self.files.root / 'dotfiles/hypr/shittim-lock.conf', self.files.config / 'hypr/shittim-lock.conf')
+        self.files.write(self.files.config / 'hypr/shittim-lock.conf', lock_text(self.files.root))
         bindings, conflicts = self.bindings(replace)
         self.files.write(self.files.config / 'hypr/shittim-desktop.lua', self.lua(bindings))
         self.files.write(self.manifest, json.dumps({'bindings': bindings, 'conflicts': conflicts, 'defaults': defaults}, ensure_ascii=False, indent=2) + '\n')
         if not self.files.dry:
             subprocess.run(['luac', '-p', str(self.files.config / 'hypr/shittim-desktop.lua')], check=True)
-        files.say('클립보드 기록과 자동 잠금은 켜지 않았습니다. 포털은 다음 로그인부터 새 설정을 사용합니다.')
+        files.say('클립보드 기록은 켜지 않았습니다. 포털은 다음 로그인부터 새 설정을 사용합니다.')
         files.say('공유 선택 창은 화면 공유를 하지 않을 때 systemctl --user restart xdg-desktop-portal-hyprland 로 바로 적용할 수 있습니다.')
 
     def verify(self, live=False):
@@ -186,8 +194,9 @@ class Desktop:
             errors.append('공유 선택 창 설정 누락: ' + str(xdph))
         elif xdph_current.startswith(XDPH_MARKER) and xdph_current != xdph_text(self.files.root):
             errors.append('설정 불일치: ' + str(xdph))
-        if not (self.files.config / 'hypr/shittim-lock.conf').is_file():
-            errors.append('화면 잠금 설정 누락')
+        lock = self.files.config / 'hypr/shittim-lock.conf'
+        if not lock.is_file() or lock.is_symlink() or lock.read_text(encoding='utf-8') != lock_text(self.files.root):
+            errors.append('화면 잠금 설정 누락 또는 불일치: ' + str(lock))
         available = self.installed()
         for app_id in APPLICATIONS:
             if app_id not in available and app_id != 'google-chrome.desktop':

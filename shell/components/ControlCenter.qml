@@ -29,9 +29,12 @@ PanelWindow {
 		ControlContent {
 			id: content; anchors.fill: parent
 			audio: AudioState; network: NetworkState; battery: BatteryState; bluetooth: BluetoothState; brightness: BrightnessState; power: PowerState; capture: CaptureState; metrics: SystemMetricsState; microphone: MicrophoneState; camera: CameraState; screenShare: ScreenShareState
-			notifications: NotificationState
+			notifications: NotificationState; session: PowerPolicyState
 			page: ControlState.page
-			onNavigate: destination => ControlState.page = destination
+			onNavigate: destination => {
+				if (destination !== "power-settings") { ControlState.page = destination; return }
+				ControlState.close(); DashboardState.show(null); DashboardState.select("power")
+			}
 			onCloseRequested: ControlState.close()
 		}
 	}

@@ -14,6 +14,7 @@ vlc-gui-qt
 vlc-plugin-ffmpeg
 vlc-plugin-dbus
 hyprlock
+hypridle
 fuzzel
 networkmanager
 nm-connection-editor

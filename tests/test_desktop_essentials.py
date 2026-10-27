@@ -32,7 +32,7 @@ class DesktopSetup(unittest.TestCase):
         self.env = patch.dict(os.environ, HOME=str(self.home), XDG_CONFIG_HOME=str(self.home / '.config'),
                               XDG_STATE_HOME=str(self.home / '.local/state'), HYPRLAND_INSTANCE_SIGNATURE='')
         self.env.start(); self.addCleanup(self.env.stop)
-        for relative in ['config/hyprland-portals.conf', 'dotfiles/hypr/shittim-lock.conf']:
+        for relative in ['config/hyprland-portals.conf', 'config/templates/shittim-lock.conf.in']:
             path = self.root / relative; path.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(ROOT / relative, path)
         self.config = TOOL.files.Config(self.root, self.home)
@@ -63,7 +63,10 @@ class DesktopSetup(unittest.TestCase):
             self.assertEqual(next(self.config.backups.rglob('mimeapps.list')).read_text(), original)
             self.assertIn('google-chrome.desktop', mime.read_text())
             self.assertIn('text/plain=mine.desktop;', mime.read_text())
-            self.assertTrue((self.config.config / 'hypr/shittim-lock.conf').is_symlink())
+            lock = (self.config.config / 'hypr/shittim-lock.conf').read_text(encoding='utf-8')
+            self.assertIn('path = ' + str(self.root) + '/assets/wallpapers/shittim-city.png', lock)
+            self.assertIn("/usr/bin/bash '" + str(self.root) + "'/scripts/lock-status.sh", lock)
+            self.assertNotIn('@ROOT', lock)
             before = sorted(str(path) for path in self.config.backups.rglob('*'))
             self.desktop.setup()
             self.assertEqual(before, sorted(str(path) for path in self.config.backups.rglob('*')))
@@ -155,7 +158,7 @@ class DesktopSetup(unittest.TestCase):
 
     def test_generated_desktop_file_is_excluded_from_capture(self):
         self.assertFalse(TOOL.files.allowed(Path('hypr/shittim-desktop.lua')))
-        self.assertTrue(TOOL.files.allowed(Path('hypr/shittim-lock.conf')))
+        self.assertFalse(TOOL.files.allowed(Path('hypr/shittim-lock.conf')))
 
     @unittest.skipIf(os.name == 'nt', '실제 Linux 설정 링크 검사')
     def test_live_verify_checks_actual_binding_and_default_mime(self):

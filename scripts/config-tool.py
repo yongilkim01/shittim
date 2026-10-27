@@ -25,7 +25,7 @@ SECRET = re.compile(
     r'\b(?:gh[pousr]_[A-Za-z0-9_]{20,}|github_pat_[A-Za-z0-9_]+|AKIA[A-Z0-9]{16})\b', re.I)
 SUSPICIOUS_NAME = re.compile(r'(^|[./_-])(secrets?|credentials?|id_rsa|id_ed25519|auth|passwords?|tokens?)([./_-]|$)|\.(pem|key|p12|pfx|nmconnection|env|bak|log)$', re.I)
 GROUPS = ('hypr', 'kitty', 'fcitx5', 'fontconfig', 'environment.d')
-UNITS = ('shittim.service', 'shittim-fcitx5.service', 'shittim-polkit.service')
+UNITS = ('shittim.service', 'shittim-fcitx5.service', 'shittim-polkit.service', 'shittim-idle.service')
 DEFAULT_HYPRLAND = Path('/usr/share/hypr/hyprland.lua')
 
 
@@ -44,7 +44,7 @@ def allowed(relative):
         return False
     group = relative.parts[0]
     if group == 'hypr':
-        return relative.suffix in ('.lua', '.conf') and relative.name not in ('shittim-base.lua', 'shittim-desktop.lua', 'shittim-windows.lua', 'shittim-titlebars.lua')
+        return relative.suffix in ('.lua', '.conf') and relative.name not in ('shittim-base.lua', 'shittim-desktop.lua', 'shittim-windows.lua', 'shittim-titlebars.lua', 'shittim-lock.conf')
     if group == 'kitty':
         return relative.suffix == '.conf'
     if group == 'fcitx5':
@@ -350,6 +350,7 @@ class Config:
             self.config / 'systemd/user/shittim.service': self.service('run-shell.sh', 'Shittim desktop shell'),
             self.config / 'systemd/user/shittim-fcitx5.service': self.service('run-fcitx5.sh', 'Shittim input method'),
             self.config / 'systemd/user/shittim-polkit.service': self.service('run-polkit.sh', 'Shittim authentication agent'),
+            self.config / 'systemd/user/shittim-idle.service': self.service('run-idle.sh', 'Shittim idle lock and power policy'),
         }
 
     def autostart(self):

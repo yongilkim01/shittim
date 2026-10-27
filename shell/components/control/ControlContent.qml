@@ -17,6 +17,7 @@ FocusScope {
 	property var microphone: null
 	property var camera: null
 	property var screenShare: null
+	property var session: null
 	readonly property bool consuming:visible && Window.window!==null && Window.window.visible
 	readonly property var currentService:page==="bluetooth" ? bluetooth : page==="brightness" ? brightness : page==="power" ? power : page==="settings" ? metrics : capture
 	readonly property string actionError:page==="overview" ? [brightness.error,bluetooth.error,capture.error].filter((text,index,list)=>text && list.indexOf(text)===index).join("\n") : currentService.error
@@ -93,6 +94,6 @@ FocusScope {
 	Component { id: audioPage; AudioPage { audio: root.audio; microphone: root.microphone } }
 	Component { id: devicesPage; DevicesPage { microphone: root.microphone; camera: root.camera; screenShare: root.screenShare; onNavigate: destination => root.navigate(destination) } }
 	Component { id: brightnessPage; BrightnessPage { brightness: root.brightness } }
-	Component { id: powerPage; PowerPage { battery: root.battery; power: root.power } }
+	Component { id: powerPage; PowerPage { battery: root.battery; power: root.power; session: root.session; onNavigate: destination => root.navigate(destination); onCloseRequested: root.closeRequested() } }
 	Component { id: settingsPage; SettingsPage { metrics: root.metrics; onNavigate: destination => root.navigate(destination) } }
 }

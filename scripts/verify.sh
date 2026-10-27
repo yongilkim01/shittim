@@ -39,7 +39,7 @@ for shittim_service in pipewire.socket pipewire-pulse.socket wireplumber.service
         warn "사용자 서비스/소켓 비활성: $shittim_service"; shittim_failures=$((shittim_failures + 1))
     fi
 done
-for shittim_unit in shittim.service shittim-fcitx5.service shittim-polkit.service; do
+for shittim_unit in shittim.service shittim-fcitx5.service shittim-polkit.service shittim-idle.service; do
     systemctl --user cat "$shittim_unit" >/dev/null || shittim_failures=$((shittim_failures + 1))
 done
 if [[ -n ${HYPRLAND_INSTANCE_SIGNATURE:-} ]]; then
@@ -59,6 +59,7 @@ else info '현재 TTY입니다. Hyprland·Shittim·입력기는 다음 그래픽
 shittim_meeting_flags=()
 [[ -n ${HYPRLAND_INSTANCE_SIGNATURE:-} ]] || shittim_meeting_flags+=(--static)
 python3 "$SHITTIM_ROOT/scripts/meeting-check.py" "${shittim_meeting_flags[@]}" || { warn '화상회의·화면 공유 환경: bash scripts/verify-meeting.sh 출력의 [실패] 항목을 확인하세요.'; shittim_failures=$((shittim_failures + 1)); }
+bash "$SHITTIM_ROOT/scripts/verify-power.sh" || { warn '잠금·전원 관리: bash scripts/verify-power.sh 출력의 주의 항목을 확인하세요.'; shittim_failures=$((shittim_failures + 1)); }
 fc-match 'Hack Nerd Font Mono'
 fc-match D2Coding
 (( shittim_failures == 0 )) || die "검증 실패: $shittim_failures. 표시된 항목을 수정한 뒤 다시 실행하세요."

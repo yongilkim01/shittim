@@ -7,6 +7,7 @@ import "../services"
 import "./dashboard"
 import "./control"
 import "./launcher"
+import "../ui/AssetPaths.js" as AssetPaths
 
 PanelWindow {
     id: window
@@ -29,7 +30,7 @@ PanelWindow {
         id: content; anchors.fill: parent; model: DashboardState.model; page: DashboardState.page
         onNavigate: destination => DashboardState.select(destination)
         onCloseRequested: DashboardState.close()
-        detailComponent: DashboardState.page === "apps" ? apps : controls
+        detailComponent: DashboardState.page === "apps" ? apps : DashboardState.page === "power" ? powerLock : controls
     }
     Component {
         id: apps
@@ -46,6 +47,10 @@ PanelWindow {
                 onCloseRequested: DashboardState.close()
             }
         }
+    }
+    Component {
+        id: powerLock
+        PowerLockPage { policy: PowerPolicyState; wallpaper: AssetPaths.asset(Quickshell.shellDir, "wallpapers/shittim-city.png") }
     }
     Component {
         id: controls

@@ -73,11 +73,11 @@ bash scripts/verify-desktop.sh
 |---|---|
 | Super+B | Chrome 실행 또는 기존 창 활성화 |
 | Super+E | Shittim Files로 홈 폴더 열기 |
-| Super+L | Shittim HUD Hyprlock으로 수동 잠금 |
+| Super+L | Shittim HUD 잠금 화면 (Control Center Power 의 «잠금» 과 같음) |
 | Print / Shift+Print | 전체 / 영역 캡처, 파일 저장과 클립보드 복사 |
 | Super+Shift+V | 선택적으로 켠 클립보드 기록 보기 |
 
-충돌한 사용자 단축키는 유지하고 설치 출력에 표시한다. 의도적으로 교체할 때만 `bash scripts/setup-desktop.sh --replace-bindings` 후 `hyprctl reload`를 실행한다. 자동 잠금·절전·클립보드 수집은 기본으로 켜지 않는다.
+충돌한 사용자 단축키는 유지하고 설치 출력에 표시한다. 의도적으로 교체할 때만 `bash scripts/setup-desktop.sh --replace-bindings` 후 `hyprctl reload`를 실행한다. 자동 잠금(5분)과 화면 끄기는 기본으로 켜고, 자동 절전·클립보드 수집은 켜지 않는다. 시간·덮개 동작은 대시보드 «Power» 에서 바꾼다([잠금 · 전원 관리](docs/power.md)).
 
 **A. 브라우저**: Super+B, 런처의 Chrome 검색, 앱 바 Chrome 아이콘을 각각 확인한다. 아래 명령의 연결 결과는 `google-chrome.desktop`이어야 한다.
 
@@ -182,7 +182,7 @@ touch "${XDG_CONFIG_HOME:-$HOME/.config}/shittim/disable-autostart"
 ./scripts/verify.sh --dry-run
 ./scripts/verify.sh
 hyprctl -j configerrors
-systemctl --user status shittim.service shittim-fcitx5.service shittim-polkit.service
+systemctl --user status shittim.service shittim-fcitx5.service shittim-polkit.service shittim-idle.service
 journalctl --user -u shittim.service -b --no-pager
 ```
 

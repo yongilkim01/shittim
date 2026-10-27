@@ -9,4 +9,4 @@ for shittim_variable in WAYLAND_DISPLAY DISPLAY HYPRLAND_INSTANCE_SIGNATURE XDG_
     [[ -z ${!shittim_variable+x} ]] || shittim_environment+=("$shittim_variable")
 done
 dbus-update-activation-environment --systemd "${shittim_environment[@]}"
-systemctl --user start shittim.service shittim-fcitx5.service shittim-polkit.service
+systemctl --user start shittim.service shittim-fcitx5.service shittim-polkit.service shittim-idle.service

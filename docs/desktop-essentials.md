@@ -84,7 +84,7 @@ Hyprland 전용 `xdg-desktop-portal/hyprland-portals.conf`에서 기본·파일 
 
 캡처는 기존 control-service.py를 확장해 Control Center Screenshot과 같은 경로를 쓴다. 생성된 파일명만 사용하고 slurp 좌표를 검증한 뒤 `grim -g`에 별도 인수로 전달한다. `PICTURES/Screenshots`에 저장하고 wl-copy로 PNG를 복사한다. 취소 시 캡처하지 않는다. 캡처 프로세스 시간 초과는 종료·회수하고, 저장 성공 후 복사 실패는 Control Center에 별도로 표시한다.
 
-잠금은 [Hyprlock 공식 설정](https://wiki.hypr.land/Hypr-Ecosystem/hyprlock/)에 맞춘 `shittim-lock.conf`를 명시적으로 사용한다. 기존 개인 `hyprlock.conf`와 PAM 설정은 유지한다. 어두운 HUD 색·각진 입력창·같은 폰트를 사용하며 자동 로그인·화면 꺼짐·절전·자동 잠금을 추가하지 않는다. 중복 스크립트 잠금은 flock으로 막는다. 실제 비밀번호·키보드 배열과 잠금 해제는 노트북에서 확인해야 한다.
+잠금은 [Hyprlock 공식 설정](https://wiki.hypr.land/Hypr-Ecosystem/hyprlock/)에 맞춘 `shittim-lock.conf`를 명시적으로 사용한다. 기존 개인 `hyprlock.conf`와 PAM 설정은 유지한다. 자동 잠금·화면 끄기·절전은 [잠금 · 전원 관리](power.md)에서 다룬다. 이 설정은 이제 저장소 템플릿에서 생성한다. 중복 스크립트 잠금은 flock으로 막는다. 실제 비밀번호·키보드 배열과 잠금 해제는 노트북에서 확인해야 한다.
 
 ## 클립보드 정책
 
@@ -137,7 +137,7 @@ VLC의 D-Bus 인터페이스는 [공식 소스](https://github.com/videolan/vlc/
 
 ## 변경 파일과 검증 범위
 
-신규: `config/hyprland-portals.conf`, `dotfiles/hypr/shittim-lock.conf`, `scripts/{desktop-tool.py,setup-desktop.sh,install-chrome.sh,open-desktop.sh,screenshot.sh,lock-screen.sh,clipboard.sh,verify-desktop.sh,diagnose-media.py,make-test-media.py}`, `tests/test_desktop_essentials.py`, 이 문서.
+신규: `config/hyprland-portals.conf`, `dotfiles/hypr/shittim-lock.conf`(이후 `config/templates/shittim-lock.conf.in` 으로 이동), `scripts/{desktop-tool.py,setup-desktop.sh,install-chrome.sh,open-desktop.sh,screenshot.sh,lock-screen.sh,clipboard.sh,verify-desktop.sh,diagnose-media.py,make-test-media.py}`, `tests/test_desktop_essentials.py`, 이 문서.
 
 수정: `install.sh`, `scripts/{packages.txt,config-tool.py,control-service.py,verify.sh}`, `config/dock.json`, `shell/services/{MediaState.qml,SystemControl.qml}`, `shell/components/{AppMediaControls.qml,media/MediaView.qml}`, `tests/{test_launcher_gio.py,test_control_service.py}`, `README.md`와 미디어 문서의 기본 앱 설명.
 
