@@ -2,6 +2,8 @@
 
 Arch Linux + Hyprland + Quickshell 기반 데스크톱 환경. SHITTIM HUD 디자인 시스템을 사용하며 워크스페이스·네트워크·볼륨·배터리·시계를 표시한다.
 
+공통 입력 소유권, 창 명령/관찰 결과, 구독 기반 서비스, 디자인 토큰 생성, CI 및 기존 설치 업데이트 절차는 [공통 동작 계약과 검증](docs/architecture.md)에 정리되어 있다. 상단 바의 겹친 창 아이콘으로 창 목록, Dock의 격자 아이콘으로 앱 런처를 직접 연다.
+
 상단 바 오른쪽을 클릭하면 Control Center를 연다. 원본 시안 5번 패널의 3열 타일·두 줄 슬라이더·3열×2행 버튼을 사용하며 시스템 제어는 하위 화면에서 관리한다. [Control Center 사용법·패키지·실기 검사](docs/control-center.md)를 참고한다.
 
 **Super+Space**로 전용 App Launcher를 연다. 원본 시안 2번 패널을 재현하며 실제 XDG 앱 검색·아이콘·키보드 탐색·터미널 앱 실행을 지원한다. 검증 전까지 **Super+R의 Fuzzel은 유지**한다. [런처 적용·검증·Fuzzel 대체/복원](docs/app-launcher.md)을 참고한다.

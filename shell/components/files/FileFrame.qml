@@ -18,8 +18,8 @@ Shape {
         strokeWidth: 5; strokeColor: Qt.rgba(Theme.accent.r,Theme.accent.g,Theme.accent.b,0.06)
         fillGradient: LinearGradient {
             x1: 0; y1: 0; x2: root.width; y2: root.height
-            GradientStop { position: 0; color: "#000b10" }
-            GradientStop { position: 1; color: "#011721" }
+            GradientStop { position: 0; color: Theme.fileGradientStart }
+            GradientStop { position: 1; color: Theme.fileGradientEnd }
         }
         PathSvg { path: root.outline }
     }
@@ -28,7 +28,7 @@ Shape {
         PathSvg { path: root.outline }
     }
     ShapePath {
-        strokeWidth: 1; strokeColor: "#009fad"; fillColor: "transparent"
+        strokeWidth: 1; strokeColor: Theme.fileFrame; fillColor: "transparent"
         PathSvg { path: root.outline }
     }
 }

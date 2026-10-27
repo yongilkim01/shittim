@@ -8,3 +8,4 @@ HudDivider 1.0 HudDivider.qml
 HudProgress 1.0 HudProgress.qml
 HudSlider 1.0 HudSlider.qml
 HudInput 1.0 HudInput.qml
+ActionInput 1.0 ActionInput.qml

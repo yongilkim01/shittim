@@ -10,9 +10,12 @@ FocusScope {
     signal navigate(string destination)
     signal closeRequested()
     implicitWidth: Theme.dashboardWidth; implicitHeight: Theme.dashboardHeight
-    readonly property real contentScale: Math.min(width / Theme.dashboardWidth, height / Theme.dashboardHeight)
+    readonly property real contentScale: 1
     Keys.onEscapePressed: root.closeRequested()
     ControlFrame { anchors.fill: parent; cut: 4; strokeColor: Theme.accentDim; fillColor: Qt.rgba(Theme.background.r, Theme.background.g, Theme.background.b, 0.98) }
+    Flickable {
+        objectName:"dashboardViewport"
+        anchors.fill:parent;clip:true;contentWidth:Theme.dashboardWidth;contentHeight:Theme.dashboardHeight;boundsBehavior:Flickable.StopAtBounds
     Item {
         width: Theme.dashboardWidth; height: Theme.dashboardHeight; scale: root.contentScale; transformOrigin: Item.TopLeft
         Rectangle { x: 125; y: 1; width: 1; height: 298; color: Theme.border; opacity: 0.7 }
@@ -42,5 +45,6 @@ FocusScope {
         }
         SystemOverview { anchors.fill: parent; model: root.model; visible: root.page === "system" }
         Loader { objectName: "dashboardDetail"; x: 140; y: 15; width: 589; height: 272; active: root.page !== "system"; sourceComponent: root.detailComponent }
+    }
     }
 }

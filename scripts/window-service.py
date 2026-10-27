@@ -8,6 +8,8 @@ from pathlib import Path
 import re
 import subprocess
 import sys
+import time
+import uuid
 
 
 ADDRESS = re.compile(r'(?:0x)?([0-9a-fA-F]{1,16})\Z')
@@ -66,6 +68,40 @@ class Windows:
         if result.stdout.strip().lower() != 'ok':
             raise ValueError('DispatcherFailed')
 
+    def observe(self, target):
+        client=next((item for item in self.query('clients') if address(item['address'])==target),None)
+        if client is None: return {'address':target,'closed':True}
+        return dict(address=target,closed=False,at=client['at'],size=client['size'],monitor=client.get('monitor'),
+            floating=bool(client.get('floating')),hidden=bool(HIDDEN.fullmatch(client.get('workspace',{}).get('name',''))),
+            maximized=MAXIMIZED in client.get('tags',[]) or client.get('fullscreen')==1,
+            fullscreen=bool(int(client.get('fullscreen',0)) & 2),
+            active=address(self.query('activewindow').get('address') or '0')==target)
+
+    def execute(self, operation, target, zone=None, monitor_id=None):
+        target=address(self.query('activewindow').get('address','0')) if target=='active' else address(target)
+        before=self.observe(target)
+        self.expected_geometry=None
+        result=self.action(operation,target,zone,monitor_id) or {}
+        deadline=time.monotonic()+2
+        while True:
+            state=self.observe(target)
+            expected=not state['closed']
+            if operation=='close':
+                # A save dialog can legitimately delay closing; never kill the application.
+                return dict(result,state=state,verified=state['closed'],accepted=True)
+            if operation=='hide': expected=state.get('hidden',False)
+            elif operation=='activate': expected=state.get('active',False) and not state.get('hidden',False)
+            elif operation in ('maximize','restore'): expected=state.get('maximized')==(result.get('mode')=='maximized')
+            elif operation=='fullscreen': expected=state.get('fullscreen')!=before.get('fullscreen')
+            elif operation=='tile': expected=not state.get('maximized') and state.get('floating')!=before.get('floating')
+            if expected and self.expected_geometry is not None and state.get('floating'):
+                actual=state.get('at',[])+state.get('size',[])
+                expected=len(actual)==4 and all(abs(a-b)<=2 for a,b in zip(actual,self.expected_geometry))
+            if expected:return dict(result,state=state,verified=True,accepted=True)
+            if time.monotonic()>=deadline:
+                error=ValueError('OutcomeUnknown');error.state=state;raise error
+            time.sleep(0.05)
+
     def changed(self, target):
         self.dispatch('hl.dsp.event(' + json.dumps('shittim-window-state,' + address(target)) + ')')
 
@@ -75,7 +111,7 @@ class Windows:
             if MAXIMIZED not in client.get('tags', []) or not client.get('mapped', True) or HIDDEN.fullmatch(client.get('workspace', {}).get('name', '')):
                 continue
             if int(client.get('fullscreen', 0)) & 2: continue
-            self.action('fit', client['address']); self.changed(client['address']); count += 1
+            self.execute('fit', client['address']); self.changed(client['address']); count += 1
         return {'adjusted': count}
 
     def action(self, operation, target='active', zone=None, monitor_id=None):
@@ -94,6 +130,7 @@ class Windows:
         def send(name, fields=''):
             self.dispatch('hl.dsp.' + name + '({' + (fields + ',' if fields else '') + selector + '})')
         def geometry(box):
+            self.expected_geometry=tuple(box)
             x, y, width, height = box
             send('window.resize', f'x={width},y={height},relative=false')
             send('window.move', f'x={x},y={y},relative=false')
@@ -162,8 +199,7 @@ class Windows:
                     monitor = next((item for item in monitors if item.get('id') == client.get('monitor')), None)
                     monitor = monitor or next((item for item in monitors if item.get('focused')), monitors[0])
                     x, y, width, height = fit_area(client, self.maximize_area(client, monitor))
-                    send('window.resize', f'x={width},y={height},relative=false')
-                    send('window.move', f'x={x},y={y},relative=false')
+                    geometry((x,y,width,height))
             send('focus')
             send('window.alter_zorder', 'mode="top"')
         elif operation == 'hide':
@@ -216,8 +252,7 @@ class Windows:
             if not monitor:
                 raise ValueError('MonitorUnavailable')
             x, y, width, height = fit_area(client, self.maximize_area(client, monitor))
-            send('window.resize', f'x={width},y={height},relative=false')
-            send('window.move', f'x={x},y={y},relative=false')
+            geometry((x,y,width,height))
         elif operation == 'snap':
             if not client.get('floating') or client.get('pinned') or client.get('grouped') or int(client.get('fullscreen', 0)) & 2 or int(client.get('fullscreenClient', 0)) & 2:
                 raise ValueError('RequiresNormalFloatingWindow')
@@ -231,8 +266,7 @@ class Windows:
                 else: geometry(self.maximize_area(client, monitor))
                 return
             if client.get('fullscreen') or client.get('fullscreenClient'): send('window.fullscreen_state','internal=0,client=0,action="set"')
-            send('window.resize',f'x={width},y={height},relative=false')
-            send('window.move',f'x={x},y={y},relative=false')
+            geometry((x,y,width,height))
             if MAXIMIZED in client.get('tags', []): forget_maximize()
         else:
             raise ValueError('InvalidAction')
@@ -293,33 +327,44 @@ def main():
     parser.add_argument('address', nargs='?', default='active')
     parser.add_argument('zone',nargs='?')
     parser.add_argument('monitor',nargs='?',type=int)
+    parser.add_argument('--request',default=None)
     args = parser.parse_args()
+    request=args.request or uuid.uuid4().hex
+    if not re.fullmatch(r'[A-Za-z0-9-]{1,80}',request):parser.error('InvalidRequest')
+    def reply(ok, **values):
+        print(json.dumps(dict(version=1,request=request,operation=args.action,target=args.address,
+            ok=ok,status='success' if ok else 'failure',retryable=False,**values)))
     try:
         if args.action == 'snap-preview':
             monitor = next((item for item in Windows().query('monitors') if item['id']==args.monitor),None)
             if monitor is None: raise ValueError('MonitorUnavailable')
-            print(json.dumps({'ok':True,'geometry':snapped(monitor,args.zone),'monitor':monitor})); return 0
+            reply(True,geometry=snapped(monitor,args.zone),monitor=monitor,verified=True); return 0
         # Serialize titlebar, Files, Dock and keyboard commands against the same state.
         import fcntl
         runtime = Path(os.environ['XDG_RUNTIME_DIR'])
         if runtime.stat().st_uid != os.getuid(): raise ValueError('InvalidRuntimeDirectory')
         with (runtime / 'shittim-window-actions.lock').open('a') as lock:
             os.chmod(lock.name, 0o600)
-            fcntl.flock(lock, fcntl.LOCK_EX)
+            deadline=time.monotonic()+15
+            while True:
+                try:fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB);break
+                except BlockingIOError:
+                    if time.monotonic()>=deadline:raise ValueError('RequestTimeout')
+                    time.sleep(0.05)
             windows = Windows()
             if args.action == 'reflow': result=windows.reflow()
             else:
-                result=windows.action(args.action, args.address,args.zone,args.monitor)
+                result=windows.execute(args.action, args.address,args.zone,args.monitor)
                 # Refresh state in both the main shell and the separate Files process.
                 if args.action != 'close':
                     current = windows.query('activewindow').get('address') if args.address == 'active' else args.address
                     if current: windows.changed(current)
-        print(json.dumps(dict(ok=True,**(result or {}))))
+        reply(True,**(result or {}))
         return 0
     except (OSError, ValueError, KeyError, TypeError, subprocess.SubprocessError) as error:
         code = str(error) if isinstance(error, ValueError) and re.fullmatch(r'[A-Za-z]+', str(error)) else type(error).__name__
         if code=='ExitFullscreenBeforeFit': print('전체 화면을 먼저 해제한 뒤 다시 맞추세요. 최대화는 그대로 사용할 수 있습니다.',file=sys.stderr)
-        print(json.dumps({'ok': False, 'error': code}))
+        reply(False,error=code,code=code,state=getattr(error,'state',None),verified=False,accepted=code=='OutcomeUnknown')
         return 1
 
 

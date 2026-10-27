@@ -5,7 +5,7 @@ import "../../ui"
 ColumnLayout {
 	id: root
 	required property var battery
-	required property var system
+	required property var power
 	spacing: Theme.spaceM
 	HudText { text: root.battery.validPercentage ? root.battery.percentage + "%" : "N/A"; textStyle: "value"; color: root.battery.lowBattery ? Theme.danger : Theme.accentBright }
 	HudText { text: root.battery.available ? root.battery.status : "배터리가 없는 환경입니다."; Layout.fillWidth: true }
@@ -18,16 +18,16 @@ ColumnLayout {
 	}
 	HudText { text: "전원 프로필"; textStyle: "section"; color: Theme.accent }
 	Repeater {
-		model: root.system.profiles
+		model: root.power.profiles
 		HudButton {
 			required property string modelData
 			Layout.fillWidth: true; text: modelData === "power-saver" ? "절전" : modelData === "balanced" ? "균형" : modelData === "performance" ? "성능" : modelData
-			active: root.system.profile === modelData; enabled: root.system.ready && !root.system.busy
-			onClicked: root.system.setProfile(modelData)
+			active: root.power.profile === modelData; enabled: root.power.ready && !root.power.busy
+			onClicked: root.power.setProfile(modelData)
 		}
 	}
 	HudText {
-		visible: root.system.profiles.length === 0
+		visible: root.power.profiles.length === 0
 		text: "전원 프로필 서비스를 사용할 수 없습니다. 배터리 표시는 계속 동작합니다."
 		Layout.fillWidth: true; wrapMode: Text.WordWrap; maximumLineCount: 4; color: Theme.textMuted
 	}

@@ -54,7 +54,7 @@ TestCase {
         const app={id:"nemo.desktop",name:"Files",icons:[]}
         const view=createTemporaryObject(dockFactory,testCase,{apps:[app],favorites:[app.id]})
         const strip=view.stripItem, originalY=strip.y
-        compare(strip.height,64); compare(strip.width,202)
+        compare(strip.height,64); compare(strip.width,254)
         compare(view.errorItem.height,0)
         const image=findChild(view,"dock-image-nemo.desktop")
         compare(image.width,32); compare(image.height,32)
@@ -74,6 +74,7 @@ TestCase {
         const trash=createTemporaryObject(spyFactory,testCase,{target:view,signalName:"trashRequested"})
         mouseClick(findChild(view,"dock-settings"),15,15); compare(settings.count,1)
         mouseClick(findChild(view,"dock-settings"),15,15,Qt.RightButton); compare(launcher.count,1)
+        mouseClick(findChild(view,"dock-launcher"),15,15);compare(launcher.count,2)
         mouseClick(findChild(view,"dock-trash"),15,15); compare(trash.count,1)
         view.trashAvailable=false
         mouseClick(findChild(view,"dock-trash"),15,15); compare(trash.count,1)

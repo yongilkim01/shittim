@@ -5,19 +5,19 @@ Rectangle {
 	property alias text: label.text
 	property bool active: false
 	property bool compact: false
-	readonly property bool hovered: mouse.containsMouse
+	Keys.forwardTo:[input]
+	readonly property bool hovered: input.hovered
 	signal clicked()
 	implicitWidth: compact ? Math.max(Theme.barWorkspaceWidth, label.implicitWidth + Theme.spaceXS)
 		: Math.max(Theme.workspaceWidth, label.implicitWidth + Theme.spaceL)
 	implicitHeight: compact ? Theme.barWorkspaceHeight : Theme.controlHeight
 	radius: compact ? Theme.barWorkspaceRadius : Theme.cornerRadius
 	color: compact ? (enabled && active ? Theme.accentBright
-		: (enabled && (hovered || mouse.pressed) ? Theme.surfaceElevated : Theme.transparent))
+		: (enabled && (hovered || input.pressed) ? Theme.surfaceElevated : Theme.transparent))
 		: !enabled ? Theme.background
-		: (active || hovered || mouse.pressed ? Theme.surfaceElevated : Theme.surface)
-	border.width: compact && !activeFocus ? 0 : Theme.lineWidth
-	border.color: enabled && (active || hovered || activeFocus) ? Theme.borderActive : Theme.border
-	activeFocusOnTab: true
+		: (active || hovered || input.pressed ? Theme.surfaceElevated : Theme.surface)
+	border.width: compact && !input.focused ? 0 : Theme.lineWidth
+	border.color: enabled && (active || hovered || input.focused) ? Theme.borderActive : Theme.border
 
 	HudText {
 		id: label
@@ -36,16 +36,7 @@ Rectangle {
 		height: Theme.lineWidth
 		color: root.active ? Theme.accent : Theme.transparent
 	}
-	MouseArea {
-		id: mouse
-		anchors.fill: parent
-		hoverEnabled: true
-		acceptedButtons: Qt.LeftButton
-		cursorShape: Qt.PointingHandCursor
-		onClicked: root.clicked()
-	}
-	Keys.onSpacePressed: event => { if (enabled) { clicked(); event.accepted = true } }
-	Keys.onReturnPressed: event => { if (enabled) { clicked(); event.accepted = true } }
+	ActionInput {id:input;label:String(root.text);onTriggered:root.clicked()}
 	Behavior on color { ColorAnimation { duration: Theme.hoverDuration; easing.type: Theme.easing } }
 	Behavior on border.color { ColorAnimation { duration: Theme.hoverDuration; easing.type: Theme.easing } }
 }

@@ -7,13 +7,16 @@ import Quickshell.Hyprland
 import Quickshell.Services.Notifications
 import "../components/notifications"
 import "../components/notifications/NotificationData.js" as Data
+import "../core"
 
 Scope {
     id: root
     readonly property alias model: history
-    property bool opened: false
-    property var anchorWindow: null
-    property var targetScreen: null
+    readonly property bool opened: session.active
+    readonly property var anchorWindow: session.anchorWindow
+    readonly property var targetScreen: session.screen
+    readonly property alias panelSession: session
+    PanelSession { id:session;coordinator:InteractionState;name:"notifications" }
     property int detailId: -1
     property var popupScreen: null
     property string ownership: "checking"
@@ -24,25 +27,20 @@ Scope {
     property bool restored: false
     function live(id) { return server.trackedNotifications.values.find(notification => notification.id === id) || null }
     function toggleDnd() { history.dnd = !history.dnd }
-    function close() { opened = false }
-    function toggle(window) {
+    function close() { session.close() }
+    function toggle(window, item) {
         if (opened && anchorWindow === window) { close(); return }
-        ControlState.close(); LauncherState.close()
-        anchorWindow = window
-        if (anchorWindow === null) return
-        targetScreen = window.screen
+        if (window === null) return
         detailId = -1
-        opened = true
+        session.open(InteractionState.screenFor(window),window,item)
     }
     function showDetail(id) {
         const screen = popupScreen || focusedScreen()
-        ControlState.close(); LauncherState.close()
-        anchorWindow = null; targetScreen = screen; detailId = id
-        opened = screen !== null
+        detailId = id
+        session.open(screen)
     }
     function focusedScreen() {
-        const monitor = Hyprland.focusedMonitor
-        return Quickshell.screens.find(screen => monitor !== null && screen.name === monitor.name) || Quickshell.screens[0] || null
+        return InteractionState.screenFor(null)
     }
     function iconSource(name) { return name ? Quickshell.iconPath(name, true) : "" }
     function invoke(id, actionId) {
@@ -104,12 +102,9 @@ Scope {
         }
         onTriggered: { history.expireDue(Date.now()); reschedule() }
     }
-    Connections { target: ControlState; function onOpenedChanged() { if (ControlState.opened) root.close() } }
-    Connections { target: LauncherState; function onOpenedChanged() { if (LauncherState.opened) root.close() } }
     Connections {
         target: Quickshell
         function onScreensChanged() {
-            if (root.opened && Quickshell.screens.indexOf(root.targetScreen) < 0) root.close()
             if (root.popupScreen !== null && Quickshell.screens.indexOf(root.popupScreen) < 0) root.popupScreen = root.focusedScreen()
         }
     }
@@ -132,6 +127,7 @@ Scope {
         function dndOff(): void { history.dnd = false }
         function clear(): void { history.clear() }
         function hide(): void { root.close() }
+        function show(): void { root.detailId=-1;session.open(root.focusedScreen()) }
         function contains(id: int): bool { return history.get(id) !== null }
     }
 }

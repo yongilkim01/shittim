@@ -19,10 +19,13 @@ FocusScope {
     signal appWindowsRequested(var app)
     signal refreshRequested()
     signal closeRequested()
-    readonly property real contentScale: Math.min(width / Theme.mediaWidth, height / Theme.mediaHeight)
+    readonly property real contentScale: 1
     readonly property string artworkState: cover.status === Image.Ready ? "ready" : cover.status === Image.Loading ? "loading" : cover.status === Image.Error ? "error" : "unloaded"
     Keys.onEscapePressed: closeRequested()
     Keys.onPressed: event => { if (event.key === Qt.Key_F5) { refreshRequested(); event.accepted = true } }
+    Flickable {
+        objectName:"mediaViewport"
+        anchors.fill:parent;clip:true;contentWidth:Theme.mediaWidth;contentHeight:Theme.mediaHeight;boundsBehavior:Flickable.StopAtBounds
     Item {
         width: Theme.mediaWidth; height: Theme.mediaHeight
         scale: root.contentScale; transformOrigin: Item.TopLeft
@@ -63,10 +66,10 @@ FocusScope {
                 }
             }
             HudText {
-                objectName: "mediaElapsed"; x: 129; y: 100; width: 90; height: 17; font.pixelSize: 9; color: Theme.textSecondary
+                objectName: "mediaElapsed"; x: 129; y: 100; width: 90; height: 17; font.pixelSize: Theme.textCaption; color: Theme.textSecondary
                 text: Data.time(seek.pressed && root.model ? seek.value * root.model.duration : root.model ? root.model.position : -1)
             }
-            HudText { x: 257; y: 100; width: 66; height: 17; font.pixelSize: 9; horizontalAlignment: Text.AlignRight; color: Theme.textSecondary; text: Data.time(root.model ? root.model.duration : -1) }
+            HudText { x: 257; y: 100; width: 66; height: 17; font.pixelSize: Theme.textCaption; horizontalAlignment: Text.AlignRight; color: Theme.textSecondary; text: Data.time(root.model ? root.model.duration : -1) }
             MediaButton { objectName: "mediaPrevious"; x: 176; y: 112; icon: "\uf048"; tooltipText: "이전 곡"; enabled: root.model !== null && root.model.canPrevious; onClicked: root.model.previous() }
             MediaButton { objectName: "mediaToggle"; x: 216; y: 112; icon: root.model && root.model.playing ? "\uf04c" : "\uf04b"; tooltipText: root.model && root.model.playing ? "일시정지" : "재생"; enabled: root.model !== null && root.model.canToggle; onClicked: root.model.toggle() }
             MediaButton { objectName: "mediaNext"; x: 256; y: 112; icon: "\uf051"; tooltipText: "다음 곡"; enabled: root.model !== null && root.model.canNext; onClicked: root.model.next() }
@@ -101,6 +104,7 @@ FocusScope {
             }
         }
         // Errors appear only when needed, inside the original section-label strip.
-        HudText { objectName: "mediaError"; x: 65; y: 171; width: 274; height: 22; visible: root.error.length > 0; text: root.error; font.pixelSize: 9; color: Theme.warning }
+        HudText { objectName: "mediaError"; x: 65; y: 171; width: 274; height: 22; visible: root.error.length > 0; text: root.error; font.pixelSize: Theme.textCaption; color: Theme.warning }
+    }
     }
 }

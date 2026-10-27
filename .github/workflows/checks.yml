@@ -1,0 +1,39 @@
+name: Shittim checks
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      compositor:
+        description: Run real input checks on a configured Wayland runner
+        type: boolean
+        default: false
+permissions:
+  contents: read
+jobs:
+  arch:
+    runs-on: ubuntu-latest
+    container: archlinux:base-devel
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install official runtime and test dependencies
+        run: |
+          pacman -Syu --noconfirm --needed python python-gobject python-dbus-next qt6-declarative quickshell hyprland hyprpm dbus mesa cairo pkgconf git wtype wayland wayland-protocols kitty lua curl networkmanager upower ttf-hack-nerd ttf-d2coding-nerd
+          useradd -m tester
+          chown -R tester:tester "$GITHUB_WORKSPACE"
+      - name: Models, QML views, native paths, generation consistency
+        run: runuser -u tester -- dbus-run-session -- bash scripts/check-code.sh
+      - name: Actual installed Quickshell and Qt import metadata
+        run: runuser -u tester -- python3 scripts/lint-qml.py
+      - name: Native build against installed Hyprland headers
+        run: runuser -u tester -- python3 scripts/check-native.py
+  compositor:
+    if: github.event_name == 'workflow_dispatch' && inputs.compositor
+    needs: arch
+    runs-on: [self-hosted, linux, shittim-wayland]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Actual child compositor, application imports, pointer and keyboard delivery
+        run: bash scripts/test-session.sh --native

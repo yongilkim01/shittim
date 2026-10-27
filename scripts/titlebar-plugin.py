@@ -21,7 +21,7 @@ def digest(path):
 
 
 def patch_id(config):
-    sources = ('controls.hpp', 'interaction.hpp', 'hover.cpp.inc', 'input-gate.cpp.inc')
+    sources = ('controls.hpp', 'interaction.hpp', 'design.hpp', 'hover.cpp.inc', 'input-gate.cpp.inc')
     return hashlib.sha256((''.join(digest(config.root / 'native/titlebars' / name) for name in sources) + digest(Path(__file__))).encode()).hexdigest()[:16]
 
 
@@ -116,6 +116,7 @@ def patch_source(directory, config):
     replacement = '{"hyprbars", "Shittim vector controls; based on official hyprbars.", "Vaxry / Shittim", "' + identity(config) + '"}'
     main.write_text(text.replace(DESCRIPTION, replacement).replace(foreground, foreground + '\n        button.userfg = true;'), encoding='utf-8')
     shutil.copyfile(config.root / 'native/titlebars/controls.hpp', directory / 'shittim-controls.hpp')
+    shutil.copyfile(config.root / 'native/titlebars/design.hpp', directory / 'design.hpp')
     shutil.copyfile(config.root / 'native/titlebars/interaction.hpp', directory / 'shittim-interaction.hpp')
 
 

@@ -16,12 +16,13 @@ import sys
 SPEC = importlib.util.spec_from_file_location('shittim_config', Path(__file__).with_name('config-tool.py'))
 files = importlib.util.module_from_spec(SPEC); SPEC.loader.exec_module(files)
 CSS_BEGIN, CSS_END = '/* >>> Shittim HUD >>> */', '/* <<< Shittim HUD <<< */'
+TOKENS = json.loads((Path(__file__).resolve().parents[1] / 'config/design-tokens.json').read_text(encoding='utf-8'))
 GTK = {'gtk-theme-name': 'Adwaita-dark', 'gtk-icon-theme-name': 'Shittim-HUD',
-       'gtk-font-name': 'Hack Nerd Font Mono 9', 'gtk-application-prefer-dark-theme': 'true',
+       'gtk-font-name': TOKENS['gtkFont']['value'], 'gtk-application-prefer-dark-theme': 'true',
        'gtk-decoration-layout': ':maximize,close', 'gtk-titlebar-double-click': 'toggle-maximize'}
 SETTINGS = {
     'org.gnome.desktop.interface': {'gtk-theme': 'Adwaita-dark', 'icon-theme': 'Shittim-HUD',
-        'font-name': 'Hack Nerd Font Mono 9', 'monospace-font-name': 'Hack Nerd Font Mono 9', 'color-scheme': 'prefer-dark'},
+        'font-name': TOKENS['gtkFont']['value'], 'monospace-font-name': TOKENS['gtkFont']['value'], 'color-scheme': 'prefer-dark'},
     'org.nemo.icon-view': {'default-zoom-level': 'smaller', 'labels-beside-icons': False},
     'org.nemo.window-state': {'start-with-menu-bar': False, 'start-with-status-bar': False,
         'start-with-toolbar': True, 'start-with-sidebar': True},

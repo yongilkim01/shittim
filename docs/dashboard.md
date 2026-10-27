@@ -48,7 +48,7 @@ Network는 유효한 IPv4 기본 경로를 우선하고, 없으면 IPv6 기본 �
 | Power | 기존 배터리·전원 프로필 재사용. 미지원 기능은 비활성화 |
 | Settings | 기존 시스템 세부 설정 진입과 CPU/RAM/uptime 정보 |
 
-`SystemControl` 보조 서비스는 Control Center 또는 대시보드의 필요한 상세 화면이 열릴 때만 실행한다. Wi-Fi 검색도 Control Center 또는 대시보드 Network 화면에서만 켠다. 상세 화면은 `ControlContent`를 헤더 없이 포함하며 Control Center 자체의 헤더·배치·기능은 유지한다. 별도의 중복 Bluetooth 에이전트나 네트워크 관리 서비스를 만들지 않았다.
+`SystemBackend`는 화면의 `ServiceLease` 구독과 진행 중인 요청이 있을 때 실행한다. Wi-Fi 검색도 구독이 있는 동안만 켠다. 상세 화면은 `ControlContent`를 헤더 없이 포함하고 기능별 서비스를 재사용한다. 별도의 중복 Bluetooth 에이전트나 네트워크 관리 서비스를 만들지 않았다. 책임 분리 및 실행 검사는 [공통 동작 계약](architecture.md)을 따른다.
 
 Control Center·App Launcher·Notification Center와 대시보드는 서로 닫힘 상태를 연결했다. 알림 기록은 계속 수신하고, 기존 정책과 같이 다른 셸 패널이 열린 동안 팝업을 겹쳐 표시하지 않는다.
 

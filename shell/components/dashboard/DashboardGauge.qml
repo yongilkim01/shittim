@@ -29,7 +29,7 @@ Item {
     onWarningChanged: ring.requestPaint()
     HudText { x: 25; y: 23; width: 76; height: 17; horizontalAlignment: Text.AlignHCenter; text: root.title; font.pixelSize: 10; color: Theme.accent }
     HudText { objectName: "gaugeValue"; x: 25; y: 39; width: 76; height: 22; horizontalAlignment: Text.AlignHCenter; text: root.display; font.pixelSize: 14; color: root.warning ? Theme.warning : Theme.textPrimary }
-    HudText { x: 0; y: 86; width: 126; height: 18; horizontalAlignment: Text.AlignHCenter; text: root.detail || "N/A"; font.pixelSize: 9; color: Theme.textSecondary }
+    HudText { x: 0; y: 86; width: 126; height: 18; horizontalAlignment: Text.AlignHCenter; text: root.detail || "N/A"; font.pixelSize: Theme.textCaption; color: Theme.textSecondary }
     MouseArea { id: hover; anchors.fill: parent; hoverEnabled: true; acceptedButtons: Qt.NoButton }
     Controls.ToolTip.visible: hover.containsMouse && root.detail.length > 0
     Controls.ToolTip.text: root.detail

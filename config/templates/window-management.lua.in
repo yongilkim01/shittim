@@ -1,0 +1,53 @@
+-- Shittim floating desktop. Loaded after the original user configuration.
+-- Static rule: existing floating dialogs and fullscreen requests keep their sizing.
+hl.window_rule({
+    name = "shittim-normal-floating",
+    match = { class = ".+", float = false, fullscreen = false,
+              fullscreen_state_client = 0, content = "none" },
+    float = true,
+    size = { "(monitor_w*0.78)", "(monitor_h*0.72)" },
+    center = true,
+})
+-- Window-rule rounding_power accepts 1: the compositor shader draws a straight bevel.
+hl.window_rule({
+    name = "shittim-hud-frame",
+    match = { class = ".+", fullscreen = false },
+    rounding = 12, rounding_power = 1,
+})
+-- Shittim Files draws and handles its own HUD frame and title buttons.
+hl.window_rule({
+    name = "shittim-files-frame",
+    match = { class = "^org\\.shittim\\.Files$" },
+    float = true, center = true,
+    size = { "(monitor_w*0.34)", "(monitor_h*0.53)" },
+    decorate = false, border_size = 0, rounding = 0, no_shadow = true,
+})
+hl.window_rule({ name = "shittim-maximized-frame", match = { tag = "shittim-maximized" }, rounding = 0 })
+hl.config({
+    general = { resize_on_border = true, extend_border_grab_area = 8, hover_icon_on_border = true, border_size = 1, gaps_out = 4,
+                snap = { enabled = true, window_gap = 10, monitor_gap = 10 },
+                col = { active_border = "rgb(@accent@)", inactive_border = "rgb(@border@)" } },
+    decoration = { rounding = 0,
+        shadow = { enabled = true, range = 5, render_power = 3,
+                   color = "rgba(@accent@2b)", color_inactive = "rgba(@accentDim@18)" },
+        glow = { enabled = true, range = 2, render_power = 3,
+                 color = "rgba(@accent@18)", color_inactive = "rgba(@accent@0c)" },
+    },
+    -- Pointer motion reaches the hovered app; keyboard focus changes on click.
+    input = { follow_mouse = 2, float_switch_override_focus = 0, focus_on_close = 2 },
+    cursor = { no_warps = true },
+})
+-- Dock geometry and input masks are managed by QML, without compositor stretching.
+hl.layer_rule({ name = "shittim-dock-stable", match = { namespace = "shittim-dock" }, no_anim = true })
+
+-- These bindings implement the requested desktop policy, replacing these keys only.
+local function bind(key, dispatcher, options)
+    hl.unbind(key)
+    hl.bind(key, dispatcher, options or {})
+end
+bind("SUPER + mouse:272", hl.dsp.window.drag(), { mouse = true })
+bind("SUPER + mouse:273", hl.dsp.window.resize(), { mouse = true })
+bind("SUPER + C", hl.dsp.window.close())
+bind("SUPER + V", hl.dsp.window.float({ action = "toggle" }))
+-- Super+Up is installed through the shared window controller below.
+bind("SUPER + F", hl.dsp.window.fullscreen({ mode = "fullscreen", action = "toggle" }))

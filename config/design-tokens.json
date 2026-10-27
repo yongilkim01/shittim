@@ -1,0 +1,382 @@
+{
+  "name": {
+    "type": "string",
+    "value": "SHITTIM HUD"
+  },
+  "background": {
+    "type": "color",
+    "value": "#020f15"
+  },
+  "surface": {
+    "type": "color",
+    "value": "#041923"
+  },
+  "surfaceElevated": {
+    "type": "color",
+    "value": "#08232e"
+  },
+  "accent": {
+    "type": "color",
+    "value": "#00d9f5"
+  },
+  "accentBright": {
+    "type": "color",
+    "value": "#50eaff"
+  },
+  "accentDim": {
+    "type": "color",
+    "value": "#08798b"
+  },
+  "textPrimary": {
+    "type": "color",
+    "value": "#d5f8ff"
+  },
+  "textSecondary": {
+    "type": "color",
+    "value": "#76aebc"
+  },
+  "textMuted": {
+    "type": "color",
+    "value": "#477481"
+  },
+  "border": {
+    "type": "color",
+    "value": "#145263"
+  },
+  "borderActive": {
+    "type": "color",
+    "value": {
+      "expression": "accent"
+    }
+  },
+  "success": {
+    "type": "color",
+    "value": "#42e3b4"
+  },
+  "warning": {
+    "type": "color",
+    "value": "#ffc56b"
+  },
+  "danger": {
+    "type": "color",
+    "value": "#ff637e"
+  },
+  "transparent": {
+    "type": "color",
+    "value": "transparent"
+  },
+  "floatingSurface": {
+    "type": "color",
+    "value": "#ed020f15"
+  },
+  "selectionFill": {
+    "type": "color",
+    "value": "#3300d9f5"
+  },
+  "dockIconSize": {
+    "type": "int",
+    "value": 32
+  },
+  "dockCellSize": {
+    "type": "int",
+    "value": 52
+  },
+  "dockHeight": {
+    "type": "int",
+    "value": 64
+  },
+  "dockBottomMargin": {
+    "type": "int",
+    "value": 8
+  },
+  "dockEndSpace": {
+    "type": "int",
+    "value": 150
+  },
+  "desktopCellWidth": {
+    "type": "int",
+    "value": 88
+  },
+  "desktopCellHeight": {
+    "type": "int",
+    "value": 92
+  },
+  "fontMono": {
+    "type": "string",
+    "value": "Hack Nerd Font Mono"
+  },
+  "fontKorean": {
+    "type": "string",
+    "value": "D2Coding"
+  },
+  "textCaption": {
+    "type": "int",
+    "value": 10
+  },
+  "textStatus": {
+    "type": "int",
+    "value": 12
+  },
+  "textBody": {
+    "type": "int",
+    "value": 14
+  },
+  "textTitle": {
+    "type": "int",
+    "value": 16
+  },
+  "textValue": {
+    "type": "int",
+    "value": 24
+  },
+  "titleTracking": {
+    "type": "real",
+    "value": 2.5
+  },
+  "sectionTracking": {
+    "type": "real",
+    "value": 1.5
+  },
+  "iconSize": {
+    "type": "int",
+    "value": 14
+  },
+  "spaceXS": {
+    "type": "int",
+    "value": 4
+  },
+  "spaceS": {
+    "type": "int",
+    "value": 8
+  },
+  "spaceM": {
+    "type": "int",
+    "value": 12
+  },
+  "spaceL": {
+    "type": "int",
+    "value": 16
+  },
+  "spaceXL": {
+    "type": "int",
+    "value": 24
+  },
+  "barHeight": {
+    "type": "int",
+    "value": 40
+  },
+  "barPadding": {
+    "type": "int",
+    "value": 38
+  },
+  "barNotchWidth": {
+    "type": "int",
+    "value": 24
+  },
+  "barNotchShoulder": {
+    "type": "int",
+    "value": 8
+  },
+  "barNotchHeight": {
+    "type": "int",
+    "value": 16
+  },
+  "barWorkspaceWidth": {
+    "type": "int",
+    "value": 20
+  },
+  "barWorkspaceHeight": {
+    "type": "int",
+    "value": 18
+  },
+  "barWorkspaceRadius": {
+    "type": "int",
+    "value": 3
+  },
+  "barTextSize": {
+    "type": "int",
+    "value": 14
+  },
+  "barIconSize": {
+    "type": "int",
+    "value": 24
+  },
+  "controlHeight": {
+    "type": "int",
+    "value": 28
+  },
+  "workspaceWidth": {
+    "type": "int",
+    "value": 32
+  },
+  "networkTextWidth": {
+    "type": "int",
+    "value": 200
+  },
+  "lineWidth": {
+    "type": "int",
+    "value": 1
+  },
+  "cornerLength": {
+    "type": "int",
+    "value": 8
+  },
+  "cornerRadius": {
+    "type": "int",
+    "value": 1
+  },
+  "progressHeight": {
+    "type": "int",
+    "value": 2
+  },
+  "controlPanelWidth": {
+    "type": "int",
+    "value": 337
+  },
+  "controlPanelHeight": {
+    "type": "int",
+    "value": 293
+  },
+  "controlDetailHeight": {
+    "type": "int",
+    "value": 650
+  },
+  "launcherWidth": {
+    "type": "int",
+    "value": 394
+  },
+  "launcherHeight": {
+    "type": "int",
+    "value": 187
+  },
+  "notificationWidth": {
+    "type": "int",
+    "value": 360
+  },
+  "notificationHeight": {
+    "type": "int",
+    "value": 187
+  },
+  "dashboardWidth": {
+    "type": "int",
+    "value": 746
+  },
+  "dashboardHeight": {
+    "type": "int",
+    "value": 300
+  },
+  "mediaWidth": {
+    "type": "int",
+    "value": 349
+  },
+  "mediaHeight": {
+    "type": "int",
+    "value": 271
+  },
+  "hoverDuration": {
+    "type": "int",
+    "value": 150
+  },
+  "stateDuration": {
+    "type": "int",
+    "value": 200
+  },
+  "panelDuration": {
+    "type": "int",
+    "value": 250
+  },
+  "easing": {
+    "type": "int",
+    "value": {
+      "expression": "Easing.OutCubic"
+    }
+  },
+  "fileSurface": {
+    "type": "color",
+    "value": "#000e14"
+  },
+  "fileSidebar": {
+    "type": "color",
+    "value": "#000c11"
+  },
+  "fileBorder": {
+    "type": "color",
+    "value": "#0a303a"
+  },
+  "fileTabBorder": {
+    "type": "color",
+    "value": "#0a3947"
+  },
+  "fileActive": {
+    "type": "color",
+    "value": "#063441"
+  },
+  "fileSelection": {
+    "type": "color",
+    "value": "#123d4c"
+  },
+  "fileHover": {
+    "type": "color",
+    "value": "#071f2a"
+  },
+  "fileText": {
+    "type": "int",
+    "value": 11
+  },
+  "fileCaption": {
+    "type": "int",
+    "value": 10
+  },
+  "minimumTarget": {
+    "type": "int",
+    "value": 24
+  },
+  "windowButtonSize": {
+    "type": "int",
+    "value": 24
+  },
+  "windowGlyphRatio": {
+    "type": "real",
+    "value": 0.6666666666666666
+  },
+  "windowStrokeRatio": {
+    "type": "real",
+    "value": 0.06666666666666667
+  },
+  "titlebarHeight": {
+    "type": "int",
+    "value": 24
+  },
+  "titlebarText": {
+    "type": "int",
+    "value": 10
+  },
+  "titlebarPadding": {
+    "type": "int",
+    "value": 12
+  },
+  "titlebarButtonGap": {
+    "type": "int",
+    "value": 10
+  },
+  "tooltipDelay": {
+    "type": "int",
+    "value": 500
+  },
+  "fileGradientStart": {
+    "type": "color",
+    "value": "#000b10"
+  },
+  "fileGradientEnd": {
+    "type": "color",
+    "value": "#011721"
+  },
+  "fileFrame": {
+    "type": "color",
+    "value": "#009fad"
+  },
+  "gtkFont": {
+    "type": "string",
+    "value": "Hack Nerd Font Mono 9"
+  }
+}

@@ -5,7 +5,6 @@ import "../../ui"
 ColumnLayout {
 	id: root
 	required property var network
-	required property var system
 	spacing: Theme.spaceS
 	RowLayout {
 		HudText { text: "Wi-Fi"; textStyle: "body"; Layout.fillWidth: true }
@@ -66,12 +65,12 @@ ColumnLayout {
 				}
 				HudButton {
 					text: entry.modelData.stateChanging ? "진행 중" : entry.modelData.connected ? "해제" : "연결"
-					enabled: !entry.modelData.stateChanging
+					enabled: !entry.modelData.stateChanging && !root.network.busy
 					onClicked: { password.clear(); root.network.connectNetwork(entry.modelData) }
 				}
 			}
 		}
 	}
 	HudText { visible: root.network.wifiEnabled && root.network.networks.length === 0; text: "검색 결과가 없습니다. 잠시 후 다시 검색하세요."; Layout.fillWidth: true; wrapMode: Text.WordWrap; maximumLineCount: 2 }
-	HudButton { text: "기업용 / 숨겨진 네트워크 설정"; Layout.fillWidth: true; onClicked: root.system.openNetworkEditor() }
+	HudButton { text: "기업용 / 숨겨진 네트워크 설정"; Layout.fillWidth: true; onClicked: root.network.openEditor() }
 }

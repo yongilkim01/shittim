@@ -18,14 +18,9 @@ PanelWindow {
     color: Theme.transparent; exclusionMode: ExclusionMode.Ignore
     WlrLayershell.namespace: "shittim-notifications"
     WlrLayershell.layer: WlrLayer.Overlay
-    WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
-    HyprlandFocusGrab {
-        active: window.visible
-        windows: NotificationState.anchorWindow !== null ? [window, NotificationState.anchorWindow] : [window]
-        onCleared: NotificationState.close()
-    }
+    WlrLayershell.keyboardFocus:input.keyboardFocus
+    PanelInput { id:input;window:window;session:NotificationState.panelSession }
     onVisibleChanged: if (visible) { content.expandedId = NotificationState.detailId; Qt.callLater(() => content.forceActiveFocus()) }
-    Shortcut { sequence: "Escape"; enabled: window.visible; onActivated: NotificationState.close() }
     NotificationView {
         id: content; anchors.fill: parent; model: NotificationState.model; active: window.visible
         ownership: NotificationState.ownership; ownerPid: NotificationState.ownerPid

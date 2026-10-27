@@ -13,18 +13,13 @@ Item {
     property string imageSource: ""
     signal clicked()
     signal contextRequested()
+    Keys.forwardTo:[input]
     implicitWidth: 30; implicitHeight: 28
-    activeFocusOnTab: enabled
-    Accessible.role: Accessible.Button
-    Accessible.name: tooltipText
-    Accessible.onPressAction: if (enabled) clicked()
-    Keys.onReturnPressed: if (enabled) clicked()
-    Keys.onSpacePressed: if (enabled) clicked()
     ControlFrame {
         anchors.fill: parent; cut: 2
-        visible: root.framed || mouse.containsMouse || root.activeFocus
-        strokeColor: mouse.containsMouse || root.activeFocus || root.active ? Theme.accent : Theme.border
-        fillColor: mouse.containsMouse ? Theme.surfaceElevated : Theme.background
+        visible: root.framed || input.hovered || input.focused
+        strokeColor: input.hovered || input.focused || root.active ? Theme.accent : Theme.border
+        fillColor: input.hovered ? Theme.surfaceElevated : Theme.background
     }
     Image {
         id: image; anchors.centerIn: parent; width: 28; height: 28
@@ -37,12 +32,5 @@ Item {
         visible: image.status !== Image.Ready; color: root.enabled ? Theme.textPrimary : Theme.textMuted
     }
     Rectangle { visible: root.running; height: 2; width: 12; anchors.horizontalCenter: parent.horizontalCenter; anchors.bottom: parent.bottom; anchors.bottomMargin: 2; color: Theme.accent }
-    MouseArea { id: mouse; anchors.fill: parent; hoverEnabled: true; acceptedButtons: Qt.LeftButton | Qt.RightButton
-        cursorShape: root.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-        onClicked: event => { if (event.button === Qt.RightButton) root.contextRequested(); else root.clicked() } }
-    Controls.ToolTip {
-        visible: mouse.containsMouse && root.tooltipText.length > 0; delay: 450
-        contentItem: HudText { text: root.tooltipText; font.pixelSize: 10; maximumLineCount: 4; wrapMode: Text.Wrap; width: Math.min(280, implicitWidth) }
-        background: Rectangle { color: Theme.background; border.color: Theme.border }
-    }
+    ActionInput {id:input;label:root.tooltipText;contextEnabled:true;onTriggered:root.clicked();onContextRequested:root.contextRequested()}
 }

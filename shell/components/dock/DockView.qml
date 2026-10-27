@@ -34,7 +34,7 @@ FocusScope {
     signal closeRequested()
     signal hoverLeft()
     signal hoverEntered()
-    readonly property real stripWidth: Math.min(width, apps.length * Theme.dockCellSize + Theme.dockEndSpace)
+    readonly property real stripWidth: Math.min(width, apps.length * Theme.dockCellSize + Theme.dockEndSpace + Theme.dockCellSize)
     readonly property real popupHeight: Math.min(mode === "menu" ? 330 : mode ? 208 : 0,Math.max(0,height-Theme.dockHeight-12))
     Keys.onEscapePressed: closeRequested()
     Item {
@@ -43,7 +43,7 @@ FocusScope {
         DockFrame { anchors.fill: parent }
         Flickable {
             id:appScroll
-            x: 32; y: 10; width: parent.width - Theme.dockEndSpace; height: parent.height - 16
+            x: 32; y: 10; width: parent.width - Theme.dockEndSpace - Theme.dockCellSize; height: parent.height - 16
             contentWidth: icons.width; clip: true; boundsBehavior: Flickable.StopAtBounds
             Row {
                 id: icons
@@ -54,13 +54,21 @@ FocusScope {
                         required property var modelData
                         required property int index
                         width: Theme.dockCellSize; height: 48
+                        activeFocusOnTab:true
+                        Accessible.role:Accessible.Button
+                        Accessible.name:modelData.name || modelData.id
+                        Accessible.onPressAction:root.appClicked(cell.modelData)
+                        Keys.onPressed:event=>{
+                            if([Qt.Key_Return,Qt.Key_Enter,Qt.Key_Space].indexOf(event.key)>=0){root.appClicked(cell.modelData);event.accepted=true}
+                            else if(event.key===Qt.Key_Menu || event.key===Qt.Key_F10 && (event.modifiers & Qt.ShiftModifier)){root.appMenu(cell.modelData);event.accepted=true}
+                        }
                         readonly property var clients: root.matches(modelData)
                         readonly property bool allHidden: clients.length > 0 && clients.every(window => window.hidden)
                         Rectangle {
                             objectName: "dock-highlight-" + cell.modelData.id
                             x: 6; y: 0; width: 40; height: 40; radius: 3
                             color: hover.containsMouse || cell.clients.some(window => window.activated) ? Theme.selectionFill : Theme.transparent
-                            border.width: 1; border.color: cell.clients.some(window => window.activated) ? Theme.accentDim : hover.containsMouse ? Theme.border : Qt.alpha(Theme.border, 0.35)
+                            border.width: 1; border.color: cell.activeFocus ? Theme.accent : cell.clients.some(window => window.activated) ? Theme.accentDim : hover.containsMouse ? Theme.border : Qt.alpha(Theme.border, 0.35)
                             Behavior on color { ColorAnimation { duration: Theme.hoverDuration } }
                             Rectangle { anchors.fill: parent; anchors.margins: -2; radius: 5; color: "transparent"; border.width: 2; border.color: Qt.alpha(Theme.accent,0.08); visible: cell.clients.some(window => window.activated) }
                         }
@@ -92,8 +100,12 @@ FocusScope {
         }
         Rectangle { x: parent.width - 66; y: 12; width: 1; height: parent.height - 24; color: Theme.border }
         MediaButton {
+            objectName:"dock-launcher";x:parent.width-115-Theme.dockCellSize;y:12;width:40;height:40
+            framed:false;icon:"\uf009";tooltipText:"앱 런처";onClicked:root.launcherRequested()
+        }
+        MediaButton {
             objectName: "dock-settings"; x: parent.width - 115; y: 12; width: 40; height: 40
-            framed: false; imageSource: root.assetSource("icons/Shittim-HUD/scalable/apps/preferences-system.svg"); icon: "\uf013"; tooltipText: "설정 · 우클릭 앱 런처"
+            framed: false; imageSource: root.assetSource("icons/Shittim-HUD/scalable/apps/preferences-system.svg"); icon: "\uf013"; tooltipText: "설정"
             onClicked: root.settingsRequested(); onContextRequested: root.launcherRequested()
         }
         MediaButton {

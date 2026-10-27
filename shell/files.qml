@@ -8,23 +8,27 @@ import Quickshell.Io
 import Quickshell.Hyprland
 import "./components/files"
 import "./ui/AssetPaths.js" as AssetPaths
+import "./core"
+import "./core/WindowData.js" as WindowData
 
 ShellRoot {
     id: root
     property bool ready: false
     property var queued: []
     readonly property var ownWindow: Hyprland.toplevels.values.find(candidate=>Number(candidate.lastIpcObject.pid)===Quickshell.processId) || null
-    function send(action, values) {
+    function send(action:string, values:var):void {
         const message=JSON.stringify(Object.assign({action:action},values))+"\n"
         if (ready) backend.write(message)
-        else queued=queued.concat([message])
+        else if(action==="browse" && queued.length<32){
+            queued=queued.concat([message])
+            if(!backend.running){backend.running=true;startup.restart()}
+        } else filesModel.accept({event:"error",tab:values.tab,request:values.request,error:"BackendUnavailable"})
     }
     function windowAction(action) {
         const target=root.ownWindow
         if (!target && action==="activate") { window.requestActivate(); Hyprland.refreshToplevels(); return }
-        if (!target || control.running) { filesModel.error="창 상태가 아직 준비되지 않았습니다. 잠시 후 다시 시도하세요."; return }
-        control.command=["python3",Quickshell.shellDir+"/../scripts/window-service.py",action,target.address]
-        control.running=true
+        if (!target || control.busy) { filesModel.error="창 상태가 아직 준비되지 않았습니다. 잠시 후 다시 시도하세요."; return }
+        control.submit(action,target.address)
     }
     function icon(entry) {
         if(entry.iconFile && entry.iconFile.indexOf("file:")===0) return entry.iconFile
@@ -47,14 +51,16 @@ ShellRoot {
             try {
                 const result=JSON.parse(data);filesModel.accept(result)
                 if(result.event==="ready") {
+                    startup.stop()
                     root.ready=true;for(const message of root.queued)backend.write(message);root.queued=[]
                     if(filesModel.tabs.length===0)filesModel.open(result.home,false)
                 }
                 if(result.event==="changed")refresh.restart()
-            } catch(_) {filesModel.error="파일 응답을 읽지 못했습니다."}
+            } catch(_) {filesModel.failRequests("InvalidResponse");filesModel.error="파일 응답을 읽지 못했습니다. F5로 다시 조회하세요."}
         }}
-        onExited:{root.ready=false;filesModel.error="파일 서비스가 종료되었습니다. 창을 닫고 다시 여세요."}
+        onExited:{startup.stop();root.ready=false;root.queued=[];filesModel.failRequests("BackendExited");filesModel.error="파일 서비스가 종료되었습니다. F5로 다시 연결하세요."}
     }
+    Timer {id:startup;running:true;interval:10000;onTriggered:{root.queued=[];filesModel.failRequests("RequestTimeout");backend.running=false}}
     Timer { id:refresh;interval:180;onTriggered:{if(filesModel.current && filesModel.current.dirty && !filesModel.busy)filesModel.refresh();else if(filesModel.current && filesModel.current.dirty)restart()} }
     Timer { id:windowRefresh;interval:60;onTriggered:Hyprland.refreshToplevels() }
     Component.onCompleted:Hyprland.refreshToplevels()
@@ -62,16 +68,15 @@ ShellRoot {
         target:Hyprland
         function onRawEvent(event) { if(["fullscreen","openwindow","closewindow","movewindow","movewindowv2","activewindowv2"].indexOf(event.name)>=0 || (event.name==="custom" && event.data.indexOf("shittim-window-state,")===0))windowRefresh.restart() }
     }
-    Process {
+    WindowClient {
         id:control
-        stdout:SplitParser{onRead:data=>{try{const result=JSON.parse(data);if(!result.ok)filesModel.error="창 제어 실패: "+result.error}catch(_){}}}
-        onExited:(code,status)=>{windowRefresh.restart();if(code!==0 && !filesModel.error)filesModel.error="창 제어 명령을 완료하지 못했습니다."}
+        onFinished:result=>{windowRefresh.restart();if(!result.ok)filesModel.error=control.error}
     }
     FilesWindow {
         id:window;browserModel:filesModel;iconSource:root.icon
-        controlBusy:control.running
+        controlBusy:control.busy
         managedMaximize:true
-        maximized:root.ownWindow!==null && (Number(root.ownWindow.lastIpcObject.fullscreen)===1 || (root.ownWindow.lastIpcObject.tags || []).indexOf("shittim-maximized")>=0)
+        maximized:root.ownWindow!==null && WindowData.maximized(root.ownWindow.lastIpcObject)
         onMinimizeRequested:root.windowAction("hide")
         onMaximizeRequested:root.windowAction("maximize")
         onClosing:Qt.quit()
@@ -79,7 +84,8 @@ ShellRoot {
     IpcHandler {
         target:"files"
         function ping():string{return "ready"}
-        function status():string{return JSON.stringify({ready:root.ready,tabs:filesModel.tabs.length,busy:filesModel.busy,error:filesModel.error})}
+        function status():string{return JSON.stringify({ready:root.ready,tabs:filesModel.tabs.length,busy:filesModel.busy,
+            windowBusy:control.busy,maximized:window.maximized,error:filesModel.error})}
         function open(payload:string):string {
             try {const request=JSON.parse(payload);if(typeof request.uri!=="string" || request.uri.length>16384)return "invalid";filesModel.open(request.uri,Boolean(request.newTab));window.show();root.windowAction("activate");return "requested"}catch(_){return "invalid"}
         }

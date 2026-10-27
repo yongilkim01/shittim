@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Session-only GIO directory browser. File mutations reuse the desktop operations."""
+"""Session-only GIO directory browser. File mutations compose shared GIO operations."""
 import importlib.util
 import json
 import os
@@ -11,7 +11,7 @@ import sys
 import threading
 from urllib.parse import urlsplit
 
-SPEC = importlib.util.spec_from_file_location('shittim_desktop_ops', Path(__file__).with_name('desktop-service.py'))
+SPEC = importlib.util.spec_from_file_location('shittim_desktop_ops', Path(__file__).with_name('file-operations.py'))
 ops = importlib.util.module_from_spec(SPEC); SPEC.loader.exec_module(ops)
 ATTRIBUTES = 'standard::name,standard::display-name,standard::type,standard::icon,standard::size,standard::is-hidden,time::modified,access::can-write,access::can-trash,trash::orig-path'
 
@@ -28,9 +28,12 @@ def location(value, home):
     return value
 
 
-class Files(ops.Desktop):
+class Files:
     def __init__(self, gio, glib, emit):
-        super().__init__(gio, glib, emit)
+        self.gio, self.glib, self.emit = gio, glib, emit
+        self.home = Path.home()
+        self.projects = next((path for path in (self.home / 'projects', self.home / 'Projects') if path.is_dir()), self.home / 'projects')
+        self.operations = ops.FileOperations(gio, glib)
         self.tabs = {}
         self.volume_monitor = gio.VolumeMonitor.get()
 
@@ -75,7 +78,7 @@ class Files(ops.Desktop):
                 name = child.get_name()
                 item = folder.get_child(name)
                 original = child.get_attribute_byte_string('trash::orig-path') or ''
-                icon = self.icon(child.get_icon())
+                icon = self.operations.icon(child.get_icon())
                 if item.get_uri() in special_icons: icon={'icons':[special_icons[item.get_uri()]],'iconFile':''}
                 children.append(dict(id=item.get_uri(), uri=item.get_uri(), name=child.get_display_name(),
                     directory=child.get_file_type() == self.gio.FileType.DIRECTORY, hidden=child.get_is_hidden(),
@@ -112,17 +115,16 @@ class Files(ops.Desktop):
         if action == 'browse': self.browse(message); return
         state = self.tabs.get(tab)
         if state is None: raise ValueError('LocationChanged')
-        self.entries = state['entries']
-        self.directory = Path(self.gio.File.new_for_uri(state['uri']).get_path() or '/')
-        self.enabled = state['uri'].startswith('file:')
+        directory = Path(self.gio.File.new_for_uri(state['uri']).get_path() or '/')
+        enabled = state['uri'].startswith('file:')
         if action == 'open':
-            for entry in self.selected(message.get('ids')):
+            for entry in self.operations.selected(state['entries'], message.get('ids')):
                 if entry['directory']: raise ValueError('NotFile')
                 if entry['uri'].lower().endswith('.desktop'):
                     subprocess.Popen(['nemo','--no-desktop',entry['uri']], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
                 else: self.gio.AppInfo.launch_default_for_uri(entry['uri'], None)
         elif action == 'restore':
-            for entry in self.selected(message.get('ids')):
+            for entry in self.operations.selected(state['entries'], message.get('ids')):
                 if not state['uri'].startswith('trash:') or not entry.get('original') or not entry['original'].startswith('/'):
                     raise ValueError('RestoreUnavailable')
                 source = self.gio.File.new_for_uri(entry['uri'])
@@ -130,8 +132,8 @@ class Files(ops.Desktop):
         elif action == 'nemo':
             subprocess.Popen(['nemo','--no-desktop',state['uri']], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         elif action in ('copy','cut','paste','drop','folder','rename','trash'):
-            if not self.enabled: raise ValueError('ReadOnlyLocation')
-            super().operation(message)
+            if not enabled: raise ValueError('ReadOnlyLocation')
+            self.operations.operation(message, state['entries'], directory, enabled)
         else: raise ValueError('InvalidRequest')
         self.emit(dict(event='done', tab=tab, request=message['request'], action=action))
         if action in ('paste','drop','folder','rename','trash','restore'): self.emit(dict(event='changed', tab=tab))

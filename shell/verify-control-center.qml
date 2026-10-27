@@ -14,14 +14,14 @@ ShellRoot {
 	ControlCenter { visible: false }
 	// Run the same helper path and parser as the panel without enabling any controls.
 	Process {
-		command: ["python3", "-u", SystemControl.helperPath]
+		command: ["python3", "-u", SystemBackend.helperPath]
 		stdinEnabled: true
 		running: true
 		stdout: SplitParser {
 			onRead: data => {
 				try {
 					const message = JSON.parse(data)
-					SystemControl.receive(message)
+					SystemBackend.receive(message)
 					if (message.event === "ready") root.receivedReady = true
 					if (message.event === "state" && root.receivedReady && Array.isArray(message.backlights)) {
 						root.receivedState = true

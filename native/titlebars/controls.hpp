@@ -3,6 +3,7 @@
 #include <cairo.h>
 #include <cmath>
 #include <string_view>
+#include "design.hpp"
 
 // These paths are independent of font selection and Unicode glyph metrics.
 namespace ShittimHUD {
@@ -23,8 +24,8 @@ inline std::string_view displayIcon(std::string_view icon, bool maximized) {
 }
 
 inline void drawControl(cairo_t* cr, std::string_view icon, double slot) {
-    const double width = slot * 2.0 / 3.0; // 16 logical pixels in a 24px button.
-    const double stroke = slot / 15.0;     // 1.6 logical pixels, for all three paths.
+    const double width = slot * Design::glyphRatio; // 16 logical pixels in a 24px button.
+    const double stroke = slot * Design::strokeRatio;     // 1.6 logical pixels, for all three paths.
     const double left = (slot - width) / 2.0;
     const double right = slot - left;
     const double halfStroke = stroke / 2.0;

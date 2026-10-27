@@ -16,11 +16,8 @@ PanelWindow {
     color: Theme.transparent
     WlrLayershell.namespace: "shittim-launcher"
     WlrLayershell.layer: WlrLayer.Overlay
-    WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
-    HyprlandFocusGrab {
-        active: window.visible; windows: [window]
-        onCleared: if (LauncherState.opened) LauncherState.close()
-    }
+    WlrLayershell.keyboardFocus:input.keyboardFocus
+    PanelInput { id:input;window:window;session:LauncherState.panelSession }
     onVisibleChanged: if (visible) Qt.callLater(() => view.focusSearch())
     LauncherView {
         id: view; anchors.fill: parent

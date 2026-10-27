@@ -14,13 +14,7 @@ SPEC_PLUGIN = importlib.util.spec_from_file_location('shittim_titlebar_plugin', 
 plugin = importlib.util.module_from_spec(SPEC_PLUGIN); SPEC_PLUGIN.loader.exec_module(plugin)
 # Official hyprland-plugins/hyprpm.toml commit pins for released Hyprland 0.55/0.56.
 # https://github.com/hyprwm/hyprland-plugins/blob/main/hyprpm.toml
-COMPATIBLE = {commit: '3aa21f2e0ca72412f1b434c3126f8f1fec3c716c' for commit in (
-    'af923e30d1d24f1f4a4f5cb8308065173c1d9539', 'a47147bc095e5b3be3eb8bd04f0ac242b968cd4d',
-    '39d7e209c79d451efab1b21151d5938289da838d', 'fe5fe79a29ac3adaf3e75560b2f4b7a6d58b31c9',
-    'a0136d8c04687bb36eb8a28eb9d1ff92aea99704')}
-COMPATIBLE.update({commit: '7644cecdb947060682891a0db2a0cdc5c0b9e704' for commit in (
-    '36b2e0cfe0c6094dbc47bd42a437431315bb3087', '5c9377c15f85c50648f35ca5a213754f95b93ca0',
-    'efb50993780079460b0cbed1363e2166a2de1d9f')})
+COMPATIBLE = json.loads((Path(__file__).resolve().parents[1] / 'config/compatibility.json').read_text(encoding='utf-8'))['titlebars']
 
 
 def remove_legacy_controls(config):

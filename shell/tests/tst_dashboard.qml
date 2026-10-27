@@ -67,7 +67,11 @@ TestCase {
     function test_smallScreenKeepsFourGaugesAndTwoColumns() {
         const model = makeModel(); model.receive(sample(1000, "test0"))
         const view = createTemporaryObject(viewFactory, testCase, {model: model, width: 520, height: 300 * 520 / 746})
-        compare(view.contentScale, 520 / 746)
+        compare(view.contentScale, 1)
+        const viewport=findChild(view,"dashboardViewport")
+        verify(viewport.contentWidth>viewport.width)
+        viewport.contentX=viewport.contentWidth-viewport.width
+        verify(viewport.contentX>0)
         const cpu = findChild(view, "dashboardGauge-CPU"), temp = findChild(view, "dashboardGauge-TEMP")
         verify(temp.x > cpu.x); compare(cpu.y, temp.y)
         compare(findChild(view, "dashboardStorage").y, findChild(view, "dashboardNetwork").y)

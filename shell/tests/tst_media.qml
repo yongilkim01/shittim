@@ -2,6 +2,7 @@ import QtQuick
 import QtTest
 import "../components/media"
 import "../components/media/MediaData.js" as Data
+import "../core/ApplicationData.js" as Apps
 
 TestCase {
     id: testCase
@@ -108,10 +109,10 @@ TestCase {
     function test_exactWindowMappingAndAmbiguity() {
         const app = {id: "editor.desktop", startupWMClass: "Editor"}, other = {id: "other.desktop", startupWMClass: "Other"}
         const windows = [{address: "1", appId: "editor"}, {address: "2", className: "Editor"}, {address: "3", className: "Editor-beta"}]
-        compare(Data.matches(app, windows, [app, other], {}).length, 2)
-        other.startupWMClass = "Editor"; compare(Data.matches(app, windows, [app, other], {}).length, 1)
-        compare(Data.matches(app, windows, [app, other], {"editor.desktop": ["Editor-beta"]})[0].address, "3")
-        compare(Data.matches(app, [{className: "editor-title"}], [app], {}).length, 0)
+        compare(Apps.matches(app, windows, [app, other], {}).length, 2)
+        other.startupWMClass = "Editor"; compare(Apps.matches(app, windows, [app, other], {}).length, 1)
+        compare(Apps.matches(app, windows, [app, other], {"editor.desktop": ["Editor-beta"]})[0].address, "3")
+        compare(Apps.matches(app, [{className: "editor-title"}], [app], {}).length, 0)
     }
     function test_dockAndSmallScreenAndKeyboard() {
         const app = {id: "fixture.desktop", name: "실제 앱 <&>"}
@@ -119,7 +120,10 @@ TestCase {
             width: 280, height: 271 * 280 / 349, isRunning: function(a) { return a.id === app.id }, isActiveApp: function(a) { return a.id === app.id }})
         const button = findChild(v, "dock-fixture.desktop")
         verify(button !== null); compare(button.running, true); compare(button.tooltipText, app.name)
-        compare(v.contentScale, 280 / 349)
+        compare(v.contentScale, 1)
+        const viewport=findChild(v,"mediaViewport")
+        verify(viewport.contentWidth>viewport.width)
+        viewport.contentY=viewport.contentHeight-viewport.height
         const launch = createTemporaryObject(spyFactory, testCase, {target: v, signalName: "appRequested"})
         mouseClick(button, 21, 21); compare(launch.count, 1); compare(launch.signalArguments[0][0].id, app.id)
         compare(button.active, true)
@@ -132,10 +136,10 @@ TestCase {
     }
     function test_multipleWindowsPreferActiveThenRecentThenStableAddress() {
         const windows = [{address: "b", activated: false}, {address: "a", activated: false}, {address: "c", activated: true}]
-        compare(Data.preferred(windows, ["b"])[0].address, "c")
+        compare(Apps.preferred(windows, ["b"])[0].address, "c")
         windows[2].activated = false
-        compare(Data.preferred(windows, ["b"])[0].address, "b")
-        compare(Data.preferred(windows, [])[0].address, "a")
+        compare(Apps.preferred(windows, ["b"])[0].address, "b")
+        compare(Apps.preferred(windows, [])[0].address, "a")
         compare(windows[0].address, "b")
     }
 }

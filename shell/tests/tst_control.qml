@@ -24,6 +24,9 @@ TestCase {
 	}
 	QtObject {
 		id: networkFixture
+        function retain(consumer) {}
+        function release(consumer) {}
+        function openEditor() {}
 		property bool backendAvailable: false
 		property bool wifiEnabled: false
 		property bool wifiConnected: false
@@ -62,6 +65,8 @@ TestCase {
 	}
 	QtObject {
 		id: systemFixture
+        function retain(consumer) {}
+        function release(consumer) {}
 		property string error: ""
 		property bool ready: true
 		property bool busy: false
@@ -94,7 +99,7 @@ TestCase {
 		id: contentFactory
 		ControlContent {
 			width: 440; height: 720
-			audio: audioFixture; network: networkFixture; battery: batteryFixture; system: systemFixture
+			audio: audioFixture; network: networkFixture; battery: batteryFixture; bluetooth: systemFixture; brightness: systemFixture; power: systemFixture; capture: systemFixture; metrics: systemFixture
 			onNavigate: destination => page = destination
 		}
 	}
@@ -196,6 +201,12 @@ TestCase {
 		compare(findChild(content, "quick-dnd").interactive, false)
 		compare(findChild(content, "quick-dark").interactive, false)
 		compare(findChild(content, "overviewVolume").width, 217)
+	}
+	function test_narrow_overview_preserves_text_target_sizes_without_scaling(){
+		const content=createTemporaryObject(contentFactory,testCase,{width:300,height:180})
+		const tile=findChild(content,"quick-settings"),slider=findChild(content,"overviewVolume")
+		compare(tile.scale,1);compare(slider.scale,1);verify(tile.width>=70);verify(slider.height>=24)
+		const viewport=findChild(content,"controlViewport");verify(viewport.contentHeight>viewport.height)
 	}
 	function test_sharedDndToggleKeepsReferenceGrid() {
 		const content = createTemporaryObject(contentFactory, testCase, {width: 337, height: 293, notifications: notificationsFixture})

@@ -137,6 +137,14 @@ TestCase {
         verify(model.current.pending);compare(findChild(view,"files-grid").cellWidth,55)
         view.width=380;view.height=280;compare(findChild(view,"files-design").scale,1)
     }
+    function test_file_buttons_support_keyboard_and_disabled_buttons_do_not_activate(){
+        const view=createTemporaryObject(viewFactory,testCase,{model:setup()})
+        const button=findChild(view,"files-maximize")
+        const spy=createTemporaryObject(spyFactory,testCase,{target:view,signalName:"maximizeRequested"})
+        button.forceActiveFocus();keyClick(Qt.Key_Space);compare(spy.count,1)
+        keyClick(Qt.Key_Return);compare(spy.count,2)
+        button.enabled=false;keyClick(Qt.Key_Space);compare(spy.count,2)
+    }
     function test_monitor_refresh_keeps_filter_selection_and_reports_errors_without_retry_loop(){
         const model=setup();model.selected=["folder"];model.query="한글"
         model.refresh();verify(model.busy);compare(model.query,"한글");compare(model.selected.length,1)
@@ -144,5 +152,23 @@ TestCase {
         compare(model.selected.length,1)
         model.navigate("file:///missing");model.accept({event:"error",tab:model.current.id,request:model.current.request,error:"NotFound"})
         verify(!model.busy);verify(!model.current.dirty);verify(model.error.length>0)
+    }
+    function test_timeout_keeps_visible_files_releases_busy_and_ignores_late_listing(){
+        const model=setup();let now=100;model.requests.now=function(){return now}
+        const spy=createTemporaryObject(spyFactory,testCase,{target:model,signalName:"requested"})
+        model.navigate("file:///slow");const late=listing(model,"file:///slow",[])
+        now=15101;model.requests.expire()
+        verify(!model.busy);compare(model.entries.length,2);verify(model.error.length>0)
+        model.accept(late);compare(model.current.uri,model.homeUri);compare(spy.count,1)
+        model.refresh();verify(model.busy);model.accept(listing(model,model.homeUri));verify(!model.busy)
+    }
+    function test_mutation_timeout_does_not_retry_and_transport_restart_marks_tabs_dirty(){
+        const model=setup();let now=100;model.requests.now=function(){return now}
+        const spy=createTemporaryObject(spyFactory,testCase,{target:model,signalName:"requested"})
+        model.action("folder",{name:"unique"});const request=model.operationRequest
+        now=30101;model.requests.expire();verify(!model.busy);compare(spy.count,1)
+        model.accept({event:"done",tab:model.current.id,request:request});compare(spy.count,1)
+        model.failRequests("BackendExited");verify(model.current.dirty)
+        model.selectTab(0);verify(model.busy)
     }
 }

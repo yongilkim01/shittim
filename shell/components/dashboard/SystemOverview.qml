@@ -40,13 +40,13 @@ Item {
                 id: disk
                 required property var modelData
                 width: storage.width; height: 40
-                HudText { x: 0; y: 0; width: 137; height: 17; text: disk.modelData.mount + " (" + disk.modelData.device.split('/').pop() + ")"; font.pixelSize: 9; color: Theme.textPrimary }
-                HudText { x: 138; y: 0; width: 151; height: 17; horizontalAlignment: Text.AlignRight; text: Format.bytes(disk.modelData.used) + " / " + Format.bytes(disk.modelData.total); font.pixelSize: 9; color: Theme.textSecondary }
+                HudText { x: 0; y: 0; width: 137; height: 17; text: disk.modelData.mount + " (" + disk.modelData.device.split('/').pop() + ")"; font.pixelSize: Theme.textCaption; color: Theme.textPrimary }
+                HudText { x: 138; y: 0; width: 151; height: 17; horizontalAlignment: Text.AlignRight; text: Format.bytes(disk.modelData.used) + " / " + Format.bytes(disk.modelData.total); font.pixelSize: Theme.textCaption; color: Theme.textSecondary }
                 Rectangle {
                     x: 0; y: 23; width: 253; height: 6; color: Theme.surfaceElevated; radius: 1
                     Rectangle { width: parent.width * Math.max(0, Format.fraction(disk.modelData.percent)); height: parent.height; color: Theme.accent; radius: 1 }
                 }
-                HudText { x: 260; y: 18; width: 30; height: 16; horizontalAlignment: Text.AlignRight; text: Format.percent(disk.modelData.percent); font.pixelSize: 9; color: Theme.accentBright }
+                HudText { x: 260; y: 18; width: 30; height: 16; horizontalAlignment: Text.AlignRight; text: Format.percent(disk.modelData.percent); font.pixelSize: Theme.textCaption; color: Theme.accentBright }
                 MouseArea { id: mountHover; anchors.fill: parent; hoverEnabled: true; acceptedButtons: Qt.NoButton }
                 Controls.ToolTip.visible: mountHover.containsMouse
                 Controls.ToolTip.text: disk.modelData.mount + " · " + disk.modelData.device + " · " + disk.modelData.filesystem
@@ -57,9 +57,9 @@ Item {
     ControlFrame {
         objectName: "dashboardNetwork"; x: 480; y: 169; width: 249; height: 118; cut: 4
         HudText { x: 18; y: 8; width: 100; height: 20; text: "NETWORK"; font.pixelSize: 10; font.letterSpacing: 1; color: Theme.accent }
-        HudText { x: 120; y: 8; width: 111; height: 20; horizontalAlignment: Text.AlignRight; text: root.metrics.network.interface || "N/A"; font.pixelSize: 9; color: Theme.textSecondary }
+        HudText { x: 120; y: 8; width: 111; height: 20; horizontalAlignment: Text.AlignRight; text: root.metrics.network.interface || "N/A"; font.pixelSize: Theme.textCaption; color: Theme.textSecondary }
         NetworkGraph { objectName: "dashboardNetworkGraph"; x: 18; y: 36; width: 213; height: 48; samples: root.model ? root.model.samples : [] }
-        HudText { x: 18; y: 91; width: 104; height: 18; text: "↓ " + Format.rate(root.metrics.network.down); font.pixelSize: 9; color: Theme.accentBright }
-        HudText { x: 127; y: 91; width: 104; height: 18; text: "↑ " + Format.rate(root.metrics.network.up); font.pixelSize: 9; color: Theme.accentBright }
+        HudText { x: 18; y: 91; width: 104; height: 18; text: "↓ " + Format.rate(root.metrics.network.down); font.pixelSize: Theme.textCaption; color: Theme.accentBright }
+        HudText { x: 127; y: 91; width: 104; height: 18; text: "↑ " + Format.rate(root.metrics.network.up); font.pixelSize: Theme.textCaption; color: Theme.accentBright }
     }
 }

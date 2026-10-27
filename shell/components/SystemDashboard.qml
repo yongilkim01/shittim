@@ -22,14 +22,9 @@ PanelWindow {
     color: Theme.transparent; exclusionMode: ExclusionMode.Ignore
     WlrLayershell.namespace: "shittim-dashboard"
     WlrLayershell.layer: WlrLayer.Overlay
-    WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
-    HyprlandFocusGrab {
-        active: window.visible
-        windows: DashboardState.anchorWindow !== null ? [window, DashboardState.anchorWindow] : [window]
-        onCleared: DashboardState.close()
-    }
+    WlrLayershell.keyboardFocus:input.keyboardFocus
+    PanelInput { id:input;window:window;session:DashboardState.panelSession }
     onVisibleChanged: if (visible) Qt.callLater(() => content.forceActiveFocus())
-    Shortcut { sequence: "Escape"; enabled: window.visible; onActivated: DashboardState.close() }
     DashboardView {
         id: content; anchors.fill: parent; model: DashboardState.model; page: DashboardState.page
         onNavigate: destination => DashboardState.select(destination)
@@ -56,7 +51,7 @@ PanelWindow {
         id: controls
         ControlContent {
             embedded: true
-            audio: AudioState; network: NetworkState; battery: BatteryState; system: SystemControl; notifications: NotificationState
+            audio: AudioState; network: NetworkState; battery: BatteryState; bluetooth: BluetoothState; brightness: BrightnessState; power: PowerState; capture: CaptureState; metrics: SystemMetricsState; notifications: NotificationState
             page: DashboardState.page === "network" ? "wifi" : DashboardState.page === "display" ? "brightness" : DashboardState.page
             onNavigate: destination => DashboardState.select(destination === "wifi" ? "network" : destination === "brightness" ? "display" : destination)
             onCloseRequested: DashboardState.close()

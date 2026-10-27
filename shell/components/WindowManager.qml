@@ -15,8 +15,8 @@ PanelWindow {
     color: Theme.transparent; exclusionMode: ExclusionMode.Ignore
     WlrLayershell.namespace: "shittim-windows"
     WlrLayershell.layer: WlrLayer.Overlay
-    WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
-    HyprlandFocusGrab { active: window.visible; windows: [window]; onCleared: WindowState.close() }
+    WlrLayershell.keyboardFocus:input.keyboardFocus
+    PanelInput { id:input;window:window;session:WindowState.panelSession }
     onVisibleChanged: if (visible) Qt.callLater(() => view.forceActiveFocus())
     WindowView {
         id: view; anchors.fill: parent; model: WindowState.model; error: WindowState.error; cycling: WindowState.cycling

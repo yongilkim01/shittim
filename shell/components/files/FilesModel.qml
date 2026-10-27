@@ -1,4 +1,6 @@
 import QtQuick
+import "../../core"
+import "../../core/ActionErrors.js" as Errors
 
 QtObject {
     id: root
@@ -31,6 +33,15 @@ QtObject {
     }
     signal requested(string action, var values)
     signal closeRequested()
+    property RequestLedger requests: RequestLedger {
+        onFinished: result => {
+            if(result.ok)return
+            if(root.operationRequest===result.id)root.operationRequest=-1
+            root.tabs=root.tabs.map(tab=>tab.request===result.id ? Object.assign({},tab,{pending:false,dirty:false}) : tab)
+            if(result.status==="timeout" || result.status==="cancelled" && ["Cancelled","Superseded"].indexOf(result.code)<0)root.error=Errors.message(result.code)
+        }
+    }
+    function failRequests(code) { requests.cancelAll(code); operationRequest=-1;tabs=tabs.map(tab=>Object.assign({},tab,{dirty:true,pending:false})) }
     function changed(tab) { tabs=tabs.map(candidate => candidate.id===tab.id ? Object.assign({},tab) : candidate) }
     function selectTab(index) { activeIndex=index; selected=[]; query=""; if (current && current.dirty) refresh() }
     function open(uri, newTab) {
@@ -44,7 +55,10 @@ QtObject {
     function navigate(uri, historyIndex, keepView) {
         if (!current) return
         error=""; if(!keepView){selected=[]; query=""}
-        const tab=Object.assign({},current,{pending:true,request:++serial,historyTarget:historyIndex===undefined ? -1 : historyIndex})
+        if(current.pending)requests.settle(current.request,"cancelled","Superseded",false)
+        const request=requests.begin("browse",15000,String(current.id))
+        if(!request){error=Errors.message("QueueFull");return}
+        const tab=Object.assign({},current,{pending:true,request:request,historyTarget:historyIndex===undefined ? -1 : historyIndex})
         changed(tab); requested("browse",{tab:tab.id,request:tab.request,uri:uri})
     }
     function refresh() { if (current) navigate(current.uri,current.position,true) }
@@ -52,6 +66,7 @@ QtObject {
     function up() { if (current && current.parent) navigate(current.parent) }
     function closeTab(index) {
         if (!tabs[index]) return
+        if(tabs[index].pending)requests.settle(tabs[index].request,"cancelled","Cancelled",false)
         requested("close-tab",{tab:tabs[index].id,request:++serial})
         tabs=tabs.filter((_,i)=>i!==index); activeIndex=Math.max(0,Math.min(activeIndex,tabs.length-1)); selected=[]
         if (tabs.length===0) closeRequested()
@@ -71,26 +86,28 @@ QtObject {
     function activate(entry) { if (entry.directory) navigate(entry.uri); else { selected=[entry.id]; action("open") } }
     function action(name, values) {
         if (!current || busy) return
-        operationRequest=++serial; error=""
+        operationRequest=requests.begin(name,30000,String(current.id)); error=""
+        if(!operationRequest){operationRequest=-1;error=Errors.message("QueueFull");return}
         requested(name,Object.assign({tab:current.id,request:operationRequest,ids:selected.slice()},values || {}))
     }
     function accept(message) {
         if (message.event==="ready") { homeUri=message.home; places=message.places; return }
         if (message.event==="places") { places=message.places; return }
         const index=tabs.findIndex(tab=>tab.id===message.tab)
-        if (index<0) { if ((message.event==="done" || message.event==="error") && operationRequest===message.request) operationRequest=-1; return }
+        if (index<0) { if ((message.event==="done" || message.event==="error") && operationRequest===message.request) {requests.complete(message.request,message.event==="done",message.error,false);operationRequest=-1} return }
         const tab=Object.assign({},tabs[index])
         if (message.event==="changed") { tab.dirty=true; changed(tab); return }
         if (message.event==="listing") {
-            if (tab.request!==message.request) return
+            if (!tab.pending || tab.request!==message.request || !requests.complete(message.request,true)) return
             if (tab.historyTarget>=0) tab.position=tab.historyTarget
             else if (tab.uri!==message.uri || tab.position<0) { tab.history=tab.history.slice(0,tab.position+1).concat([message.uri]); tab.position=tab.history.length-1 }
             Object.assign(tab,{name:message.name,uri:message.uri,parent:message.parent,entries:message.entries,breadcrumbs:message.breadcrumbs,writable:message.writable,pending:false,dirty:false,truncated:message.truncated})
             changed(tab); selected=selected.filter(id=>current && current.entries.some(entry=>entry.id===id))
         } else if (message.event==="done") {
-            if (operationRequest===message.request) operationRequest=-1
+            if (operationRequest===message.request && requests.complete(message.request,true)) operationRequest=-1
         } else if (message.event==="error") {
             if (tab.request!==message.request && operationRequest!==message.request) return
+            if(!requests.complete(message.request,false,message.error,false))return
             if (operationRequest===message.request) operationRequest=-1
             else { tab.pending=false; tab.dirty=false; changed(tab) }
             const messages={PermissionDenied:"이 위치에 접근할 권한이 없습니다.",NotFound:"파일이나 폴더를 찾을 수 없습니다.",AlreadyExists:"같은 이름이 이미 있습니다. 기존 파일은 덮어쓰지 않았습니다.",NotDirectory:"폴더를 선택하세요.",ReadOnlyLocation:"이 위치의 파일 작업은 Nemo에서 열어 사용할 수 있습니다.",ClipboardHasNoFiles:"클립보드에 복사한 파일이 없습니다.",InvalidName:"사용할 수 없는 파일 이름입니다.",RestoreUnavailable:"원래 위치로 복원할 수 없습니다."}

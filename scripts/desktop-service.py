@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Desktop catalogue and explicit file operations; JSON over private standard I/O."""
+import importlib.util
 import json
 import os
 from pathlib import Path
@@ -7,22 +8,11 @@ import signal
 import subprocess
 import sys
 import tempfile
-from urllib.parse import urlsplit, unquote
 
 
-def component(value):
-    if not isinstance(value, str) or value in ('', '.', '..') or len(value.encode('utf-8')) > 255 or any(c in value for c in ('/', '\\', '\x00')):
-        raise ValueError('InvalidName')
-    return value
-
-
-def local_uri(value):
-    if not isinstance(value, str) or len(value) > 16384:
-        raise ValueError('InvalidURI')
-    parsed = urlsplit(value)
-    if parsed.scheme != 'file' or parsed.netloc not in ('', 'localhost') or parsed.query or parsed.fragment or '\x00' in unquote(parsed.path) or not parsed.path.startswith('/'):
-        raise ValueError('LocalFilesOnly')
-    return value
+SPEC = importlib.util.spec_from_file_location('shittim_file_ops', Path(__file__).with_name('file-operations.py'))
+ops = importlib.util.module_from_spec(SPEC); SPEC.loader.exec_module(ops)
+component, local_uri = ops.component, ops.local_uri
 
 
 class Layout:
@@ -63,6 +53,7 @@ class Layout:
 class Desktop:
     def __init__(self, gio, glib, emit):
         self.gio, self.glib, self.emit = gio, glib, emit
+        self.operations = ops.FileOperations(gio, glib)
         self.home = Path.home()
         directory = glib.get_user_special_dir(glib.UserDirectory.DIRECTORY_DESKTOP)
         self.directory = Path(directory) if directory else None
@@ -70,11 +61,6 @@ class Desktop:
         self.projects = next((path for path in (self.home / 'projects', self.home / 'Projects') if path.is_dir()), self.home / 'projects')
         self.layout = Layout(Path(os.environ.get('XDG_STATE_HOME') or self.home / '.local/state') / 'shittim/desktop-layout.json')
         self.entries = {}; self.busy = False
-
-    def icon(self, icon):
-        if isinstance(icon, self.gio.ThemedIcon): return {'icons': list(icon.get_names()), 'iconFile': ''}
-        if isinstance(icon, self.gio.FileIcon): return {'icons': [], 'iconFile': icon.get_file().get_uri()}
-        return {'icons': ['text-x-generic'], 'iconFile': ''}
 
     def refresh(self):
         entries = [{'id':'home','name':'Home','uri':self.home.as_uri(),'directory':True,'special':True,'icons':['user-home']},
@@ -88,7 +74,7 @@ class Desktop:
                     if info.get_is_hidden(): continue
                     child = folder.get_child(info.get_name()); uri = child.get_uri()
                     entries.append(dict(id=uri,name=info.get_display_name(),uri=uri,
-                        directory=info.get_file_type() == self.gio.FileType.DIRECTORY,special=False,**self.icon(info.get_icon())))
+                        directory=info.get_file_type() == self.gio.FileType.DIRECTORY,special=False,**self.operations.icon(info.get_icon())))
                     if len(entries) >= 4096: break
             finally: iterator.close(None)
         self.entries = {entry['id']: entry for entry in entries}
@@ -96,64 +82,12 @@ class Desktop:
         except (OSError, ValueError): positions = {}; self.emit({'event':'error','error':'LayoutInvalid'})
         self.emit({'event':'desktop','entries':entries,'positions':positions,'directory':str(self.directory or ''),'enabled':self.enabled})
 
-    def selected(self, ids, editable=False):
-        if not isinstance(ids, list) or not 0 < len(ids) <= 256 or not all(isinstance(key, str) and key in self.entries for key in ids):
-            raise ValueError('SelectionChanged')
-        entries = [self.entries[key] for key in dict.fromkeys(ids)]
-        if editable and any(entry['special'] for entry in entries): raise ValueError('ProtectedShortcut')
-        return entries
-
     def transfer(self, uris, destination, move=False):
-        if not isinstance(uris, list) or not 0 < len(uris) <= 256: raise ValueError('InvalidURI')
-        sources = [local_uri(uri) for uri in uris]
-        # Nemo owns recursive operations, conflict dialogs, progress, and I/O errors.
-        connection = self.gio.bus_get_sync(self.gio.BusType.SESSION, None)
-        connection.call_sync('org.Nemo','/org/Nemo','org.Nemo.FileOperations','MoveURIs' if move else 'CopyURIs',
-            self.glib.Variant('(ass)', (sources, local_uri(destination))), None, self.gio.DBusCallFlags.NONE, 10000, None)
+        return ops.FileOperations(self.gio, self.glib).transfer(uris, destination, move)
 
     def operation(self, message):
-        action = message.get('action')
-        if action == 'open':
-            for entry in self.selected(message.get('ids')):
-                if entry['id'] == 'projects': self.projects.mkdir(exist_ok=True)
-                if entry['directory']:
-                    subprocess.Popen([sys.executable,str(Path(__file__).with_name('files-client.py')),entry['uri']], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, close_fds=True)
-                elif entry['uri'].endswith('.desktop'):
-                    subprocess.Popen(['nemo','--no-desktop',entry['uri']], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, close_fds=True)
-                else: self.gio.AppInfo.launch_default_for_uri(entry['uri'], None)
-        elif action == 'trash':
-            for entry in self.selected(message.get('ids'), True): self.gio.File.new_for_uri(entry['uri']).trash(None)
-        elif action == 'rename':
-            entries = self.selected(message.get('ids'), True)
-            if len(entries) != 1: raise ValueError('SelectOneFile')
-            self.gio.File.new_for_uri(entries[0]['uri']).set_display_name(component(message.get('name')), None)
-        elif action in ('copy','cut'):
-            entries = self.selected(message.get('ids'), True)
-            uris = [local_uri(entry['uri']) for entry in entries]
-            subprocess.run(['wl-copy','--type','x-special/gnome-copied-files'], input=('cut' if action == 'cut' else 'copy') + '\n' + '\n'.join(uris), text=True, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=5)
-        elif action in ('paste','drop'):
-            if not self.enabled or not self.directory.is_dir(): raise ValueError('DesktopDirectoryUnavailable')
-            destination = self.directory.as_uri()
-            if message.get('target'):
-                entry = self.selected([message['target']])[0]
-                if not entry['directory']: raise ValueError('NotDirectory')
-                destination = entry['uri']
-            if action == 'paste':
-                result = subprocess.run(['wl-paste','--no-newline','--type','x-special/gnome-copied-files'], capture_output=True, text=True, check=True, timeout=5)
-                if len(result.stdout) > 1024 * 1024: raise ValueError('InvalidURI')
-                lines = result.stdout.splitlines()
-                if not lines or lines[0] not in ('cut','copy'): raise ValueError('ClipboardHasNoFiles')
-                self.transfer(lines[1:], destination, lines[0] == 'cut')
-                if lines[0] == 'cut': subprocess.run(['wl-copy','--clear'], check=True, timeout=5, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            else: self.transfer(message.get('uris'), destination, False)
-        elif action == 'folder':
-            if not self.enabled or not self.directory.is_dir(): raise ValueError('DesktopDirectoryUnavailable')
-            self.gio.File.new_for_path(str(self.directory / component(message.get('name')))).make_directory(None)
-        elif action == 'open-desktop':
-            if not self.enabled: raise ValueError('DesktopDirectoryUnavailable')
-            self.directory.mkdir(exist_ok=True)
-            subprocess.Popen([sys.executable,str(Path(__file__).with_name('files-client.py')),str(self.directory)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, close_fds=True)
-        else: raise ValueError('InvalidRequest')
+        return self.operations.operation(message, self.entries, self.directory, self.enabled, self.projects)
+
 
 
 def serve(gio, glib, emit):
@@ -172,23 +106,24 @@ def serve(gio, glib, emit):
         desktop.directory.mkdir(exist_ok=True)
         monitor = gio.File.new_for_path(str(desktop.directory)).monitor_directory(gio.FileMonitorFlags.NONE,None)
         monitor.connect('changed',changed); monitors.append(monitor)
-    def finish(error):
+    def finish(error, request):
         desktop.busy = False
-        if error: emit({'event':'error','error':error})
+        emit({'event':'result','id':request,'ok':not error,'error':error})
         emit({'event':'busy','value':False}); changed(); return False
     def work(message):
         error = ''
         try: desktop.operation(message)
         except ValueError as exception: error = str(exception)
         except Exception: error = 'FileOperationFailed'
-        glib.idle_add(finish,error)
+        glib.idle_add(finish,error,message.get('id'))
     def handle(message):
         if not isinstance(message,dict): raise ValueError('InvalidRequest')
         if message.get('action') == 'refresh': changed()
         elif message.get('action') == 'positions':
             positions = desktop.layout.move(message.get('screen'),message.get('positions'))
             emit({'event':'positions','positions':positions})
-        elif desktop.busy: emit({'event':'error','error':'FileOperationBusy'})
+            emit({'event':'result','id':message.get('id'),'ok':True})
+        elif desktop.busy: emit({'event':'result','id':message.get('id'),'ok':False,'error':'FileOperationBusy'})
         else:
             desktop.busy=True; emit({'event':'busy','value':True})
             threading.Thread(target=work,args=(message,),daemon=True).start()
@@ -202,8 +137,9 @@ def serve(gio, glib, emit):
                 if len(pending)>1024*1024: loop.quit(); return False
                 while b'\n' in pending:
                     line,_,tail=pending.partition(b'\n'); pending[:]=tail
-                    try: handle(json.loads(line))
-                    except Exception: emit({'event':'error','error':'InvalidRequest'})
+                    message={}
+                    try: message=json.loads(line);handle(message)
+                    except Exception: emit({'event':'result','id':message.get('id') if isinstance(message,dict) else None,'ok':False,'error':'InvalidRequest'})
         except OSError: loop.quit(); return False
         if condition & (glib.IO_HUP|glib.IO_ERR): loop.quit(); return False
         return True

@@ -4,27 +4,26 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Hyprland
 import "../components/dashboard"
+import "../core"
 
 Scope {
     id: root
-    property bool opened: false
+    readonly property bool opened: session.active
     property string page: "system"
-    property var anchorWindow: null
-    property var targetScreen: null
+    readonly property var anchorWindow: session.anchorWindow
+    readonly property var targetScreen: session.screen
+    readonly property alias panelSession: session
+    PanelSession { id:session;coordinator:InteractionState;name:"dashboard" }
     readonly property alias model: metrics
     readonly property bool measuring: opened && page === "system"
     readonly property bool controlsActive: opened && ["bluetooth", "display", "power", "settings"].indexOf(page) >= 0
     onMeasuringChanged: if (measuring) metrics.reset()
-    function close() { opened = false }
-    function show(window) {
-        ControlState.close(); NotificationState.close(); LauncherState.close()
-        anchorWindow = window || null
-        const monitor = Hyprland.focusedMonitor
-        targetScreen = window ? window.screen : Quickshell.screens.find(screen => monitor !== null && screen.name === monitor.name) || Quickshell.screens[0] || null
+    function close() { session.close() }
+    function show(window, item) {
         page = "system"
-        if (targetScreen !== null) opened = true
+        session.open(InteractionState.screenFor(window),window,item)
     }
-    function toggle(window) { if (opened && anchorWindow === window) close(); else show(window) }
+    function toggle(window, item) { if (opened && anchorWindow === window) close(); else show(window,item) }
     function select(destination) {
         if (["system", "apps", "bluetooth", "display", "network", "audio", "power", "settings"].indexOf(destination) >= 0) page = destination
     }
@@ -43,17 +42,6 @@ Scope {
         stderr: SplitParser { onRead: data => { metrics.failure("시스템 측정 오류. Python 설치와 장치 접근 권한을 확인하세요.") } }
         onExited: if (root.measuring) metrics.failure("측정 서비스가 종료되었습니다. 대시보드를 다시 열어 주세요.")
         onRunningChanged: if (root.measuring && !running && !metrics.ready) metrics.failure("측정 서비스를 시작하지 못했습니다. Python 설치를 확인하고 다시 열어 주세요.")
-    }
-    Connections { target: ControlState; function onOpenedChanged() { if (ControlState.opened) root.close() } }
-    Connections { target: NotificationState; function onOpenedChanged() { if (NotificationState.opened) root.close() } }
-    Connections {
-        target: LauncherState
-        function onOpenedChanged() { if (LauncherState.opened) root.close() }
-        function onApplicationLaunched() { if (root.opened && root.page === "apps") root.close() }
-    }
-    Connections {
-        target: Quickshell
-        function onScreensChanged() { if (root.opened && Quickshell.screens.indexOf(root.targetScreen) < 0) root.close() }
     }
     onPageChanged: if (page === "apps") LauncherState.model.reset()
     IpcHandler {

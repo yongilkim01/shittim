@@ -21,6 +21,7 @@ if (( SHITTIM_DRY_RUN )); then
     info '설치 전 점검 완료. 서비스 시작·파일 변경은 수행하지 않았습니다.'; exit 0
 fi
 check_session_versions
+python3 "$SHITTIM_ROOT/scripts/design-tokens.py" --check || { warn '생성 디자인 파일이 원본 토큰과 다릅니다.'; shittim_failures=$((shittim_failures + 1)); }
 python3 -c 'import dbus_next' || { warn 'Control Center용 python-dbus-next가 없습니다.'; shittim_failures=$((shittim_failures + 1)); }
 python3 "$SHITTIM_ROOT/scripts/launcher-service.py" --check || { warn 'App Launcher용 GIO·python-gobject 설치를 확인하세요.'; shittim_failures=$((shittim_failures + 1)); }
 python3 "$SHITTIM_ROOT/scripts/files-config.py" --verify || { warn 'Shittim Files 등록을 확인하세요: bash scripts/setup-files.sh'; shittim_failures=$((shittim_failures + 1)); }

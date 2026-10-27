@@ -8,10 +8,10 @@ Shape {
     property string glyph: "maximize"
     property color ink: Theme.accent
     readonly property real slot: Math.min(width,height)
-    readonly property real inkExtent: slot*2/3
-    readonly property real inkStroke: slot/15
+    readonly property real inkExtent: slot*Theme.windowGlyphRatio
+    readonly property real inkStroke: slot*Theme.windowStrokeRatio
     readonly property string outline: {
-        const edge=slot/6, far=slot-edge, half=inkStroke/2, mid=slot/2
+        const edge=(slot-inkExtent)/2, far=slot-edge, half=inkStroke/2, mid=slot/2
         if(glyph==="minimize")return "M "+edge+" "+mid+" H "+far
         if(glyph==="close") {
             const inset=half/Math.sqrt(2),a=edge+inset,b=far-inset

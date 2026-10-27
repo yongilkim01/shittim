@@ -10,9 +10,9 @@ Item {
     property bool windowControl: false
     property color ink: Theme.accent
     signal clicked()
-    implicitWidth: 24; implicitHeight: root.windowControl ? 24 : 22
-    Rectangle { anchors.fill: parent; anchors.margins: 1; radius: 2; color: root.active ? "#063441" : mouse.containsMouse ? Theme.surfaceElevated : "transparent"; border.width: 1; border.color: root.active || mouse.containsMouse ? Theme.border : "transparent" }
-    FileGlyph { anchors.centerIn: parent; width: root.windowControl ? 24 : 14; height: width; windowControl: root.windowControl; glyph: root.glyph; ink: root.enabled ? root.ink : Theme.textMuted }
-    MouseArea { id: mouse; anchors.fill: parent; hoverEnabled: true; cursorShape: root.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor; onClicked: root.clicked() }
-    Controls.ToolTip { visible: mouse.containsMouse && root.hint.length>0; text: root.hint; delay: 650; contentItem: HudText { text: root.hint; font.pixelSize: 10 } background: Rectangle { color: Theme.background; border.color: Theme.border } }
+    Keys.forwardTo:[input]
+    implicitWidth: Theme.minimumTarget; implicitHeight: Theme.minimumTarget
+    Rectangle { anchors.fill: parent; anchors.margins: 1; radius: 2; color: root.active ? Theme.fileActive : input.hovered ? Theme.surfaceElevated : Theme.transparent; border.width: 1; border.color: input.focused ? Theme.accent : root.active || input.hovered ? Theme.border : Theme.transparent }
+    FileGlyph { anchors.centerIn: parent; width: root.windowControl ? Theme.windowButtonSize : Theme.iconSize; height: width; windowControl: root.windowControl; glyph: root.glyph; ink: root.enabled ? root.ink : Theme.textMuted }
+    ActionInput {id:input;label:root.hint;onTriggered:root.clicked()}
 }

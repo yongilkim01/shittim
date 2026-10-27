@@ -1,0 +1,92 @@
+/* Original Shittim HUD overlay, MIT license. Adwaita supplies base widget metrics. */
+@define-color theme_bg_color @background@;
+@define-color theme_fg_color @textPrimary@;
+@define-color theme_base_color @surface@;
+@define-color theme_text_color @textPrimary@;
+@define-color theme_selected_bg_color @accentDim@;
+@define-color theme_selected_fg_color @textPrimary@;
+@define-color insensitive_bg_color @surface@;
+@define-color insensitive_fg_color @textMuted@;
+@define-color borders @border@;
+@define-color accent_bg_color @accentDim@;
+@define-color accent_fg_color @textPrimary@;
+@define-color accent_color @accent@;
+window, .background { background-color: @background@; color: @textPrimary@; }
+headerbar, .titlebar, toolbar, .toolbar, menubar, statusbar {
+    background-image: none; background-color: @surface@; color: @textPrimary@;
+    border-color: @border@; border-radius: 0; box-shadow: none;
+}
+.sidebar, .sidebar.view, .sidebar .view, .navigation-sidebar {
+    background-color: @background@; color: @textSecondary@;
+}
+.view, treeview, iconview, textview, textview text, list, listview, gridview {
+    background-color: @surface@; color: @textPrimary@;
+}
+.view:selected, .view:selected:focus, treeview:selected, iconview:selected,
+row:selected, .navigation-sidebar row:selected, selection {
+    background-color: @accentDim@; color: @textPrimary@;
+}
+button, entry, spinbutton, combobox, searchentry {
+    background-image: none; background-color: @surfaceElevated@; color: @textPrimary@;
+    border-color: @border@; border-radius: 1px; box-shadow: none; text-shadow: none;
+}
+button:hover, button:checked, button:active, entry:focus, searchentry:focus {
+    background-image: none; background-color: @surfaceElevated@; border-color: @accent@; color: @accentBright@;
+}
+button:disabled { color: @textMuted@; }
+separator { background-color: @border@; min-width: 1px; min-height: 1px; }
+scrollbar { background-color: @background@; }
+scrollbar slider { background-color: @border@; border-radius: 1px; min-width: 5px; min-height: 5px; }
+scrollbar slider:hover { background-color: @accentDim@; }
+menu, .menu, popover, popover contents { background-color: @surface@; color: @textPrimary@; border-color: @border@; }
+menuitem:hover { background-color: @surfaceElevated@; color: @accentBright@; }
+tooltip, tooltip.background { background-color: @background@; color: @textPrimary@; border: 1px solid @border@; }
+progressbar progress, scale highlight { background-color: @accent@; background-image: none; }
+
+/* Compact title, toolbar and tabs from the desktop reference. */
+headerbar, .titlebar { min-height: 24px; padding: 2px 6px; }
+toolbar, .toolbar { padding: 3px 6px; border-bottom: 1px solid @border@; }
+toolbar button, .toolbar button { min-width: 20px; min-height: 20px; padding: 2px 4px; background-color: transparent; border-color: transparent; }
+toolbar button:hover, .toolbar button:hover { background-color: @surfaceElevated@; border-color: @accentDim@; }
+notebook > header { background-color: @background@; border-bottom: 1px solid @border@; }
+notebook > header tab { min-height: 22px; padding: 2px 10px; border: 1px solid transparent; border-radius: 1px; }
+notebook > header tab:checked { background-color: @surface@; border-color: @border@; color: @accentBright@; }
+entry { min-height: 22px; padding: 2px 6px; }
+.sidebar, .sidebar .view { background-color: @background@; color: @textSecondary@; }
+
+/* Nemo's pane frames and path buttons have their own Adwaita node styles. */
+.nemo-window { background-color: @background@; color: @textPrimary@; font-size: 10px; }
+.nemo-window label, .nemo-window .view { font-weight: normal; text-shadow: none; }
+.nemo-window .view, .nemo-window viewport, .nemo-window scrolledwindow {
+    background-color: @background@; background-image: linear-gradient(to bottom right, @fileSurface@, #01131c); color: @textPrimary@;
+}
+.nemo-window .view { font-size: 12px; }
+.nemo-window scrolledwindow, .nemo-window frame > border {
+    border: none; box-shadow: none;
+}
+.nemo-window paned > separator {
+    background: @border@; border: none; min-width: 1px; min-height: 1px;
+    margin: 0; padding: 0;
+}
+.nemo-window .sidebar, .nemo-window .sidebar .view {
+    background-color: @fileSidebar@; background-image: none; color: @textSecondary@; font-size: 10px;
+}
+.nemo-window .sidebar .view:selected, .nemo-window .sidebar .view:selected:focus {
+    background-color: @surfaceElevated@; color: @accentBright@;
+}
+.nemo-window toolbar, .nemo-window .toolbar {
+    background: @background@; border: none; border-bottom: 1px solid @border@;
+    padding: 2px 4px; box-shadow: none;
+}
+.nemo-window toolbar button, .nemo-window .toolbar button {
+    background: transparent; color: @textSecondary@; border: 1px solid transparent;
+    border-radius: 1px; padding: 2px 4px; min-height: 18px; min-width: 18px;
+    box-shadow: none; text-shadow: none;
+}
+.nemo-window toolbar button:hover, .nemo-window .toolbar button:hover,
+.nemo-window toolbar button:checked, .nemo-window .toolbar button:checked {
+    background: @surfaceElevated@; color: @accentBright@; border-color: @border@;
+}
+.nemo-window .view:selected, .nemo-window .view:selected:focus {
+    background-color: @surfaceElevated@; color: @textPrimary@;
+}

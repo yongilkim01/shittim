@@ -2,7 +2,6 @@ singleton AudioState 1.0 AudioState.qml
 singleton NetworkState 1.0 NetworkState.qml
 singleton BatteryState 1.0 BatteryState.qml
 singleton ControlState 1.0 ControlState.qml
-singleton SystemControl 1.0 SystemControl.qml
 singleton LauncherState 1.0 LauncherState.qml
 singleton NotificationState 1.0 NotificationState.qml
 singleton DashboardState 1.0 DashboardState.qml
@@ -11,3 +10,15 @@ singleton WindowState 1.0 WindowState.qml
 singleton DockState 1.0 DockState.qml
 singleton DesktopState 1.0 DesktopState.qml
 singleton SnapState 1.0 SnapState.qml
+singleton InteractionState 1.0 InteractionState.qml
+singleton RuntimeStatus 1.0 RuntimeStatus.qml
+singleton ApplicationsState 1.0 ApplicationsState.qml
+singleton ApplicationCatalog 1.0 ApplicationCatalog.qml
+singleton WindowCatalog 1.0 WindowCatalog.qml
+singleton WindowCommands 1.0 WindowCommands.qml
+singleton SystemBackend 1.0 SystemBackend.qml
+singleton BrightnessState 1.0 BrightnessState.qml
+singleton BluetoothState 1.0 BluetoothState.qml
+singleton PowerState 1.0 PowerState.qml
+singleton SystemMetricsState 1.0 SystemMetricsState.qml
+singleton CaptureState 1.0 CaptureState.qml

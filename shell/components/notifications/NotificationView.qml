@@ -42,7 +42,7 @@ FocusScope {
             Controls.ToolTip.text: root.ownership === "conflict" ? "다른 알림 서버가 실행 중입니다. PID " + root.ownerPid : root.ownership !== "owned" ? "Shittim 알림 서버 소유권을 확인하세요." : root.model.dnd ? "방해 금지 사용 중 · 긴급 알림은 표시" : "방해 금지 켜기"
         }
         HudText {
-            x: 280; y: 1; width: 57; height: 33; text: "Clear All"; font.pixelSize: 9; horizontalAlignment: Text.AlignRight
+            x: 280; y: 1; width: 57; height: 33; text: "Clear All"; font.pixelSize: Theme.textCaption; horizontalAlignment: Text.AlignRight
             color: root.model.entries.length > 0 ? Theme.accentBright : Theme.textMuted
             MouseArea { anchors.fill: parent; enabled: root.model.entries.length > 0; cursorShape: Qt.PointingHandCursor; onClicked: root.model.clear() }
         }

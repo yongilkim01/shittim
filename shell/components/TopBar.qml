@@ -3,6 +3,7 @@ import QtQuick
 import QtQuick.Layouts
 import "../ui"
 import "../services"
+import "./media"
 
 PanelWindow {
 	id: bar
@@ -15,15 +16,7 @@ PanelWindow {
 	implicitHeight: Theme.barHeight
 	color: Theme.transparent
 	TapHandler {
-		onTapped: {
-			if (ControlState.opened && point.position.x < statusArea.mapToItem(null, 0, 0).x) ControlState.close()
-			const notificationX = notificationArea.mapToItem(null, 0, 0).x
-			if (NotificationState.opened && (point.position.x < notificationX || point.position.x > notificationX + notificationArea.width)) NotificationState.close()
-			const logoX = logo.mapToItem(null, 0, 0).x
-			if (DashboardState.opened && (point.position.x < logoX || point.position.x > logoX + logo.width)) DashboardState.close()
-			const mediaX = mediaArea.mapToItem(null, 0, 0).x
-			if (MediaState.opened && (point.position.x < mediaX || point.position.x > mediaX + mediaArea.width)) MediaState.close()
-		}
+		onTapped: InteractionState.anchorTapped(bar,point.position)
 	}
 
 	Canvas {
@@ -73,7 +66,7 @@ PanelWindow {
 			color: Theme.accentBright
 			Layout.alignment: Qt.AlignVCenter
 			Layout.rightMargin: Theme.spaceXL
-			MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: DashboardState.toggle(bar) }
+			ActionInput {label:"시스템 대시보드";focusFrame:true;onTriggered:DashboardState.toggle(bar,logo)}
 		}
 		Flickable {
 			objectName: "workspaceViewport"
@@ -81,16 +74,22 @@ PanelWindow {
 			Layout.minimumWidth: 0
 			Layout.preferredWidth: workspaces.implicitWidth
 			Layout.maximumWidth: workspaces.implicitWidth
-			Layout.preferredHeight: Theme.barWorkspaceHeight
+			Layout.preferredHeight: Theme.minimumTarget
 			Layout.alignment: Qt.AlignVCenter
 			contentWidth: workspaces.width
-			contentHeight: workspaces.height
+			contentHeight: height
 			flickableDirection: Flickable.HorizontalFlick
 			boundsBehavior: Flickable.StopAtBounds
 			clip: true
-			Workspaces { id: workspaces }
+			Workspaces { id: workspaces;y:(parent.height-height)/2 }
 		}
 		Item { Layout.fillWidth: true; Layout.minimumWidth: Theme.spaceS }
+		MediaButton {
+			objectName:"bar-window-list"
+			icon:"\uf24d";tooltipText:"열린 창 목록 · Alt+Tab"
+			Layout.preferredWidth:Theme.minimumTarget;Layout.preferredHeight:Theme.minimumTarget
+			onClicked:WindowState.show([],0,bar.screen)
+		}
 		HudIcon {
 			id: mediaArea
 			text: "\uf001"; font.pixelSize: Theme.barIconSize; width: Theme.barIconSize
@@ -98,8 +97,7 @@ PanelWindow {
 			Layout.alignment: Qt.AlignVCenter
 			Layout.preferredWidth: Theme.barIconSize
 			Layout.preferredHeight: Theme.barIconSize
-			MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; acceptedButtons: Qt.LeftButton | Qt.RightButton
-				onClicked: event => { if (event.button === Qt.RightButton) WindowState.show([], 0, bar.screen); else MediaState.toggle(bar) } }
+			ActionInput {label:"미디어";focusFrame:true;contextEnabled:true;onTriggered:MediaState.toggle(bar,mediaArea);onContextRequested:WindowState.show([],0,bar.screen)}
 		}
 		Item {
 			id: notificationArea
@@ -115,22 +113,19 @@ PanelWindow {
 				}
 				HudText { visible: NotificationState.unread > 0; text: NotificationState.unread > 99 ? "99+" : String(NotificationState.unread); font.pixelSize: 10; height: Theme.barIconSize; color: Theme.accentBright }
 			}
-			MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: NotificationState.toggle(bar) }
+			ActionInput {label:"알림 센터";focusFrame:true;onTriggered:NotificationState.toggle(bar,notificationArea)}
 		}
 		Item {
 			id: statusArea
 			implicitWidth: statuses.implicitWidth
 			implicitHeight: statuses.implicitHeight
 			Layout.alignment: Qt.AlignVCenter
-			MouseArea {
-				anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-				onClicked: ControlState.toggle(bar)
-			}
+			ActionInput {label:"빠른 설정";focusFrame:true;onTriggered:ControlState.toggle(bar,statusArea)}
 			Row {
 				id: statuses; objectName: "barStatuses"
 				spacing: Theme.spaceXL
 				Network { compact: true; anchors.verticalCenter: parent.verticalCenter }
-				Volume { compact: true; anchors.verticalCenter: parent.verticalCenter; onControlCenterRequested: ControlState.toggle(bar) }
+				Volume { compact: true; anchors.verticalCenter: parent.verticalCenter; onControlCenterRequested: ControlState.toggle(bar,statusArea) }
 				Battery { compact: true; anchors.verticalCenter: parent.verticalCenter }
 				HudDivider { anchors.verticalCenter: parent.verticalCenter }
 				Clock { compact: true; anchors.verticalCenter: parent.verticalCenter }

@@ -19,23 +19,18 @@ PanelWindow {
     color: Theme.transparent; exclusionMode: ExclusionMode.Ignore
     WlrLayershell.namespace: "shittim-media"
     WlrLayershell.layer: WlrLayer.Overlay
-    WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
-    HyprlandFocusGrab {
-        active: window.visible
-        windows: MediaState.anchorWindow !== null ? [window, MediaState.anchorWindow] : [window]
-        onCleared: MediaState.close()
-    }
+    WlrLayershell.keyboardFocus:input.keyboardFocus
+    PanelInput { id:input;window:window;session:MediaState.panelSession }
     onVisibleChanged: if (visible) Qt.callLater(() => view.forceActiveFocus())
-    Shortcut { sequence: "Escape"; enabled: window.visible; onActivated: MediaState.close() }
     MediaView {
-        id: view; anchors.fill: parent; active: window.visible; model: MediaState.model; apps: MediaState.apps
+        id: view; anchors.fill: parent; active: window.visible; model: MediaState.model; apps: ApplicationsState.apps
         ready: LauncherState.ready; launching: LauncherState.launching
-        iconSource: LauncherState.iconSource; isRunning: app => MediaState.running(app)
-        isActiveApp: app => MediaState.matches(app).some(window => window.activated)
-        error: MediaState.error || LauncherState.dockError || (!LauncherState.ready ? LauncherState.error : "")
-        onAppRequested: app => MediaState.activate(app)
+        iconSource: LauncherState.iconSource; isRunning: app => ApplicationsState.running(app)
+        isActiveApp: app => ApplicationsState.matches(app).some(window => window.activated)
+        error: ApplicationsState.error || LauncherState.dockError || (!LauncherState.ready ? LauncherState.error : "")
+        onAppRequested: app => ApplicationsState.activate(app)
         onAppWindowsRequested: app => {
-            const matches = MediaState.matches(app)
+            const matches = ApplicationsState.matches(app)
             if (matches.length) WindowState.show(matches.map(window => window.address), 0, window.screen)
         }
         onCloseRequested: MediaState.close()

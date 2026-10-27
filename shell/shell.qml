@@ -1,8 +1,14 @@
 //@ pragma IconTheme Shittim-HUD
 import Quickshell
 import "./components"
+import "./services"
+import QtQuick
 
 ShellRoot {
+	readonly property string runtimeContract:RuntimeStatus.contract
+	Connections { target:ApplicationsState;function onActivating(){InteractionState.dismiss("action")} }
+	Connections { target:CaptureState;function onStarting(){InteractionState.dismiss("action")} }
+	Connections { target:NetworkState;function onEditorOpening(){InteractionState.dismiss("action")} }
 	Variants {
 		model: Quickshell.screens
 		TopBar {
@@ -27,4 +33,5 @@ ShellRoot {
 	WindowManager {}
 	SnapPreview {}
 	TitlebarTooltip {}
+	ActionFeedback {}
 }

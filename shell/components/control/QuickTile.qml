@@ -31,7 +31,7 @@ ControlFrame {
 			}
 		}
 		HudText { text: root.title; font.pixelSize: 10; width: parent.width; horizontalAlignment: Text.AlignHCenter; color: root.interactive ? Theme.textPrimary : Theme.textMuted }
-		HudText { visible: root.large; text: root.detail; font.pixelSize: 9; color: Theme.accentDim; width: Math.min(implicitWidth, root.width - 8); horizontalAlignment: Text.AlignHCenter; anchors.horizontalCenter: parent.horizontalCenter }
+		HudText { visible: root.large; text: root.detail; font.pixelSize: Theme.textCaption; color: Theme.accentDim; width: Math.min(implicitWidth, root.width - 8); horizontalAlignment: Text.AlignHCenter; anchors.horizontalCenter: parent.horizontalCenter }
 	}
 	MouseArea {
 		id: mouse; anchors.fill: parent; hoverEnabled: true

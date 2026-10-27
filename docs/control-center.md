@@ -71,6 +71,8 @@ Windows Qt 화면 테스트는 화면·입력·바인딩만 확인한다. Arch W
 
 ## 변경 파일
 
+아래는 초기 구현 당시 목록이다. 이후 `SystemControl`은 `SystemBackend`와 기능별 서비스로 분리했으며 현재 구조·구독·검사 절차는 [공통 동작 계약](architecture.md)을 따른다.
+
 - 진입점·바 연결: `shell/shell.qml`, `shell/components/TopBar.qml`, `Network.qml`, `Volume.qml`, `Battery.qml`, 신규 `ControlCenter.qml`.
 - 공통 상태: 신규 `shell/services/qmldir`, `AudioState.qml`, `NetworkState.qml`, `BatteryState.qml`, `ControlState.qml`, `SystemControl.qml`.
 - 패널·상세 화면: 신규 `shell/components/control/ControlFrame.qml`, `QuickTile.qml`, `ControlOverview.qml`, `ControlContent.qml`, `LevelControl.qml`, `WifiPage.qml`, `BluetoothPage.qml`, `AudioPage.qml`, `BrightnessPage.qml`, `PowerPage.qml`, `SettingsPage.qml`.

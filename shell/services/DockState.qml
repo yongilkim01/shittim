@@ -1,29 +1,36 @@
 pragma Singleton
 import QtQuick
 import Quickshell
+import "../core"
 
 Scope {
     id: root
     property string appId: ""
     property string mode: ""
-    property var screen: null
+    readonly property var screen: session.screen
+    readonly property alias panelSession: session
+    PanelSession {
+        id:session;coordinator:InteractionState;name:"dock"
+        onRevoked:root.reset()
+    }
     property string targetAddress: ""
-    readonly property var apps: MediaState.apps
+    readonly property var apps: ApplicationsState.apps
     readonly property var app: apps.find(candidate => candidate.id === appId) || null
-    readonly property var windows: app ? MediaState.matches(app) : []
+    readonly property var windows: app ? ApplicationsState.matches(app) : []
     readonly property var target: windows.find(window => window.address === targetAddress) || windows[0] || null
-    function close() { mode = ""; appId = ""; targetAddress = "" }
+    function reset() { mode = ""; appId = ""; targetAddress = "" }
+    function close() { session.close();reset() }
     function open(app, kind, output) {
         if (!app) return
-        if (kind !== "preview") {
-            ControlState.close(); LauncherState.close(); NotificationState.close(); DashboardState.close(); MediaState.close(); WindowState.close()
-        }
-        screen = output; appId = app.id; mode = kind
+        if(kind==="preview" && InteractionState.owner && InteractionState.owner!==session)return
+        session.kind=kind==="preview" ? "preview" : "panel";session.keyboard=kind!=="preview"
+        if(!session.open(output))return
+        appId = app.id; mode = kind
     }
     function click(app, output) {
-        const matches = MediaState.matches(app)
+        const matches = ApplicationsState.matches(app)
         if (matches.length > 1) open(app, "choose", output)
-        else { close(); MediaState.activate(app) }
+        else { close(); ApplicationsState.activate(app) }
     }
     function act(operation) {
         const selectedApp = app, selectedWindow = target
@@ -33,12 +40,5 @@ Scope {
         else if (selectedWindow) WindowState.perform(operation, selectedWindow.address)
         close()
     }
-    Connections { target: ControlState; function onOpenedChanged() { if (ControlState.opened) root.close() } }
-    Connections { target: LauncherState; function onOpenedChanged() { if (LauncherState.opened) root.close() } }
-    Connections { target: NotificationState; function onOpenedChanged() { if (NotificationState.opened) root.close() } }
-    Connections { target: DashboardState; function onOpenedChanged() { if (DashboardState.opened) root.close() } }
-    Connections { target: MediaState; function onOpenedChanged() { if (MediaState.opened) root.close() } }
-    Connections { target: WindowState; function onShowing() { root.close() } }
-    Connections { target: Quickshell; function onScreensChanged() { if (Quickshell.screens.indexOf(root.screen) < 0) root.close() } }
     onAppChanged: if (!app && mode) close()
 }

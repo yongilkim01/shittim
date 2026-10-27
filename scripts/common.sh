@@ -37,10 +37,12 @@ load_packages() {
     if [[ ${SHITTIM_WITH_POWER_PROFILES:-0} == 1 ]]; then SHITTIM_PACKAGES+=(power-profiles-daemon); fi
 }
 check_session_versions() {
-    local version
+    local version minimum
+    minimum=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["minimum"][sys.argv[2]])' "$SHITTIM_ROOT/config/compatibility.json" hyprland)
     version=$(pacman -Q hyprland | awk '{print $2}')
-    (( $(vercmp "$version" '0.55.0') >= 0 )) || die "Hyprland $version: Lua 자동 실행에는 0.55 이상이 필요합니다."
+    (( $(vercmp "$version" "$minimum") >= 0 )) || die "Hyprland $version: Lua 자동 실행에는 $minimum 이상이 필요합니다."
+    minimum=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["minimum"][sys.argv[2]])' "$SHITTIM_ROOT/config/compatibility.json" quickshell)
     version=$(pacman -Q quickshell | awk '{print $2}')
-    (( $(vercmp "$version" '0.3.2') >= 0 )) || die "Quickshell $version: 0.3.2 이상이 필요합니다."
+    (( $(vercmp "$version" "$minimum") >= 0 )) || die "Quickshell $version: $minimum 이상이 필요합니다."
     require_command start-hyprland
 }

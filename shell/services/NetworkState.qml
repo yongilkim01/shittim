@@ -3,9 +3,15 @@ import QtQuick
 import QtQml.Models
 import Quickshell
 import Quickshell.Networking as Net
+import Quickshell.Io
+import "../core"
+import "../core/ActionErrors.js" as Errors
 
 Scope {
 	id: root
+	signal editorOpening()
+	Process { id:editor;command:["nm-connection-editor"] }
+	function openEditor(){editorOpening();editor.startDetached()}
 	readonly property bool backendAvailable: Net.Networking.backend !== Net.NetworkBackendType.None
 	readonly property var devices: Net.Networking.devices.values.filter(device =>
 		(device.type === Net.DeviceType.Wifi || device.type === Net.DeviceType.Wired)
@@ -30,11 +36,25 @@ Scope {
 	readonly property var controlDevice: wifiDevices.indexOf(selectedDevice) >= 0 ? selectedDevice : wifiDevice
 	property bool scanning: false
 	property var pendingNetwork: null
+	property int request:0
+	property string operation:""
+	readonly property bool busy:requests.busy
+	RequestLedger {
+		id:requests
+		onFinished:result=>{
+			if(result.id!==root.request)return
+			root.request=0
+			if(result.status==="timeout"){root.needsPassword=false;root.error=Errors.message(result.code)}
+		}
+	}
 	property bool needsPassword: false
 	onPendingNetworkChanged: if (pendingNetwork === null) needsPassword = false
 	property string error: ""
-	readonly property bool interactive: ControlState.opened || DashboardState.opened && DashboardState.page === "network"
-	function syncConsumer() { scanning = interactive; if (!interactive) resetPrompt() }
+	readonly property bool interactive: consumers.active
+	ConsumerSet { id:consumers;onActiveChanged:root.syncConsumer() }
+	function retain(consumer){consumers.retain(consumer)}
+	function release(consumer){consumers.release(consumer)}
+	function syncConsumer() { scanning = interactive; if (!interactive) { needsPassword=false;if(!busy)pendingNetwork=null } }
 	readonly property var networks: controlDevice === null ? [] : controlDevice.networks.values.slice().sort((a, b) =>
 		Number(b.connected) - Number(a.connected) || b.signalStrength - a.signalStrength)
 	function supportsPsk(network) {
@@ -46,36 +66,27 @@ Scope {
 			Net.Networking.wifiEnabled = !Net.Networking.wifiEnabled
 		}
 	}
-	function resetPrompt() { needsPassword = false; pendingNetwork = null; connectionTimeout.stop() }
+	function resetPrompt() { needsPassword = false;if(request)requests.settle(request,"cancelled","Cancelled",false);pendingNetwork = null }
 	function connectNetwork(network) {
-		if (!wifiEnabled || network === null || network.stateChanging) return
+		if (!wifiEnabled || busy || network === null || network.stateChanging) return
 		resetPrompt()
 		error = ""
 		pendingNetwork = network
+		operation=network.connected ? "disconnect" : "connect"
+		request=requests.begin(operation,35000,controlDevice ? controlDevice.name : "")
 		if (network.connected) network.disconnect()
-		else { network.connect(); connectionTimeout.restart() }
+		else network.connect()
 	}
 	function submitPassword(psk) {
-		if (!supportsPsk(pendingNetwork) || !wifiEnabled) return
+		if (!supportsPsk(pendingNetwork) || !wifiEnabled || busy) return
 		needsPassword = false
 		error = ""
+		operation="connect";request=requests.begin(operation,35000,controlDevice ? controlDevice.name : "")
 		pendingNetwork.connectWithPsk(psk)
-		connectionTimeout.restart()
 	}
 	function refresh() { scanning = false; Qt.callLater(() => { if (root.interactive) scanning = true }) }
 	onControlDeviceChanged: { resetPrompt(); error = "" }
 	onWifiEnabledChanged: if (!wifiEnabled) resetPrompt()
-	Connections {
-		target: ControlState
-		function onOpenedChanged() {
-			root.syncConsumer()
-		}
-	}
-	Connections {
-		target: DashboardState
-		function onOpenedChanged() { root.syncConsumer() }
-		function onPageChanged() { root.syncConsumer() }
-	}
 	Instantiator {
 		model: root.wifiDevices
 		delegate: Binding {
@@ -89,7 +100,8 @@ Scope {
 	Connections {
 		target: root.pendingNetwork
 		function onConnectionFailed(reason) {
-			connectionTimeout.stop()
+			if(!root.request)return
+			requests.complete(root.request,false,"NetworkConnectionFailed",false)
 			if (reason === Net.ConnectionFailReason.NoSecrets && root.supportsPsk(root.pendingNetwork)) {
 				root.needsPassword = root.interactive
 				root.error = "Wi-Fi 비밀번호가 필요하거나 올바르지 않습니다."
@@ -98,15 +110,9 @@ Scope {
 			} else root.error = Net.ConnectionFailReason.toString(reason)
 		}
 		function onStateChanged() {
-			if (root.pendingNetwork && root.pendingNetwork.connected) {
-				connectionTimeout.stop(); root.error = ""; root.needsPassword = false
+			if (root.request && root.pendingNetwork && root.pendingNetwork.connected===(root.operation==="connect")) {
+				requests.complete(root.request,true);root.error = ""; root.needsPassword = false
 			}
 		}
 	}
-	Timer {
-		id: connectionTimeout
-		interval: 35000
-		onTriggered: root.error = "네트워크 요청이 완료되지 않았습니다. 연결 상태와 인증 설정을 확인하세요."
-	}
-
 }

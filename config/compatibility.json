@@ -1,0 +1,19 @@
+{
+  "protocol": 1,
+  "minimum": {
+    "hyprland": "0.55.0",
+    "quickshell": "0.3.2"
+  },
+  "windowContract": 1,
+  "runtimeContract": "interaction-window-v1",
+  "titlebars": {
+    "af923e30d1d24f1f4a4f5cb8308065173c1d9539": "3aa21f2e0ca72412f1b434c3126f8f1fec3c716c",
+    "a47147bc095e5b3be3eb8bd04f0ac242b968cd4d": "3aa21f2e0ca72412f1b434c3126f8f1fec3c716c",
+    "39d7e209c79d451efab1b21151d5938289da838d": "3aa21f2e0ca72412f1b434c3126f8f1fec3c716c",
+    "fe5fe79a29ac3adaf3e75560b2f4b7a6d58b31c9": "3aa21f2e0ca72412f1b434c3126f8f1fec3c716c",
+    "a0136d8c04687bb36eb8a28eb9d1ff92aea99704": "3aa21f2e0ca72412f1b434c3126f8f1fec3c716c",
+    "36b2e0cfe0c6094dbc47bd42a437431315bb3087": "7644cecdb947060682891a0db2a0cdc5c0b9e704",
+    "5c9377c15f85c50648f35ca5a213754f95b93ca0": "7644cecdb947060682891a0db2a0cdc5c0b9e704",
+    "efb50993780079460b0cbed1363e2166a2de1d9f": "7644cecdb947060682891a0db2a0cdc5c0b9e704"
+  }
+}
