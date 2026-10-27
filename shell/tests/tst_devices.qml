@@ -29,6 +29,8 @@ TestCase {
 		const chrome = node({isStream: true, audio: audio, properties: {"application.name": "Google Chrome"}})
 		verify(Devices.isRecording(chrome))
 		compare(Devices.applicationName(chrome), "Google Chrome")
+		compare(Devices.applicationName(node({isStream: true, audio: audio, properties: {"application.name": "Google Chrome input"}})), "Google Chrome")
+		compare(Devices.applicationName(node({isStream: true, audio: audio, properties: {"application.name": "input"}})), "input")
 		verify(!Devices.isRecording(node({isStream: true, audio: audio, properties: {"stream.monitor": "true"}})))
 		verify(!Devices.isRecording(node({isStream: true, audio: audio, properties: {"stream.capture.sink": "true"}})))
 		verify(!Devices.isRecording(node({isStream: true, isSink: true, audio: audio})))
@@ -41,16 +43,32 @@ TestCase {
 		verify(!Devices.isScreenCast(node({name: undefined})))
 	}
 	function test_activityIndicatorHiddenWhenIdle() {
-		const activity = createTemporaryObject(activityFactory, testCase)
+		const activity = createTemporaryObject(activityFactory, testCase, {iconFor: name => name === "Google Chrome" ? "file:///chrome.svg" : ""})
 		compare(activity.visible, false)
 		compare(activity.implicitWidth, 0)
 		micFixture.applications = ["Google Chrome"]; micFixture.inUse = true
 		compare(activity.visible, true)
 		compare(findChild(activity, "activityMicrophone").visible, true)
 		compare(findChild(activity, "activityCamera").visible, false)
-		compare(activity.summary, "마이크 사용 중: Google Chrome")
+		compare(activity.summary, "마이크 사용 중 · Google Chrome")
+		const mic = activity.cardFor("microphone")
+		compare(mic.title, "마이크 사용 중")
+		compare(mic.rows, [{text: "Google Chrome", glyph: "󰖯", image: "file:///chrome.svg"}])
+		compare(activity.cardFor("camera"), null)
 		micFixture.muted = true; shareFixture.active = true
-		compare(activity.summary, "마이크 사용 중(음소거): Google Chrome\n화면 공유 중")
+		compare(activity.cardFor("microphone").title, "마이크 사용 중 (음소거)")
+		compare(activity.summary, "마이크 사용 중 (음소거) · Google Chrome\n화면 공유 중 · 중지는 회의 앱의 «공유 중지»")
 		tryVerify(() => activity.implicitWidth > 0)
+	}
+	function test_hoverSelectsThatIconsCard() {
+		micFixture.applications = ["Google Chrome"]; micFixture.inUse = true; shareFixture.active = true
+		const activity = createTemporaryObject(activityFactory, testCase)
+		const share = findChild(activity, "activityShare")
+		tryVerify(() => share.width > 0 && share.x > 0)
+		compare(activity.card, null)
+		mouseMove(share, share.width / 2, share.height / 2)
+		tryCompare(activity, "hoveredKind", "share")
+		compare(activity.hoveredItem, share)
+		compare(activity.card.title, "화면 공유 중")
 	}
 }

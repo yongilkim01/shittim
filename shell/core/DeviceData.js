@@ -24,8 +24,10 @@ function isRecording(node) {
     return property(node, "stream.monitor") !== "true" && property(node, "stream.capture.sink") !== "true"
 }
 
+// Chrome names its capture stream "Google Chrome input"; the user knows the app as "Google Chrome".
 function applicationName(node) {
-    return property(node, "application.name") || label(node) || "알 수 없는 앱"
+    const name = property(node, "application.name") || label(node)
+    return name ? name.replace(/\s+input$/i, "") || name : "알 수 없는 앱"
 }
 
 function applicationNames(nodes) {

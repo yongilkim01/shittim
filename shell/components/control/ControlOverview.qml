@@ -12,10 +12,14 @@ Item {
     property var microphone: null
     property var camera: null
     property var screenShare: null
-    readonly property var deviceActivity: [
-        microphone !== null && microphone.inUse ? (microphone.muted ? "마이크 사용 중(음소거)" : "마이크 사용 중") : "",
-        camera !== null && camera.inUse ? "카메라 사용 중" : "",
-        screenShare !== null && screenShare.active ? "화면 공유 중" : ""].filter(text => text.length > 0)
+    readonly property bool micInUse: microphone !== null && microphone.inUse
+    readonly property bool cameraInUse: camera !== null && camera.inUse
+    readonly property bool shareActive: screenShare !== null && screenShare.active
+    readonly property bool deviceActive: micInUse || cameraInUse || shareActive
+    readonly property var meetingInfo: ({glyph: "󰕧", title: "회의 장치", rows: [
+        {glyph: micInUse && microphone.muted ? "󰍭" : "󰍬", text: "마이크", active: micInUse, status: !micInUse ? "사용 안 함" : microphone.muted ? "음소거" : "사용 중"},
+        {glyph: "󰕧", text: "카메라", active: cameraInUse, status: cameraInUse ? "사용 중" : "사용 안 함"},
+        {glyph: "󰍹", text: "화면 공유", active: shareActive, status: shareActive ? "사용 중" : "사용 안 함"}]})
     property var notifications: null
     signal navigate(string page)
     readonly property real tileWidth: 93 + (width - Theme.controlPanelWidth) / 3
@@ -70,7 +74,7 @@ Item {
         Rectangle { x: 18; y: 163; width: root.width - 33; height: 1; color: Theme.border; opacity: 0.45 }
         Repeater {
             model: [
-                {name: "Meeting", key: "devices", icon: "󰍹", hint: "마이크·카메라·화면 공유 상태"},
+                {name: "Meeting", key: "devices", icon: "󰕧", hint: "마이크·카메라·화면 공유 상태"},
                 {name: "Do Not Disturb", key: "dnd", icon: "\uf186", hint: "방해 금지 전환 · 긴급 알림은 표시합니다."},
                 {name: "Dark Mode", key: "dark", icon: "\uf042", hint: "고정 HUD 테마이며 시스템 테마 전환은 지원하지 않습니다."},
                 {name: "Power", key: "power", icon: "\uf011", hint: "배터리와 전원 프로필"},
@@ -84,9 +88,9 @@ Item {
                 x: 18 + (index % 3) * (root.tileWidth + 13); y: 173 + Math.floor(index / 3) * 59
                 width: root.tileWidth-(index%3===0 ? 0 : 1); height: 49
                 title: modelData.name; glyph: modelData.icon
-                hint: modelData.key === "devices" && root.deviceActivity.length > 0 ? root.deviceActivity.join(" · ")
-                    : modelData.key === "dnd" && root.notifications !== null && !root.notifications.available ? "Shittim 알림 서버 소유권을 확인하세요." : modelData.hint
-                active: modelData.key === "dnd" && root.notifications !== null && root.notifications.dnd || modelData.key === "devices" && root.deviceActivity.length > 0
+                hint: modelData.key === "dnd" && root.notifications !== null && !root.notifications.available ? "Shittim 알림 서버 소유권을 확인하세요." : modelData.hint
+                info: modelData.key === "devices" ? root.meetingInfo : null
+                active: modelData.key === "dnd" && root.notifications !== null && root.notifications.dnd || modelData.key === "devices" && root.deviceActive
                 interactive: ["devices", "power", "settings"].indexOf(modelData.key) >= 0 || modelData.key === "screenshot" && root.capture.screenshotAvailable || modelData.key === "dnd" && root.notifications !== null && root.notifications.available
                 onClicked: { if (modelData.key === "dnd") root.notifications.toggleDnd(); else if (modelData.key === "screenshot") root.capture.takeScreenshot(); else root.navigate(modelData.key) }
             }

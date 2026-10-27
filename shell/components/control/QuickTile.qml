@@ -43,9 +43,23 @@ ControlFrame {
 			else root.clicked()
 		}
 	}
-	Controls.ToolTip.visible: mouse.containsMouse && hint.length > 0
-	Controls.ToolTip.text: hint
-	Controls.ToolTip.delay: 500
+	// Optional detailed card {glyph, title, rows}; otherwise the hint is a one-line card.
+	property var info: null
+	Controls.ToolTip {
+		id: tip; objectName: "tileTip"
+		visible: mouse.containsMouse && (root.info !== null || root.hint.length > 0)
+		delay: 500; padding: 0; margins: 0
+		background: null
+		// Above the tile, or below it when the panel has no room above.
+		readonly property bool below: root.mapToItem(null, 0, 0).y < implicitHeight + Theme.spaceS
+		x: (root.width - implicitWidth) / 2
+		y: below ? root.height + Theme.spaceXS : -implicitHeight - Theme.spaceXS
+		onAboutToShow: card.arrow = below ? "top" : "bottom"
+		contentItem: HudInfoCard {
+			id: card; arrow: "bottom"
+			glyph: root.info ? root.info.glyph : ""; title: root.info ? root.info.title : root.hint; rows: root.info ? root.info.rows : []
+		}
+	}
 	Keys.onReturnPressed: if (interactive) clicked()
 	Keys.onSpacePressed: if (interactive) clicked()
 	activeFocusOnTab: interactive

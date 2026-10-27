@@ -125,8 +125,10 @@ PanelWindow {
 				id: statuses; objectName: "barStatuses"
 				spacing: Theme.spaceXL
 				DeviceActivity {
+					id: deviceActivity
 					anchors.verticalCenter: parent.verticalCenter
 					microphone: MicrophoneState; camera: CameraState; screenShare: ScreenShareState
+					iconFor: name => { const entry = DesktopEntries.heuristicLookup(name); return entry && entry.icon ? Quickshell.iconPath(entry.icon, true) : "" }
 					onDetailsRequested: ControlState.show(bar, statusArea, "devices")
 				}
 				Network { compact: true; anchors.verticalCenter: parent.verticalCenter }
@@ -135,6 +137,7 @@ PanelWindow {
 				HudDivider { anchors.verticalCenter: parent.verticalCenter }
 				Clock { compact: true; anchors.verticalCenter: parent.verticalCenter }
 			}
+			BarTooltip { target: deviceActivity.hoveredItem; card: deviceActivity.card }
 		}
 	}
 }

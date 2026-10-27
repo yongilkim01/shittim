@@ -191,7 +191,14 @@ TestCase {
 		compare(tile.active, false)
 		shareFixture.count = 1
 		compare(tile.active, true)
-		compare(tile.hint, "화면 공유 중")
+		compare(tile.info.title, "회의 장치")
+		compare(tile.info.rows.map(row => row.status), ["사용 안 함", "사용 안 함", "사용 중"])
+		microphoneFixture.inUse = true; microphoneFixture.muted = true
+		compare(tile.info.rows[0].status, "음소거")
+		// The detailed card replaces the default Qt tooltip and appears on hover.
+		mouseMove(tile, tile.width / 2, tile.height / 2)
+		const tip = findChild(tile, "tileTip")
+		tryVerify(() => tip.visible, 2000)
 		mouseClick(tile, tile.width / 2, tile.height / 2)
 		compare(content.page, "devices")
 	}
