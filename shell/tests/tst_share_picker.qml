@@ -6,8 +6,8 @@ import "../components/sharepicker/PickerData.js" as PickerData
 TestCase {
 	id: testCase
 	name: "SharePicker"
-	width: 800; height: 560; visible: true; when: windowShown
-	Component { id: viewFactory; SharePickerView { width: 760; height: 520; focus: true } }
+	width: 1000; height: 640; visible: true; when: windowShown
+	Component { id: viewFactory; SharePickerView { width: 980; height: 620; focus: true } }
 	SignalSpy { id: chosenSpy; signalName: "chosen" }
 	SignalSpy { id: cancelSpy; signalName: "cancelled" }
 	function init() { failOnWarning(/.*/) }
@@ -35,39 +35,74 @@ TestCase {
 		compare(PickerData.selection("screen", "eDP-1\n[SELECTION]/window:1", true), "")
 		compare(PickerData.selection("region", "x", true), "")
 	}
-	function test_viewChoosesOnlyOnUserAction() {
-		const view = createTemporaryObject(viewFactory, testCase, {
-			outputs: [{name: "eDP-1", x: 0, y: 0, width: 1280, height: 720}, {name: "HDMI-A-1", x: 1280, y: 0, width: 1920, height: 1080}],
-			windows: [{id: "93", appClass: "google-chrome", title: "Meet", address: "1"}]})
+	function click(item) { mouseClick(item, item.width / 2, item.height / 2) }
+	readonly property var twoScreens: [{name: "eDP-1", x: 0, y: 0, width: 1280, height: 720}, {name: "HDMI-A-1", x: 1280, y: 0, width: 1920, height: 1200}]
+	readonly property var twoWindows: [{id: "93", appClass: "google-chrome", title: "Meet", address: "1"}, {id: "94", appClass: "google-chrome", title: "Docs", address: "2"},
+		{id: "17", appClass: "kitty", title: "~/shittim", address: "3"}]
+	function test_selectThenShare() {
+		const view = createTemporaryObject(viewFactory, testCase, {focusedOutput: "HDMI-A-1", outputs: twoScreens, windows: twoWindows})
 		chosenSpy.target = view; cancelSpy.target = view
 		wait(20)
-		compare(chosenSpy.count, 0)
 		compare(view.tab, "screen")
+		compare(findChild(view, "pickerInfo").text, "공유할 화면이나 창을 선택하세요.")
+		const share = findChild(view, "pickerShare")
+		compare(share.enabled, false)
 		const screen = findChild(view, "pickerScreen-HDMI-A-1")
 		verify(screen !== null)
-		mouseClick(screen, screen.width / 2, screen.height / 2)
+		compare(view.screenTitle(view.outputs[1], 1), "모니터 2")
+		compare(view.screenDetail(view.outputs[0]), "1280 × 720 (16:9)")
+		compare(view.screenDetail(view.outputs[1]), "1920 × 1200 (16:10)")
+		click(screen)
+		// Picking only selects; nothing is shared until the user confirms.
+		compare(chosenSpy.count, 0)
+		compare(screen.picked, true)
+		compare(share.enabled, true)
+		compare(findChild(view, "pickerInfo").text, "선택한 화면만 공유됩니다.")
+		// The window list beside the monitors picks a window without leaving the tab.
+		const row = findChild(view, "pickerWindowRow-17")
+		click(row)
+		compare(view.tab, "screen")
+		compare(row.picked, true); compare(screen.picked, false)
+		compare(findChild(view, "pickerInfo").text, "선택한 창만 공유됩니다. 다른 창은 보이지 않습니다.")
+		click(screen)
+		click(share)
 		compare(chosenSpy.count, 1)
 		compare(Array.from(chosenSpy.signalArguments[0]), ["screen", "HDMI-A-1"])
-		const tab = findChild(view, "pickerTabWindow")
-		mouseClick(tab, tab.width / 2, tab.height / 2)
+		click(findChild(view, "pickerTabWindow"))
 		compare(view.tab, "window")
-		const row = findChild(view, "pickerWindow-93")
-		tryVerify(() => row.visible && row.width > 0)
-		mouseClick(row, row.width / 2, row.height / 2)
-		compare(Array.from(chosenSpy.signalArguments[1]), ["window", "93"])
 	}
-	function test_keyboardAndRememberToggle() {
-		const view = createTemporaryObject(viewFactory, testCase, {outputs: [{name: "eDP-1", x: 0, y: 0, width: 1280, height: 720}], windows: []})
+	function test_windowNamesUseDesktopEntries() {
+		const view = createTemporaryObject(viewFactory, testCase, {outputs: twoScreens, windows: twoWindows,
+			appInfo: appClass => appClass === "kitty" ? {name: "Kitty", genericName: "터미널", icon: ""}
+				: appClass === "google-chrome" ? {name: "Google Chrome", genericName: "웹 브라우저", icon: ""} : null})
+		compare(view.windowTitle(twoWindows[2]), "Kitty")
+		compare(view.windowDetail(twoWindows[2]), "터미널")
+		// Two Chrome windows: the window title tells them apart.
+		compare(view.windowTitle(twoWindows[0]), "Google Chrome")
+		compare(view.windowDetail(twoWindows[0]), "Meet")
+		compare(view.windowTitle({id: "5", appClass: "unknown", title: "x", address: "4"}), "unknown")
+	}
+	function test_doubleActivationShares() {
+		const view = createTemporaryObject(viewFactory, testCase, {outputs: [], windows: twoWindows})
+		chosenSpy.target = view
+		compare(view.tab, "window")
+		const card = findChild(view, "pickerWindow-93")
+		tryVerify(() => card.visible && card.width > 0)
+		mouseDoubleClickSequence(card, card.width / 2, card.height / 2)
+		compare(chosenSpy.count, 1)
+		compare(Array.from(chosenSpy.signalArguments[0]), ["window", "93"])
+	}
+	function test_keyboardShareAndEscape() {
+		const view = createTemporaryObject(viewFactory, testCase, {outputs: [twoScreens[0]], windows: []})
 		chosenSpy.target = view; cancelSpy.target = view
 		view.forceActiveFocus()
 		wait(20)
 		keyClick(Qt.Key_Return)
+		compare(chosenSpy.count, 0)
+		compare(view.selectedValue, "eDP-1")
+		keyClick(Qt.Key_Return)
 		compare(chosenSpy.count, 1)
 		compare(Array.from(chosenSpy.signalArguments[0]), ["screen", "eDP-1"])
-		const remember = findChild(view, "pickerRemember")
-		compare(view.remember, true)
-		mouseClick(remember, remember.width / 2, remember.height / 2)
-		compare(view.remember, false)
 		view.forceActiveFocus()
 		keyClick(Qt.Key_Escape)
 		compare(cancelSpy.count, 1)
@@ -75,5 +110,7 @@ TestCase {
 	function test_emptyListsShowWindowTabWhenNoScreens() {
 		const view = createTemporaryObject(viewFactory, testCase, {outputs: [], windows: [{id: "1", appClass: "kitty", title: "", address: "0"}]})
 		compare(view.tab, "window")
+		click(findChild(view, "pickerTabScreen"))
+		compare(findChild(view, "pickerEmpty").visible, true)
 	}
 }

@@ -37,23 +37,47 @@ ShellRoot {
 		MouseArea { anchors.fill: parent; onClicked: root.finish("[CANCEL]\n") }
 		SharePickerView {
 			anchors.centerIn: parent
-			width: Math.min(parent.width - 32, 780); height: Math.min(parent.height - 32, 540)
+			width: Math.min(parent.width - 32, 980); height: Math.min(parent.height - 32, 620)
 			focus: true
 			outputs: root.outputs; windows: root.windows
+			focusedOutput: Hyprland.focusedMonitor !== null ? Hyprland.focusedMonitor.name : ""
 			remember: Quickshell.env("SHITTIM_PICKER_ALLOW_TOKEN") === "1"
-			previewComponent: screenPreview
+			previewComponent: preview
+			appInfo: appClass => root.appInfo(appClass)
 			onChosen: (kind, value) => root.finish(PickerData.selection(kind, value, remember))
 			onCancelled: root.finish("[CANCEL]\n")
 			// Clicks inside the panel must not reach the cancel backdrop.
 			MouseArea { anchors.fill: parent; z: -1 }
 		}
 	}
+	// xdph passes the Hyprland window address as a decimal number; Quickshell reports it in hex.
+	function toplevelFor(target) {
+		const address = Number(target.address)
+		if (!Number.isSafeInteger(address) || address <= 0) return null
+		const hex = address.toString(16)
+		const match = Hyprland.toplevels.values.find(toplevel => String(toplevel.address).replace(/^0x/, "").toLowerCase() === hex)
+		return match ? match.wayland : null
+	}
+	function appInfo(appClass) {
+		const entry = appClass ? DesktopEntries.heuristicLookup(appClass) : null
+		if (!entry) return null
+		return {name: entry.name || "", genericName: entry.genericName || "", icon: entry.icon ? Quickshell.iconPath(entry.icon, true) : ""}
+	}
 	Component {
-		id: screenPreview
-		ScreencopyView {
-			property var output: null
-			captureSource: output === null ? null : Quickshell.screens.find(screen => screen.name === output.name) || null
-			live: false
+		id: preview
+		Item {
+			property string kind: ""
+			property var target: null
+			readonly property bool hasContent: copy.hasContent
+			ScreencopyView {
+				id: copy; anchors.centerIn: parent
+				width: Math.min(parent.width, implicitWidth); height: Math.min(parent.height, implicitHeight)
+				constraintSize: Qt.size(parent.width, parent.height)
+				captureSource: parent.target === null ? null
+					: parent.kind === "screen" ? Quickshell.screens.find(screen => screen.name === parent.target.name) || null
+					: root.toplevelFor(parent.target)
+				live: false
+			}
 		}
 	}
 }
