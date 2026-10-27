@@ -37,6 +37,7 @@ TestCase {
 		compare(Devices.applicationNames([chrome, chrome, node({isStream: true, audio: audio, description: "OBS"})]), ["Google Chrome", "OBS"])
 	}
 	function test_screenCastMatchesPortalStreamsOnly() {
+		verify(Devices.isScreenCast(node({name: "xdg-desktop-portal-hyprland"})))
 		verify(Devices.isScreenCast(node({name: "xdph-streaming-aB3dE"})))
 		verify(!Devices.isScreenCast(node({name: "v4l2_input.pci-0000_00_14.0-usb-0_6_1.0"})))
 		verify(!Devices.isScreenCast(node({name: "xdph-streaming-x", isStream: true})))

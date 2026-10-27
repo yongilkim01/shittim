@@ -39,7 +39,9 @@ function applicationNames(nodes) {
     return names
 }
 
-// xdg-desktop-portal-hyprland names every screencast stream "xdph-streaming-<random>" (Video/Source).
+// xdg-desktop-portal-hyprland creates one Video/Source stream per screencast. The stream is named
+// "xdph-streaming-<random>" (media.name), but PipeWire sets node.name to the portal's application name.
 function isScreenCast(node) {
-    return !!node && !node.isStream && String(node.name || "").indexOf("xdph-streaming-") === 0
+    const name = String(node && node.name || "")
+    return !!node && !node.isStream && (name === "xdg-desktop-portal-hyprland" || name.indexOf("xdph-streaming-") === 0)
 }

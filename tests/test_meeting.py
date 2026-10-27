@@ -153,7 +153,7 @@ class ChromeAndDevices(unittest.TestCase):
 
     def test_screencast_nodes_from_pw_dump(self):
         dump = json.dumps([
-            {'type': 'PipeWire:Interface:Node', 'info': {'props': {'node.name': 'xdph-streaming-Ab12', 'media.class': 'Video/Source'}}},
+            {'type': 'PipeWire:Interface:Node', 'info': {'props': {'node.name': 'xdg-desktop-portal-hyprland', 'media.name': 'xdph-streaming-Ab12', 'media.class': 'Video/Source'}}},
             {'type': 'PipeWire:Interface:Node', 'info': {'props': {'node.name': 'v4l2_input.usb', 'media.class': 'Video/Source'}}},
             {'type': 'PipeWire:Interface:Port', 'info': {'props': {'node.name': 'xdph-streaming-port'}}}])
         self.assertEqual(CHECK.screencast_nodes(dump), ['xdph-streaming-Ab12'])

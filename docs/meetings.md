@@ -13,7 +13,7 @@ Google Meet 같은 브라우저 회의를 Shittim 에서 쓰기 위한 공통 �
 | Chrome | 플래그를 **추가하지 않는다**. 프로필·쿠키·비밀번호·확장·권한을 건드리지 않는다 | `scripts/meeting-check.py` 가 위험 플래그만 검사 |
 | 마이크 | 기본 입력 장치 볼륨·음소거·선택, 녹음 중인 앱 목록 | `shell/services/MicrophoneState.qml` |
 | 카메라 | `/dev/videoN` 존재·캡처 가능 여부·사용 중인 프로세스 | `scripts/camera-service.py` → `shell/services/CameraState.qml` |
-| 화면 공유 상태 | xdph 가 만드는 PipeWire `Video/Source` 노드(`xdph-streaming-*`) 관찰 | `shell/services/ScreenShareState.qml` |
+| 화면 공유 상태 | xdph 가 만드는 PipeWire `Video/Source` 노드(`node.name` = `xdg-desktop-portal-hyprland`, `media.name` = `xdph-streaming-*`) 관찰 | `shell/services/ScreenShareState.qml` |
 | 분류 규칙 | 마이크/녹음 스트림/공유 스트림 판정 (UI·서비스 공용, 단위 시험 대상) | `shell/core/DeviceData.js` |
 
 ### 책임 분리
@@ -29,7 +29,7 @@ Google Meet 같은 브라우저 회의를 Shittim 에서 쓰기 위한 공통 �
 |---|---|---|
 | 마이크 사용 중 | PipeWire `Stream/Input/Audio` 노드 (`stream.monitor`·`stream.capture.sink` 제외) | 앱 이름은 `application.name` 그대로 (Chrome = `Google Chrome`) |
 | 카메라 사용 중 | `/dev/videoN` 을 연 프로세스 (`/proc/<pid>/fd`), inotify open/close 이벤트로 다시 조회 | 같은 사용자 프로세스만 보인다. Meet 의 장치 나열처럼 0.3초 안에 닫는 열기는 무시 |
-| 화면 공유 중 | `xdph-streaming-*` 노드 존재 (공유 시작 시 생성, 중지 시 제거 — xdph `Screencopy.cpp`) | 어떤 앱이 무엇을 공유하는지는 노드에 없어 표시하지 않는다 |
+| 화면 공유 중 | xdph 의 `Video/Source` 노드 존재 (공유 시작 시 생성, 중지 시 제거 — xdph `Screencopy.cpp`) | 어떤 앱이 무엇을 공유하는지는 노드에 없어 표시하지 않는다 |
 
 브라우저 안의 상태(Meet 마이크 버튼, 카메라 끄기)는 추측하지 않는다. Meet 에서 마이크를 끄면 Chrome 스트림이 남아 있는 동안 “사용 중”으로 보일 수 있다.
 
@@ -140,4 +140,4 @@ python3 scripts/camera-service.py --check
 | [ViegPhunt Dotfiles](https://github.com/ViegPhunt/Dotfiles) (MIT) | `install_archpkg.sh` 의 포털 3종 패키지, `environment.conf` 의 `OZONE_PLATFORM` 전역 환경변수 | 패키지 구성만 확인. 전역 Ozone 환경변수는 Chrome 기본값과 겹쳐 쓰지 않음 |
 | [ViegPhunt Arch-Hyprland](https://github.com/ViegPhunt/Arch-Hyprland) (MIT) | 설치 스크립트 구성 | 해당 기능 관련 구현 없음 |
 
-화면 공유 스트림 이름은 [xdg-desktop-portal-hyprland](https://github.com/hyprwm/xdg-desktop-portal-hyprland) `src/portals/Screencopy.cpp` 의 `getRandName("xdph-streaming-")` · `PW_KEY_MEDIA_CLASS "Video/Source"` 에서 확인했다. Quickshell 0.3.2 의 `Pipewire.nodes` 는 노드 종류를 걸러내지 않고 `Video/Source` 를 `VideoSource` 로 분류한다(`qml.cpp`, `node.cpp`).
+화면 공유 스트림 이름은 [xdg-desktop-portal-hyprland](https://github.com/hyprwm/xdg-desktop-portal-hyprland) `src/portals/Screencopy.cpp` 의 `getRandName("xdph-streaming-")` · `PW_KEY_MEDIA_CLASS "Video/Source"` 에서 확인했다. 이 이름은 `pw_stream_new` 가 `media.name` 으로 넣고, `node.name` 은 PipeWire `stream.c` 가 컨텍스트의 `application.name`(`xdg-desktop-portal-hyprland`)으로 채운다. Quickshell 0.3.2 의 `Pipewire.nodes` 는 노드 종류를 걸러내지 않고 `Video/Source` 를 `VideoSource` 로 분류한다(`qml.cpp`, `node.cpp`).

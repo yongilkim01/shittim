@@ -254,8 +254,11 @@ def screencast_nodes(dump_json):
     names = []
     for item in objects if isinstance(objects, list) else []:
         props = ((item.get('info') or {}).get('props') or {}) if isinstance(item, dict) else {}
-        if item.get('type') == 'PipeWire:Interface:Node' and str(props.get('node.name', '')).startswith('xdph-streaming-'):
-            names.append(props['node.name'])
+        # The stream name is media.name; PipeWire sets node.name to the portal's application name.
+        name = str(props.get('media.name') or props.get('node.name') or '')
+        if item.get('type') == 'PipeWire:Interface:Node' and props.get('media.class') == 'Video/Source' and (
+                name.startswith('xdph-streaming-') or props.get('node.name') == 'xdg-desktop-portal-hyprland'):
+            names.append(name)
     return names
 
 
