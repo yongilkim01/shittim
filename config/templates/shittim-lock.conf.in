@@ -19,7 +19,7 @@ background {
 
 image {
     monitor =
-    path = @ROOT@/assets/branding/shittim-emblem.png
+    path = @ROOT@/assets/lock/emblem.png
     size = 64
     rounding = 0
     border_size = 0

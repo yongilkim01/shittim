@@ -3,7 +3,9 @@ import importlib.util
 import json
 import os
 from pathlib import Path
+import re
 import shutil
+import struct
 import subprocess
 import tempfile
 import unittest
@@ -231,8 +233,20 @@ class LockScreen(unittest.TestCase):
         self.assertTrue(text.startswith('# Managed by Shittim'))
         self.assertNotIn('@ROOT', text)
         self.assertIn('path = ' + str(ROOT) + '/assets/wallpapers/shittim-city.png', text)
-        for asset in ('assets/wallpapers/shittim-city.png', 'assets/branding/shittim-emblem.png', 'assets/lock/card.png'):
+        template = (ROOT / 'config/templates/shittim-lock.conf.in').read_text()
+        widgets = []
+        for block in template.split('\n}\n'):
+            path = re.search(r'path = @ROOT@/(\S+)', block)
+            if path:
+                size = re.search(r'\n    size = (\d+)', block)
+                widgets.append((block.strip().split(' ', 1)[0].split('\n')[-1], path[1], size[1] if size else ''))
+        self.assertEqual([kind for kind, _, _ in widgets], ['background', 'image', 'image'])
+        for kind, asset, size in widgets:
             self.assertTrue((ROOT / asset).is_file(), asset)
+            if kind == 'image':
+                # hyprlock minifies with GL_LINEAR and no mipmaps; a source much larger than 2x breaks thin lines.
+                width, height = struct.unpack('>II', (ROOT / asset).read_bytes()[16:24])
+                self.assertLessEqual(min(width, height), int(size) * 2, asset)
 
     def test_template_never_handles_secrets_and_keeps_pam_with_hyprlock(self):
         template = (ROOT / 'config/templates/shittim-lock.conf.in').read_text()
