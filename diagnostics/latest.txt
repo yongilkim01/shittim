@@ -1,10 +1,10 @@
 Shittim 로그인 진단
-수집 시각: 2026-10-28T08:39:26.363048+00:00
+수집 시각: 2026-10-28T09:09:04.949202+00:00
 자동 실행/서비스/설정 변경 없음. 의심 줄은 제외되며 원본 로그는 복사하지 않음.
 
 === 저장소 버전 ===
 [종료 코드 0]
-5a4d573 fix: per-unit journal tails and shell screen state in diagnostics
+078e776 feat: record panel open/close reasons and watch them across suspend
 
 === 세션 환경 (허용한 변수만) ===
 SHELL=/usr/bin/bash
@@ -85,7 +85,7 @@ util-linux 2.42.4-1
 [Shittim] 기본 앱·XDG 파일 연결·포털·잠금 설정 검사 통과
 [Shittim] Floating 정책·GTK 설정·HUD 아이콘 링크 검사 통과
 {"activationFiles": [], "autostartCandidates": []}
-{"state": "owned", "pid": 732}
+{"state": "owned", "pid": 6203}
 == 패키지
 [정상] pipewire
 [정상] pipewire-pulse
@@ -254,6 +254,34 @@ Oct 28 17:19:25 <HOST> bash[732]:   WARN scene: QML WindowManager at @shell.qml[
 Oct 28 17:19:25 <HOST> bash[732]: qs:@/qs/components/WindowManager.qml:12:5
 Oct 28 17:19:35 <HOST> bash[732]:   WARN scene: QML WindowManager at @shell.qml[33:2]: Binding loop detected for property "visible":
 Oct 28 17:19:35 <HOST> bash[732]: qs:@/qs/components/WindowManager.qml:12:5
+Oct 28 17:41:46 <HOST> bash[732]:   WARN scene: QML ControlCenter at @shell.qml[19:2]: Binding loop detected for property "visible":
+Oct 28 17:41:46 <HOST> bash[732]: qs:@/qs/components/ControlCenter.qml:12:2
+Oct 28 17:42:23 <HOST> bash[732]:   WARN scene: QML ControlCenter at @shell.qml[19:2]: Binding loop detected for property "visible":
+Oct 28 17:42:23 <HOST> bash[732]: qs:@/qs/components/ControlCenter.qml:12:2
+Oct 28 17:54:59 <HOST> bash[732]:   WARN scene: QML WindowManager at @shell.qml[33:2]: Binding loop detected for property "visible":
+Oct 28 17:54:59 <HOST> bash[732]: qs:@/qs/components/WindowManager.qml:12:5
+Oct 28 17:55:00 <HOST> bash[732]:   WARN scene: QML WindowManager at @shell.qml[33:2]: Binding loop detected for property "visible":
+Oct 28 17:55:00 <HOST> bash[732]: qs:@/qs/components/WindowManager.qml:12:5
+Oct 28 17:55:07 <HOST> bash[732]:   INFO: Reloading configuration...
+Oct 28 17:55:07 <HOST> bash[732]:   INFO: Configuration Loaded
+Oct 28 17:55:22 <HOST> systemd[625]: Stopping Shittim desktop shell...
+Oct 28 17:55:22 <HOST> systemd[625]: Stopped Shittim desktop shell.
+Oct 28 17:55:22 <HOST> systemd[625]: shittim.service: Consumed 14.810s CPU time over 49min 12.740s wall clock time, 540.1M memory peak.
+Oct 28 17:55:22 <HOST> systemd[625]: Started Shittim desktop shell.
+[민감 정보 의심 줄 제외]
+Oct 28 17:55:22 <HOST> bash[4624]:   INFO: Shell ID: "9eb42cb46c47fc06b73f0cbee12bf779" Path ID "9eb42cb46c47fc06b73f0cbee12bf779"
+[민감 정보 의심 줄 제외]
+Oct 28 17:55:22 <HOST> bash[4624]:   INFO: Configuration Loaded
+Oct 28 18:07:09 <HOST> bash[4624]:   INFO: Reloading configuration...
+Oct 28 18:07:09 <HOST> bash[4624]:   INFO: Configuration Loaded
+Oct 28 18:07:27 <HOST> systemd[625]: Stopping Shittim desktop shell...
+Oct 28 18:07:27 <HOST> systemd[625]: Stopped Shittim desktop shell.
+Oct 28 18:07:27 <HOST> systemd[625]: shittim.service: Consumed 7.016s CPU time over 12min 1.817s wall clock time, 406.1M memory peak.
+Oct 28 18:07:27 <HOST> systemd[625]: Started Shittim desktop shell.
+[민감 정보 의심 줄 제외]
+Oct 28 18:07:27 <HOST> bash[6203]:   INFO: Shell ID: "9eb42cb46c47fc06b73f0cbee12bf779" Path ID "9eb42cb46c47fc06b73f0cbee12bf779"
+[민감 정보 의심 줄 제외]
+Oct 28 18:07:28 <HOST> bash[6203]:   INFO: Configuration Loaded
 
 === 사용자 서비스 로그 shittim-fcitx5.service ===
 [종료 코드 0]
@@ -271,57 +299,80 @@ Oct 28 17:06:01 <HOST> polkit-kde-authentication-agent-1[731]: Failed to registe
 
 === 사용자 서비스 로그 shittim-idle.service ===
 [종료 코드 0]
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: vicinae_hotkey_manager_v1 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: ext_workspace_manager_v1 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: ext_data_control_manager_v1 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: wp_pointer_warp_v1 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: wp_fifo_manager_v1 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: zxdg_exporter_v2 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: zxdg_importer_v2 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: ext_background_effect_manager_v1 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: wp_commit_timing_manager_v1 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: zwlr_screencopy_manager_v1 v3
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: hyprland_toplevel_export_manager_v1 v2
+Oct 28 18:01:07 <HOST> bash[5011]: DEBUG ]: Configuring surface for logical [Vector2D: x: 1280, y: 720] and pixel [Vector2D: x: 1920, y: 1080]
+Oct 28 18:01:07 <HOST> bash[5011]: DEBUG ]: Missing screenshot for output eDP-1
+Oct 28 18:01:07 <HOST> bash[5011]: DEBUG ]: Updating placeholder text: 비밀번호 입력
+Oct 28 18:01:07 <HOST> bash[2459]: [LOG] Wayland session got locked
+Oct 28 18:01:07 <HOST> bash[5011]: DEBUG ]: onLockLocked called
+Oct 28 18:01:07 <HOST> bash[2459]: [LOG] Releasing the sleep inhibitor!
+Oct 28 18:06:07 <HOST> bash[2459]: [LOG] Idled: rule 55af7f7c0850
+Oct 28 18:06:07 <HOST> bash[2459]: [LOG] Running loginctl lock-session
+Oct 28 18:06:07 <HOST> bash[2459]: [LOG] Executing loginctl lock-session
+Oct 28 18:06:07 <HOST> bash[2459]: [LOG] Process Created with pid 5975
+Oct 28 18:06:07 <HOST> bash[2459]: [LOG] Got dbus .Session
+Oct 28 18:06:07 <HOST> bash[2459]: [LOG] Got Lock from dbus
 [민감 정보 의심 줄 제외]
 [민감 정보 의심 줄 제외]
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: ext_image_copy_capture_manager_v1 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: wp_color_manager_v1 v3
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: wp_drm_lease_device_v1 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: wp_linux_drm_syncobj_manager_v1 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: wl_drm v2
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: zwp_linux_dmabuf_v1 v5
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: wl_output v4
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG] found 2 rules
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG] wayland done, registering dbus
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG] Sleep inhibition enabled - inhibiting until the wayland session gets locked
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG] Using dbus path /org/freedesktop/login1/session/_31
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG] Inhibited sleep with fd 10
-Oct 28 17:30:56 <HOST> bash[2459]: [LOG] Wayland session got locked
-Oct 28 17:30:56 <HOST> bash[2459]: [LOG] Releasing the sleep inhibitor!
-Oct 28 17:30:56 <HOST> bash[2459]: [LOG] Got PrepareForSleep from dbus with sleep true
-Oct 28 17:30:56 <HOST> bash[2459]: [LOG] Executing loginctl lock-session
-Oct 28 17:30:56 <HOST> bash[2459]: [LOG] Process Created with pid 2533
-Oct 28 17:30:56 <HOST> bash[2459]: [LOG] Got dbus .Session
-Oct 28 17:30:56 <HOST> bash[2459]: [LOG] Got Lock from dbus
+Oct 28 18:06:07 <HOST> bash[2459]: [LOG] Process Created with pid 5977
+Oct 28 18:06:48 <HOST> bash[2459]: [LOG] Resumed: rule 55af7f7c0850
+Oct 28 18:06:48 <HOST> bash[2459]: [LOG] Ignoring, onRestore is empty.
+Oct 28 18:06:49 <HOST> bash[5011]: DEBUG ]: Authenticating
+Oct 28 18:06:49 <HOST> bash[5011]: DEBUG ]: Updating placeholder text: 확인 중…
+Oct 28 18:06:49 <HOST> bash[5011]: DEBUG ]: auth: authenticated for hyprlock
+Oct 28 18:06:49 <HOST> bash[5011]: DEBUG ]: Unlocking session
+Oct 28 18:06:49 <HOST> bash[5011]: DEBUG ]: Unlocked, exiting!
+Oct 28 18:06:49 <HOST> bash[2459]: [LOG] Wayland session got unlocked
+Oct 28 18:06:49 <HOST> bash[2459]: [LOG] Inhibited sleep with fd 10
+Oct 28 18:06:49 <HOST> bash[5011]: DEBUG ]: Reached the end, exiting
+Oct 28 18:07:56 <HOST> bash[2459]: [LOG] Wayland session got locked
+Oct 28 18:07:56 <HOST> bash[2459]: [LOG] Releasing the sleep inhibitor!
+Oct 28 18:07:56 <HOST> bash[2459]: [LOG] Got PrepareForSleep from dbus with sleep true
+Oct 28 18:07:56 <HOST> bash[2459]: [LOG] Executing loginctl lock-session
+Oct 28 18:07:56 <HOST> bash[2459]: [LOG] Process Created with pid 6472
+Oct 28 18:07:56 <HOST> bash[2459]: [LOG] Got dbus .Session
+Oct 28 18:07:56 <HOST> bash[2459]: [LOG] Got Lock from dbus
 [민감 정보 의심 줄 제외]
 [민감 정보 의심 줄 제외]
-Oct 28 17:30:56 <HOST> bash[2459]: [LOG] Process Created with pid 2540
-Oct 28 17:31:04 <HOST> bash[2459]: [LOG] Got PrepareForSleep from dbus with sleep false
+Oct 28 18:07:56 <HOST> bash[2459]: [LOG] Process Created with pid 6479
+Oct 28 18:08:07 <HOST> bash[2459]: [LOG] Got PrepareForSleep from dbus with sleep false
 [민감 정보 의심 줄 제외]
-Oct 28 17:31:04 <HOST> bash[2459]: [LOG] Process Created with pid 2597
-Oct 28 17:31:07 <HOST> bash[2459]: [LOG] Wayland session got unlocked
-Oct 28 17:31:07 <HOST> bash[2459]: [LOG] Inhibited sleep with fd 10
+Oct 28 18:08:07 <HOST> bash[2459]: [LOG] Process Created with pid 6536
+Oct 28 18:08:09 <HOST> bash[2459]: [LOG] Wayland session got unlocked
+Oct 28 18:08:09 <HOST> bash[2459]: [LOG] Inhibited sleep with fd 10
 
 === Shittim 실행 상태 ===
-[종료 코드 0]
-  WARN: Detected locale "C" with character encoding "ANSI_X3.4-1968", which is not UTF-8.
-Qt depends on a UTF-8 locale, and has switched to "C.UTF-8" instead.
-If this causes problems, reconfigure your locale. See the locale(1) manual
-for more information.
-[민감 정보 의심 줄 제외]
+{"configRoot": "$HOME/projects/shittim/shell", "contract": "interaction-window-v1", "control": {"anchorScreen": "eDP-1", "opened": false, "page": "overview"}, "generation": 6, "history": [{"event": "open", "name": "control", "time": 1793178472870}, {"event": "close:dismiss", "name": "control", "time": 1793178476643}, {"event": "open", "name": "control", "time": 1793178495842}, {"event": "close:dismiss", "name": "control", "time": 1793178500585}, {"event": "open", "name": "control", "time": 1793178504316}, {"event": "close:outside", "name": "control", "time": 1793178516989}], "launcherReady": true, "owner": "", "ownerScreen": "", "pid": 6203, "protocol": 1, "screens": ["eDP-1"], "windowBusy": false, "windowRequests": 0}
 
 === Hyprland 모니터 ===
 eDP-1 disabled=False dpms=True focused=True
+
+=== Hyprland 레이어 ===
+eDP-1: quickshell, shittim-desktop, shittim-dock
+
+=== 패널 상태 기록 panel-watch-20261028-180747.txt ===
+18:07:47.981 Shittim 응답 정상
+18:07:47.981 패널 소유: None → '' · 화면 ['eDP-1'] · control {'opened': False, 'page': 'overview', 'anchorScreen': ''}
+18:07:47.986 Shittim 레이어: shittim-desktop, shittim-dock
+18:07:53.093 패널 소유: '' → 'control' · 화면 ['eDP-1'] · control {'opened': True, 'page': 'overview', 'anchorScreen': 'eDP-1'}
+18:07:53.093   기록: control open
+18:07:53.098 Shittim 레이어: shittim-control-center, shittim-desktop, shittim-dock
+18:07:56.799 패널 소유: 'control' → '' · 화면 ['eDP-1'] · control {'opened': False, 'page': 'overview', 'anchorScreen': 'eDP-1'}
+18:07:56.799   기록: control close:dismiss
+18:07:56.804 Shittim 레이어: shittim-desktop, shittim-dock
+18:08:07.853 절전 복귀 감지 (절전 4초)
+18:08:16.093 패널 소유: '' → 'control' · 화면 ['eDP-1'] · control {'opened': True, 'page': 'overview', 'anchorScreen': 'eDP-1'}
+18:08:16.093   기록: control open
+18:08:16.098 Shittim 레이어: shittim-control-center, shittim-desktop, shittim-dock
+18:08:20.628 패널 소유: 'control' → '' · 화면 ['eDP-1'] · control {'opened': False, 'page': 'overview', 'anchorScreen': 'eDP-1'}
+18:08:20.628   기록: control close:dismiss
+18:08:20.633 Shittim 레이어: shittim-desktop, shittim-dock
+18:08:24.589 패널 소유: '' → 'control' · 화면 ['eDP-1'] · control {'opened': True, 'page': 'overview', 'anchorScreen': 'eDP-1'}
+18:08:24.589   기록: control open
+18:08:24.594 Shittim 레이어: shittim-control-center, shittim-desktop, shittim-dock
+18:08:37.048 패널 소유: 'control' → '' · 화면 ['eDP-1'] · control {'opened': False, 'page': 'overview', 'anchorScreen': 'eDP-1'}
+18:08:37.048   기록: control close:outside
+18:08:37.053 Shittim 레이어: shittim-desktop, shittim-dock
+18:08:38.034 기록 끝
 
 === tty1 로그인 서비스 로그 ===
 [종료 코드 0]
@@ -336,8 +387,7 @@ Oct 28 17:06:00 <HOST> login[579]: pam_unix(login:session): session opened for u
 [파일 없음]
 
 === Hyprland 실행 로그 1 ===
-AD
-DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_HOLD → GESTURE_EVENT_CANCEL → GESTURE_STATE_NONE
+URE_EVENT_CANCEL → GESTURE_STATE_NONE
 DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_HOLD → GESTURE_EVENT_POINTER_MOTION_START → GESTURE_STATE_POINTER_MOTION
 DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] state GESTURE_STATE_HOLD → GESTURE_STATE_POINTER_MOTION
 DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 148
@@ -346,6 +396,125 @@ DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 148
 DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 155
 DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 148
 DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_POINTER_MOTION → GESTURE_EVENT_END → GESTURE_STATE_NONE
+DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 155
+DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_AREA    event BUTTON_EVENT_UP          to BUTTON_STATE_NONE   
+DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_END), tap state TAP_STATE_DEAD → TAP_EVENT_RELEASE → TAP_STATE_IDLE
+DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 148
+DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_NONE    event BUTTON_EVENT_IN_AREA     to BUTTON_STATE_AREA   
+DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_BEGIN), tap state TAP_STATE_IDLE → TAP_EVENT_TOUCH → TAP_STATE_TOUCH
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_NONE → GESTURE_EVENT_FINGER_DETECTED → GESTURE_STATE_UNKNOWN
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] state GESTURE_STATE_NONE → GESTURE_STATE_UNKNOWN
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_UNKNOWN → GESTURE_EVENT_HOLD_TIMEOUT → GESTURE_STATE_HOLD
+DEBUG from aquamarine ]: [libinput] event8  - tap: touch -1 (), tap state TAP_STATE_TOUCH → TAP_EVENT_TIMEOUT → TAP_STATE_HOLD
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_HOLD → GESTURE_EVENT_CANCEL → GESTURE_STATE_NONE
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_HOLD → GESTURE_EVENT_POINTER_MOTION_START → GESTURE_STATE_POINTER_MOTION
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] state GESTURE_STATE_HOLD → GESTURE_STATE_POINTER_MOTION
+DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_UPDATE), tap state TAP_STATE_HOLD → TAP_EVENT_MOTION → TAP_STATE_DEAD
+DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 155
+DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 148
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_POINTER_MOTION → GESTURE_EVENT_END → GESTURE_STATE_NONE
+DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 155
+DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 155
+DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_AREA    event BUTTON_EVENT_UP          to BUTTON_STATE_NONE   
+DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_END), tap state TAP_STATE_DEAD → TAP_EVENT_RELEASE → TAP_STATE_IDLE
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: udev: new udev change event for card1
+DEBUG from aquamarine ]: udev: DRM device card1 changed
+DEBUG from aquamarine ]: drm: Got a hotplug event for /dev/dri/card1
+DEBUG from aquamarine ]: drm: Scanning connectors for /dev/dri/card1
+DEBUG from aquamarine ]: drm: Scanning connector id 120
+DEBUG from aquamarine ]: drm: Connector id 120 already initialized
+DEBUG from aquamarine ]: drm: connector eDP-1 crtc is capable of vrr: props.vrr_capable -> 123, crtc->props.vrr_enabled -> 25
+DEBUG from aquamarine ]: drm: Explicit sync supported
+DEBUG from aquamarine ]: drm: connector eDP-1 crtc supports CTM
+DEBUG from aquamarine ]: drm: connector eDP-1 crtc supports HDR (8)
+DEBUG from aquamarine ]: drm: connector eDP-1 crtc supports Colorspace (122)
+DEBUG from aquamarine ]: drm: Connector 120 connection state: 1
+DEBUG from aquamarine ]: drm: Scanning connector id 128
+DEBUG from aquamarine ]: drm: Connector id 128 already initialized
+DEBUG from aquamarine ]: drm: Connector 128 connection state: 2
+DEBUG from aquamarine ]: drm: Scanning connector id 135
+DEBUG from aquamarine ]: drm: Connector id 135 already initialized
+DEBUG from aquamarine ]: drm: Connector 135 connection state: 2
+DEBUG from aquamarine ]: drm: Rechecking CRTCs
+DEBUG from aquamarine ]: drm: Skipping connector eDP-1, has crtc 103 and is connected
+DEBUG from aquamarine ]: drm: connector HDMI-A-1, has crtc -1, will be rechecked
+DEBUG from aquamarine ]: drm: connector DP-1, has crtc -1, will be rechecked
+DEBUG from aquamarine ]: drm: slot 0 crtc 103 taken by eDP-1, skipping
+DEBUG from aquamarine ]: drm: slot 1 crtc 108 unassigned
+DEBUG from aquamarine ]: drm: slot 2 crtc 113 unassigned
+DEBUG from aquamarine ]: drm: slot 3 crtc 118 unassigned
+DEBUG from aquamarine ]: udev: new udev change event for card1
+DEBUG from aquamarine ]: udev: DRM device card1 changed
+DEBUG from aquamarine ]: drm: Got a hotplug event for /dev/dri/card1
+DEBUG from aquamarine ]: drm: Scanning connectors for /dev/dri/card1
+DEBUG from aquamarine ]: drm: Scanning connector id 120
+DEBUG from aquamarine ]: drm: Connector id 120 already initialized
+DEBUG from aquamarine ]: drm: connector eDP-1 crtc is capable of vrr: props.vrr_capable -> 123, crtc->props.vrr_enabled -> 25
+DEBUG from aquamarine ]: drm: Explicit sync supported
+DEBUG from aquamarine ]: drm: connector eDP-1 crtc supports CTM
+DEBUG from aquamarine ]: drm: connector eDP-1 crtc supports HDR (8)
+DEBUG from aquamarine ]: drm: connector eDP-1 crtc supports Colorspace (122)
+DEBUG from aquamarine ]: drm: Connector 120 connection state: 1
+DEBUG from aquamarine ]: drm: Scanning connector id 128
+DEBUG from aquamarine ]: drm: Connector id 128 already initialized
+DEBUG from aquamarine ]: drm: Connector 128 connection state: 2
+DEBUG from aquamarine ]: drm: Scanning connector id 135
+DEBUG from aquamarine ]: drm: Connector id 135 already initialized
+DEBUG from aquamarine ]: drm: Connector 135 connection state: 2
+DEBUG from aquamarine ]: drm: Rechecking CRTCs
+DEBUG from aquamarine ]: drm: Skipping connector eDP-1, has crtc 103 and is connected
+DEBUG from aquamarine ]: drm: connector HDMI-A-1, has crtc -1, will be rechecked
+DEBUG from aquamarine ]: drm: connector DP-1, has crtc -1, will be rechecked
+DEBUG from aquamarine ]: drm: slot 0 crtc 103 taken by eDP-1, skipping
+DEBUG from aquamarine ]: drm: slot 1 crtc 108 unassigned
+DEBUG from aquamarine ]: drm: slot 2 crtc 113 unassigned
+DEBUG from aquamarine ]: drm: slot 3 crtc 118 unassigned
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 148
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_NONE    event BUTTON_EVENT_IN_AREA     to BUTTON_STATE_AREA   
+DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_BEGIN), tap state TAP_STATE_IDLE → TAP_EVENT_TOUCH → TAP_STATE_TOUCH
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_NONE → GESTURE_EVENT_FINGER_DETECTED → GESTURE_STATE_UNKNOWN
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] state GESTURE_STATE_NONE → GESTURE_STATE_UNKNOWN
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_UNKNOWN → GESTURE_EVENT_HOLD_TIMEOUT → GESTURE_STATE_HOLD
+DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_UPDATE), tap state TAP_STATE_TOUCH → TAP_EVENT_MOTION → TAP_STATE_DEAD
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_HOLD → GESTURE_EVENT_CANCEL → GESTURE_STATE_NONE
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_HOLD → GESTURE_EVENT_POINTER_MOTION_START → GESTURE_STATE_POINTER_MOTION
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] state GESTURE_STATE_HOLD → GESTURE_STATE_POINTER_MOTION
+DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 155
+DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_AREA    event BUTTON_EVENT_UP          to BUTTON_STATE_NONE   
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_POINTER_MOTION → GESTURE_EVENT_END → GESTURE_STATE_NONE
+DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_END), tap state TAP_STATE_DEAD → TAP_EVENT_RELEASE → TAP_STATE_IDLE
+DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_NONE    event BUTTON_EVENT_IN_AREA     to BUTTON_STATE_AREA   
+DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_BEGIN), tap state TAP_STATE_IDLE → TAP_EVENT_TOUCH → TAP_STATE_TOUCH
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_NONE → GESTURE_EVENT_FINGER_DETECTED → GESTURE_STATE_UNKNOWN
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] state GESTURE_STATE_NONE → GESTURE_STATE_UNKNOWN
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_UNKNOWN → GESTURE_EVENT_HOLD_TIMEOUT → GESTURE_STATE_HOLD
+DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_UPDATE), tap state TAP_STATE_TOUCH → TAP_EVENT_MOTION → TAP_STATE_DEAD
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_HOLD → GESTURE_EVENT_CANCEL → GESTURE_STATE_NONE
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_HOLD → GESTURE_EVENT_POINTER_MOTION_START → GESTURE_STATE_POINTER_MOTION
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] state GESTURE_STATE_HOLD → GESTURE_STATE_POINTER_MOTION
+DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 148
+DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 155
+DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_AREA    event BUTTON_EVENT_UP          to BUTTON_STATE_NONE   
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_POINTER_MOTION → GESTURE_EVENT_END → GESTURE_STATE_NONE
+DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_END), tap state TAP_STATE_DEAD → TAP_EVENT_RELEASE → TAP_STATE_IDLE
+DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_NONE    event BUTTON_EVENT_IN_AREA     to BUTTON_STATE_AREA   
+DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_BEGIN), tap state TAP_STATE_IDLE → TAP_EVENT_TOUCH → TAP_STATE_TOUCH
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_NONE → GESTURE_EVENT_FINGER_DETECTED → GESTURE_STATE_UNKNOWN
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] state GESTURE_STATE_NONE → GESTURE_STATE_UNKNOWN
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_UNKNOWN → GESTURE_EVENT_HOLD_TIMEOUT → GESTURE_STATE_HOLD
+DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_UPDATE), tap state TAP_STATE_TOUCH → TAP_EVENT_MOTION → TAP_STATE_DEAD
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_HOLD → GESTURE_EVENT_CANCEL → GESTURE_STATE_NONE
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_HOLD → GESTURE_EVENT_POINTER_MOTION_START → GESTURE_STATE_POINTER_MOTION
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] state GESTURE_STATE_HOLD → GESTURE_STATE_POINTER_MOTION
+DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 148
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_POINTER_MOTION → GESTURE_EVENT_END → GESTURE_STATE_NONE
+DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 155
 DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_AREA    event BUTTON_EVENT_UP          to BUTTON_STATE_NONE   
 DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_END), tap state TAP_STATE_DEAD → TAP_EVENT_RELEASE → TAP_STATE_IDLE
 DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_NONE    event BUTTON_EVENT_IN_AREA     to BUTTON_STATE_AREA   
@@ -357,17 +526,22 @@ DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_UPDATE), tap s
 DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_HOLD → GESTURE_EVENT_CANCEL → GESTURE_STATE_NONE
 DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_HOLD → GESTURE_EVENT_POINTER_MOTION_START → GESTURE_STATE_POINTER_MOTION
 DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] state GESTURE_STATE_HOLD → GESTURE_STATE_POINTER_MOTION
-DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_POINTER_MOTION → GESTURE_EVENT_END → GESTURE_STATE_NONE
+DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 148
+DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 148
 DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_AREA    event BUTTON_EVENT_UP          to BUTTON_STATE_NONE   
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_POINTER_MOTION → GESTURE_EVENT_END → GESTURE_STATE_NONE
 DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_END), tap state TAP_STATE_DEAD → TAP_EVENT_RELEASE → TAP_STATE_IDLE
 DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_NONE    event BUTTON_EVENT_IN_AREA     to BUTTON_STATE_AREA   
 DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_BEGIN), tap state TAP_STATE_IDLE → TAP_EVENT_TOUCH → TAP_STATE_TOUCH
 DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_NONE → GESTURE_EVENT_FINGER_DETECTED → GESTURE_STATE_UNKNOWN
 DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] state GESTURE_STATE_NONE → GESTURE_STATE_UNKNOWN
 DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_UNKNOWN → GESTURE_EVENT_HOLD_TIMEOUT → GESTURE_STATE_HOLD
-DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_HOLD → GESTURE_EVENT_END → GESTURE_STATE_NONE
-DEBUG from aquamarine ]: [libinput] event8  - tap: touch -1 (), tap state TAP_STATE_TOUCH → TAP_EVENT_BUTTON → TAP_STATE_DEAD
+DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_UPDATE), tap state TAP_STATE_TOUCH → TAP_EVENT_MOTION → TAP_STATE_DEAD
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_HOLD → GESTURE_EVENT_CANCEL → GESTURE_STATE_NONE
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_HOLD → GESTURE_EVENT_POINTER_MOTION_START → GESTURE_STATE_POINTER_MOTION
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] state GESTURE_STATE_HOLD → GESTURE_STATE_POINTER_MOTION
 DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_AREA    event BUTTON_EVENT_UP          to BUTTON_STATE_NONE   
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_POINTER_MOTION → GESTURE_EVENT_END → GESTURE_STATE_NONE
 DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_END), tap state TAP_STATE_DEAD → TAP_EVENT_RELEASE → TAP_STATE_IDLE
 DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_NONE    event BUTTON_EVENT_IN_AREA     to BUTTON_STATE_AREA   
 DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_BEGIN), tap state TAP_STATE_IDLE → TAP_EVENT_TOUCH → TAP_STATE_TOUCH
@@ -376,10 +550,8 @@ DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] state GESTURE_STATE
 DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_UPDATE), tap state TAP_STATE_TOUCH → TAP_EVENT_MOTION → TAP_STATE_DEAD
 DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_UNKNOWN → GESTURE_EVENT_POINTER_MOTION_START → GESTURE_STATE_POINTER_MOTION
 DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] state GESTURE_STATE_UNKNOWN → GESTURE_STATE_POINTER_MOTION
-DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 155
-DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 148
-DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_POINTER_MOTION → GESTURE_EVENT_END → GESTURE_STATE_NONE
 DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_AREA    event BUTTON_EVENT_UP          to BUTTON_STATE_NONE   
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_POINTER_MOTION → GESTURE_EVENT_END → GESTURE_STATE_NONE
 DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_END), tap state TAP_STATE_DEAD → TAP_EVENT_RELEASE → TAP_STATE_IDLE
 DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_NONE    event BUTTON_EVENT_IN_AREA     to BUTTON_STATE_AREA   
 DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_BEGIN), tap state TAP_STATE_IDLE → TAP_EVENT_TOUCH → TAP_STATE_TOUCH
@@ -390,15 +562,17 @@ DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_UPDATE), tap s
 DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_HOLD → GESTURE_EVENT_CANCEL → GESTURE_STATE_NONE
 DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_HOLD → GESTURE_EVENT_POINTER_MOTION_START → GESTURE_STATE_POINTER_MOTION
 DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] state GESTURE_STATE_HOLD → GESTURE_STATE_POINTER_MOTION
+DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 155
+DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 148
+DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 155
 DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_POINTER_MOTION → GESTURE_EVENT_END → GESTURE_STATE_NONE
 DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_NONE → GESTURE_EVENT_FINGER_DETECTED → GESTURE_STATE_UNKNOWN
 DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_UNKNOWN → GESTURE_EVENT_POINTER_MOTION_START → GESTURE_STATE_POINTER_MOTION
 DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] state GESTURE_STATE_NONE → GESTURE_STATE_UNKNOWN → GESTURE_STATE_POINTER_MOTION
-DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 155
 DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 148
 DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 155
-DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 148
 DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_POINTER_MOTION → GESTURE_EVENT_END → GESTURE_STATE_NONE
+DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 148
 DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_AREA    event BUTTON_EVENT_UP          to BUTTON_STATE_NONE   
 DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_END), tap state TAP_STATE_DEAD → TAP_EVENT_RELEASE → TAP_STATE_IDLE
 DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_NONE    event BUTTON_EVENT_IN_AREA     to BUTTON_STATE_AREA   
@@ -406,57 +580,15 @@ DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_BEGIN), tap st
 DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_NONE → GESTURE_EVENT_FINGER_DETECTED → GESTURE_STATE_UNKNOWN
 DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] state GESTURE_STATE_NONE → GESTURE_STATE_UNKNOWN
 DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_UNKNOWN → GESTURE_EVENT_HOLD_TIMEOUT → GESTURE_STATE_HOLD
-DEBUG from aquamarine ]: [libinput] event8  - tap: touch -1 (), tap state TAP_STATE_TOUCH → TAP_EVENT_TIMEOUT → TAP_STATE_HOLD
+DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_UPDATE), tap state TAP_STATE_TOUCH → TAP_EVENT_MOTION → TAP_STATE_DEAD
 DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_HOLD → GESTURE_EVENT_CANCEL → GESTURE_STATE_NONE
 DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_HOLD → GESTURE_EVENT_POINTER_MOTION_START → GESTURE_STATE_POINTER_MOTION
 DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] state GESTURE_STATE_HOLD → GESTURE_STATE_POINTER_MOTION
-DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_UPDATE), tap state TAP_STATE_HOLD → TAP_EVENT_MOTION → TAP_STATE_DEAD
-DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_POINTER_MOTION → GESTURE_EVENT_END → GESTURE_STATE_NONE
-DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_AREA    event BUTTON_EVENT_UP          to BUTTON_STATE_NONE   
-DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_END), tap state TAP_STATE_DEAD → TAP_EVENT_RELEASE → TAP_STATE_IDLE
-DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_NONE    event BUTTON_EVENT_IN_AREA     to BUTTON_STATE_AREA   
-DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_BEGIN), tap state TAP_STATE_IDLE → TAP_EVENT_TOUCH → TAP_STATE_TOUCH
-DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_NONE → GESTURE_EVENT_FINGER_DETECTED → GESTURE_STATE_UNKNOWN
-DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] state GESTURE_STATE_NONE → GESTURE_STATE_UNKNOWN
-DEBUG from aquamarine ]: [libinput] event8  - button state: touch 1 from BUTTON_STATE_NONE    event BUTTON_EVENT_IN_AREA     to BUTTON_STATE_AREA   
-DEBUG from aquamarine ]: [libinput] event8  - gesture: [2fg] event GESTURE_STATE_UNKNOWN → GESTURE_EVENT_RESET → GESTURE_STATE_NONE
-DEBUG from aquamarine ]: [libinput] event8  - tap: touch 1 (TOUCH_BEGIN), tap state TAP_STATE_TOUCH → TAP_EVENT_TOUCH → TAP_STATE_TOUCH_2
-DEBUG from aquamarine ]: [libinput] event8  - gesture: [2fg] event GESTURE_STATE_NONE → GESTURE_EVENT_FINGER_DETECTED → GESTURE_STATE_UNKNOWN
-DEBUG from aquamarine ]: [libinput] event8  - gesture: [2fg] state GESTURE_STATE_NONE → GESTURE_STATE_UNKNOWN
-DEBUG from aquamarine ]: [libinput] event8  - gesture: [2fg] event GESTURE_STATE_UNKNOWN → GESTURE_EVENT_HOLD_TIMEOUT → GESTURE_STATE_HOLD
-DEBUG from aquamarine ]: [libinput] event8  - gesture: [2fg] event GESTURE_STATE_HOLD → GESTURE_EVENT_END → GESTURE_STATE_NONE
-DEBUG from aquamarine ]: [libinput] event8  - tap: touch -1 (), tap state TAP_STATE_TOUCH_2 → TAP_EVENT_BUTTON → TAP_STATE_DEAD
-DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_AREA    event BUTTON_EVENT_UP          to BUTTON_STATE_NONE   
-DEBUG from aquamarine ]: [libinput] event8  - button state: touch 1 from BUTTON_STATE_AREA    event BUTTON_EVENT_UP          to BUTTON_STATE_NONE   
-DEBUG from aquamarine ]: [libinput] event8  - tap: touch 1 (TOUCH_END), tap state TAP_STATE_DEAD → TAP_EVENT_RELEASE → TAP_STATE_IDLE
-DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_NONE    event BUTTON_EVENT_IN_AREA     to BUTTON_STATE_AREA   
-DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_BEGIN), tap state TAP_STATE_IDLE → TAP_EVENT_TOUCH → TAP_STATE_TOUCH
-DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_NONE → GESTURE_EVENT_FINGER_DETECTED → GESTURE_STATE_UNKNOWN
-DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] state GESTURE_STATE_NONE → GESTURE_STATE_UNKNOWN
-DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_UPDATE), tap state TAP_STATE_TOUCH → TAP_EVENT_MOTION → TAP_STATE_DEAD
-DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_UNKNOWN → GESTURE_EVENT_POINTER_MOTION_START → GESTURE_STATE_POINTER_MOTION
-DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] state GESTURE_STATE_UNKNOWN → GESTURE_STATE_POINTER_MOTION
+DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 155
 DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 155
 DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_AREA    event BUTTON_EVENT_UP          to BUTTON_STATE_NONE   
 DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_POINTER_MOTION → GESTURE_EVENT_END → GESTURE_STATE_NONE
 DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_END), tap state TAP_STATE_DEAD → TAP_EVENT_RELEASE → TAP_STATE_IDLE
-DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_NONE    event BUTTON_EVENT_IN_AREA     to BUTTON_STATE_AREA   
-DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_BEGIN), tap state TAP_STATE_IDLE → TAP_EVENT_TOUCH → TAP_STATE_TOUCH
-DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_NONE → GESTURE_EVENT_FINGER_DETECTED → GESTURE_STATE_UNKNOWN
-DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] state GESTURE_STATE_NONE → GESTURE_STATE_UNKNOWN
-DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_UNKNOWN → GESTURE_EVENT_HOLD_TIMEOUT → GESTURE_STATE_HOLD
-DEBUG from aquamarine ]: [libinput] event8  - tap: touch -1 (), tap state TAP_STATE_TOUCH → TAP_EVENT_TIMEOUT → TAP_STATE_HOLD
-DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_HOLD → GESTURE_EVENT_HOLD_AND_MOTION_START → GESTURE_STATE_HOLD_AND_MOTION
-DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] state GESTURE_STATE_HOLD → GESTURE_STATE_HOLD_AND_MOTION
-DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_HOLD_AND_MOTION → GESTURE_EVENT_CANCEL → GESTURE_STATE_NONE
-DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_HOLD_AND_MOTION → GESTURE_EVENT_POINTER_MOTION_START → GESTURE_STATE_POINTER_MOTION
-DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] state GESTURE_STATE_HOLD_AND_MOTION → GESTURE_STATE_POINTER_MOTION
-DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_UPDATE), tap state TAP_STATE_HOLD → TAP_EVENT_MOTION → TAP_STATE_DEAD
-DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 148
-DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_POINTER_MOTION → GESTURE_EVENT_END → GESTURE_STATE_NONE
-DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_AREA    event BUTTON_EVENT_UP          to BUTTON_STATE_NONE   
-DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_END), tap state TAP_STATE_DEAD → TAP_EVENT_RELEASE → TAP_STATE_IDLE
-DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 155
 DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_NONE    event BUTTON_EVENT_IN_AREA     to BUTTON_STATE_AREA   
 DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_BEGIN), tap state TAP_STATE_IDLE → TAP_EVENT_TOUCH → TAP_STATE_TOUCH
 DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_NONE → GESTURE_EVENT_FINGER_DETECTED → GESTURE_STATE_UNKNOWN
@@ -469,91 +601,6 @@ DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] state GESTURE_STATE
 DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 148
 DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 155
 DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 148
-DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 148
-DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 155
-DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 155
 DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_AREA    event BUTTON_EVENT_UP          to BUTTON_STATE_NONE   
 DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_POINTER_MOTION → GESTURE_EVENT_END → GESTURE_STATE_NONE
 DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_END), tap state TAP_STATE_DEAD → TAP_EVENT_RELEASE → TAP_STATE_IDLE
-DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
-DEBUG from aquamarine ]: [libinput] event8  - lid: suspending touchpad
-DEBUG from aquamarine ]: [libinput] Plugin:button-debounce - debounce state: DEBOUNCE_STATE_IS_DOWN → DEBOUNCE_EVENT_RELEASE → DEBOUNCE_STATE_IS_UP_DETECTING_SPURIOUS
-DEBUG from aquamarine ]: [libinput] event7  - middlebutton state: MIDDLEBUTTON_PASSTHROUGH → MIDDLEBUTTON_EVENT_L_UP → MIDDLEBUTTON_PASSTHROUGH, rc 0
-DEBUG from aquamarine ]: [libinput] event7  - middlebutton state: MIDDLEBUTTON_PASSTHROUGH → MIDDLEBUTTON_EVENT_ALL_UP → MIDDLEBUTTON_IDLE, rc 1
-DEBUG from aquamarine ]: [libinput] Plugin:button-debounce - debounce state: DEBOUNCE_STATE_IS_UP_DETECTING_SPURIOUS → DEBOUNCE_EVENT_TIMEOUT_SHORT → DEBOUNCE_STATE_IS_UP_WAITING
-DEBUG from aquamarine ]: [libinput] Plugin:button-debounce - debounce state: DEBOUNCE_STATE_IS_UP_WAITING → DEBOUNCE_EVENT_TIMEOUT → DEBOUNCE_STATE_IS_UP
-DEBUG from aquamarine ]: [libinput] event8  - lid: resume touchpad
-DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
-DEBUG from aquamarine ]: udev: new udev change event for card1
-DEBUG from aquamarine ]: udev: DRM device card1 changed
-DEBUG from aquamarine ]: drm: Got a hotplug event for /dev/dri/card1
-DEBUG from aquamarine ]: drm: Scanning connectors for /dev/dri/card1
-DEBUG from aquamarine ]: drm: Scanning connector id 120
-DEBUG from aquamarine ]: drm: Connector id 120 already initialized
-DEBUG from aquamarine ]: drm: connector eDP-1 crtc is capable of vrr: props.vrr_capable -> 123, crtc->props.vrr_enabled -> 25
-DEBUG from aquamarine ]: drm: Explicit sync supported
-DEBUG from aquamarine ]: drm: connector eDP-1 crtc supports CTM
-DEBUG from aquamarine ]: drm: connector eDP-1 crtc supports HDR (8)
-DEBUG from aquamarine ]: drm: connector eDP-1 crtc supports Colorspace (122)
-DEBUG from aquamarine ]: drm: Connector 120 connection state: 1
-DEBUG from aquamarine ]: drm: Scanning connector id 128
-DEBUG from aquamarine ]: drm: Connector id 128 already initialized
-DEBUG from aquamarine ]: drm: Connector 128 connection state: 2
-DEBUG from aquamarine ]: drm: Scanning connector id 135
-DEBUG from aquamarine ]: drm: Connector id 135 already initialized
-DEBUG from aquamarine ]: drm: Connector 135 connection state: 2
-DEBUG from aquamarine ]: drm: Rechecking CRTCs
-DEBUG from aquamarine ]: drm: Skipping connector eDP-1, has crtc 103 and is connected
-DEBUG from aquamarine ]: drm: connector HDMI-A-1, has crtc -1, will be rechecked
-DEBUG from aquamarine ]: drm: connector DP-1, has crtc -1, will be rechecked
-DEBUG from aquamarine ]: drm: slot 0 crtc 103 taken by eDP-1, skipping
-DEBUG from aquamarine ]: drm: slot 1 crtc 108 unassigned
-DEBUG from aquamarine ]: drm: slot 2 crtc 113 unassigned
-DEBUG from aquamarine ]: drm: slot 3 crtc 118 unassigned
-DEBUG from aquamarine ]: udev: new udev change event for card1
-DEBUG from aquamarine ]: udev: DRM device card1 changed
-DEBUG from aquamarine ]: drm: Got a hotplug event for /dev/dri/card1
-DEBUG from aquamarine ]: drm: Scanning connectors for /dev/dri/card1
-DEBUG from aquamarine ]: drm: Scanning connector id 120
-DEBUG from aquamarine ]: drm: Connector id 120 already initialized
-DEBUG from aquamarine ]: drm: connector eDP-1 crtc is capable of vrr: props.vrr_capable -> 123, crtc->props.vrr_enabled -> 25
-DEBUG from aquamarine ]: drm: Explicit sync supported
-DEBUG from aquamarine ]: drm: connector eDP-1 crtc supports CTM
-DEBUG from aquamarine ]: drm: connector eDP-1 crtc supports HDR (8)
-DEBUG from aquamarine ]: drm: connector eDP-1 crtc supports Colorspace (122)
-DEBUG from aquamarine ]: drm: Connector 120 connection state: 1
-DEBUG from aquamarine ]: drm: Scanning connector id 128
-DEBUG from aquamarine ]: drm: Connector id 128 already initialized
-DEBUG from aquamarine ]: drm: Connector 128 connection state: 2
-DEBUG from aquamarine ]: drm: Scanning connector id 135
-DEBUG from aquamarine ]: drm: Connector id 135 already initialized
-DEBUG from aquamarine ]: drm: Connector 135 connection state: 2
-DEBUG from aquamarine ]: drm: Rechecking CRTCs
-DEBUG from aquamarine ]: drm: Skipping connector eDP-1, has crtc 103 and is connected
-DEBUG from aquamarine ]: drm: connector HDMI-A-1, has crtc -1, will be rechecked
-DEBUG from aquamarine ]: drm: connector DP-1, has crtc -1, will be rechecked
-DEBUG from aquamarine ]: drm: slot 0 crtc 103 taken by eDP-1, skipping
-DEBUG from aquamarine ]: drm: slot 1 crtc 108 unassigned
-DEBUG from aquamarine ]: drm: slot 2 crtc 113 unassigned
-DEBUG from aquamarine ]: drm: slot 3 crtc 118 unassigned
-DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
-DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout refresh
-DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout refresh
-DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 148
-DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 148
-DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
-DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
-DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout refresh
-DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout refresh
-DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
-DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
-DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
-DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
-DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
-DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
-DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
-DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
-DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
-DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
-DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
-DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
