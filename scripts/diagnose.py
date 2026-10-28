@@ -148,6 +148,9 @@ def collect():
     add('Shittim 실행 상태', shell_status())
     add('Hyprland 모니터', monitors())
     add('Hyprland 레이어', layers())
+    state = Path(os.environ.get('XDG_STATE_HOME') or home / '.local/state') / 'shittim'
+    watches = sorted(state.glob('panel-watch-*.txt')) if state.is_dir() else []
+    add('패널 상태 기록 ' + (watches[-1].name if watches else ''), read_tail(watches[-1]) if watches else '[기록 없음]')
     add('tty1 로그인 서비스 로그', command(['journalctl', '-b', '--no-pager', '-n', '80', '-u', 'getty@tty1.service']))
     add('현재 사용자 Hyprland journal', command(['journalctl', '-b', '--no-pager', '-n', '100',
         '_UID=' + str(os.getuid()), '_COMM=Hyprland', '_COMM=start-hyprland']))

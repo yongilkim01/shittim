@@ -61,6 +61,8 @@ bash ~/projects/shittim/scripts/test-power.sh --with-suspend  # + 실제 절전 
 bash ~/projects/shittim/scripts/test-power.sh --screen-wake   # 꺼진 화면이 저절로 켜지는지만 (약 30초)
 ```
 
+절전 복귀 뒤 패널이 늦게 열리면 `python3 ~/projects/shittim/scripts/watch-panels.py` 를 켜 둔 채 절전·복귀·TopBar 클릭을 한다. Shittim 응답 시간, 패널이 열리고 닫힌 이유(`close:outside` 등), Hyprland 에 올라온 Shittim 레이어를 바뀔 때마다 시각과 함께 `~/.local/state/shittim/panel-watch-<시각>.txt` 에 남기고, `diagnose.sh` 가 최신 기록을 포함한다.
+
 «꺼진 화면이 저절로 켜지는지» 는 화면을 5초씩 세 번 끈다. 지금 설정 그대로 → 키 입력 켜기만 끔 → 마우스 켜기만 끔 순서이며(`hyprctl eval`, 실행 중에만 바뀜), 두 가지를 동시에 끄지 않고 매 회 스크립트가 화면을 다시 켠다. 손대지 않았는데 켜지면 어느 쪽 입력인지와 `hyprctl devices` 장치 이름을 결과에 적는다.
 
 각 단계는 `s` 로 건너뛸 수 있다. 결과는 화면과 `~/.local/state/shittim/power-test-<시각>.txt` 에 남는다.

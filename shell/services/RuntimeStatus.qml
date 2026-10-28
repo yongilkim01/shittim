@@ -18,7 +18,7 @@ Scope {
                 configRoot:Quickshell.shellDir,owner:InteractionState.owner ? InteractionState.owner.name : "",
                 generation:InteractionState.generation,windowBusy:WindowCommands.busy,
                 windowRequests:Object.keys(WindowCommands.requests).length,launcherReady:LauncherState.ready,
-                screens:Quickshell.screens.map(output=>output.name),ownerScreen:InteractionState.screen ? InteractionState.screen.name : "",
+                screens:Quickshell.screens.map(output=>output.name),history:InteractionState.history,ownerScreen:InteractionState.screen ? InteractionState.screen.name : "",
                 control:{opened:ControlState.opened,page:ControlState.page,
                     anchorScreen:ControlState.anchorWindow && ControlState.anchorWindow.screen ? ControlState.anchorWindow.screen.name : ""}})
         }

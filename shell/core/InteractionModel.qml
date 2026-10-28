@@ -8,6 +8,11 @@ QtObject {
     readonly property var screen:_state.screen
     readonly property int generation:_state.generation
     readonly property bool blockingPopups: owner !== null && owner.kind === "panel"
+    // Last few ownership changes with the reason, for runtime status and diagnostics.
+    property var history: []
+    function note(participant, event) {
+        history=history.concat([{time:Date.now(),name:participant ? participant.name : "",event:event}]).slice(-12)
+    }
     function acquire(participant, output) {
         if (!participant || !output) return false
         if (owner === participant && screen === output) return true
@@ -18,11 +23,13 @@ QtObject {
         // A close callback cannot overwrite a newer, reentrant request.
         if (owner !== null || generation!==revision) return false
         _state={owner:participant,screen:output,generation:revision}
+        note(participant,"open")
         return generation===revision && owner===participant
     }
     function release(participant, reason) {
         if (owner !== participant) return false
         _state={owner:null,screen:null,generation:generation+1}
+        note(participant,"close:" + (reason || "dismiss"))
         participant.revoked(reason || "dismiss")
         return true
     }
