@@ -1,10 +1,10 @@
 Shittim 로그인 진단
-수집 시각: 2026-10-28T08:35:28.108483+00:00
+수집 시각: 2026-10-28T08:39:26.363048+00:00
 자동 실행/서비스/설정 변경 없음. 의심 줄은 제외되며 원본 로그는 복사하지 않음.
 
 === 저장소 버전 ===
 [종료 코드 0]
-fbfb7a7 feat: test-power --screen-wake finds input that wakes a screen turned off by DPMS
+5a4d573 fix: per-unit journal tails and shell screen state in diagnostics
 
 === 세션 환경 (허용한 변수만) ===
 SHELL=/usr/bin/bash
@@ -240,68 +240,37 @@ Type=simple
 Restart=on-failure
 RestartSec=2
 
-=== 사용자 서비스 로그 ===
+=== 사용자 서비스 로그 shittim.service ===
 [종료 코드 0]
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG] Registered timeout rule for 900s:
+Oct 28 17:06:01 <HOST> systemd[625]: Started Shittim desktop shell.
 [민감 정보 의심 줄 제외]
+Oct 28 17:06:01 <HOST> bash[732]:   INFO: Shell ID: "9eb42cb46c47fc06b73f0cbee12bf779" Path ID "9eb42cb46c47fc06b73f0cbee12bf779"
 [민감 정보 의심 줄 제외]
-Oct 28 17:28:33 <HOST> bash[2459]:       ignore_inhibit: false
-Oct 28 17:28:33 <HOST> bash[2459]:       condition_cmd:
-Oct 28 17:28:33 <HOST> bash[2459]:       condition_retry: 0
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: wl_seat v9
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]    > Bound to wl_seat v9
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: wl_data_device_manager v3
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: wl_compositor v6
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: wl_subcompositor v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: wl_shm v2
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: wp_viewporter v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: wp_tearing_control_manager_v1 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: wp_fractional_scale_manager_v1 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: zxdg_output_manager_v1 v3
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: wp_cursor_shape_manager_v1 v2
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: zwp_idle_inhibit_manager_v1 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: zwp_relative_pointer_manager_v1 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: zxdg_decoration_manager_v1 v2
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: wp_alpha_modifier_v1 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: zwlr_gamma_control_manager_v1 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: ext_foreign_toplevel_list_v1 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: zwp_pointer_gestures_v1 v3
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: zwlr_foreign_toplevel_manager_v1 v3
-[민감 정보 의심 줄 제외]
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: zwp_text_input_manager_v1 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: zwp_text_input_manager_v3 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: zwp_pointer_constraints_v1 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: zwlr_output_power_manager_v1 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: xdg_activation_v1 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: ext_idle_notifier_v1 v2
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]    > Bound to ext_idle_notifier_v1 v2
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: hyprland_lock_notifier_v1 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]    > Bound to hyprland_lock_notifier_v1 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: ext_session_lock_manager_v1 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: zwp_input_method_manager_v2 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: zwp_virtual_keyboard_manager_v1 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: zwlr_virtual_pointer_manager_v1 v2
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: zwlr_output_manager_v1 v4
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: org_kde_kwin_server_decoration_manager v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: hyprland_focus_grab_manager_v1 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: zwp_tablet_manager_v2 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: zwlr_layer_shell_v1 v5
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: wp_presentation v2
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: xdg_wm_base v7
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: zwlr_data_control_manager_v1 v2
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: zwp_primary_selection_device_manager_v1 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: xwayland_shell_v1 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: hyprland_toplevel_mapping_manager_v1 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: hyprland_global_shortcuts_manager_v1 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: xdg_wm_dialog_v1 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: wp_single_pixel_buffer_manager_v1 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: wp_security_context_manager_v1 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: hyprland_ctm_control_manager_v1 v2
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: hyprland_input_capture_manager_v1 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: hyprland_surface_manager_v1 v2
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: wp_content_type_manager_v1 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: xdg_toplevel_tag_manager_v1 v1
-Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: xdg_system_bell_v1 v1
+Oct 28 17:06:02 <HOST> bash[732]:   INFO: Configuration Loaded
+Oct 28 17:06:02 <HOST> bash[732]:   WARN qt.qpa.services: Failed to register with host portal QDBusError("org.freedesktop.portal.Error.Failed", "Could not register app ID: Connection already associated with an application ID")
+Oct 28 17:18:44 <HOST> bash[732]:   WARN scene: QML ControlCenter at @shell.qml[19:2]: Binding loop detected for property "visible":
+Oct 28 17:18:44 <HOST> bash[732]: qs:@/qs/components/ControlCenter.qml:12:2
+Oct 28 17:19:25 <HOST> bash[732]:   WARN scene: QML WindowManager at @shell.qml[33:2]: Binding loop detected for property "visible":
+Oct 28 17:19:25 <HOST> bash[732]: qs:@/qs/components/WindowManager.qml:12:5
+Oct 28 17:19:35 <HOST> bash[732]:   WARN scene: QML WindowManager at @shell.qml[33:2]: Binding loop detected for property "visible":
+Oct 28 17:19:35 <HOST> bash[732]: qs:@/qs/components/WindowManager.qml:12:5
+
+=== 사용자 서비스 로그 shittim-fcitx5.service ===
+[종료 코드 0]
+Oct 28 17:06:01 <HOST> systemd[625]: Started Shittim input method.
+
+=== 사용자 서비스 로그 shittim-polkit.service ===
+[종료 코드 0]
+Oct 28 17:06:01 <HOST> systemd[625]: Started Shittim authentication agent.
+Oct 28 17:06:01 <HOST> polkit-kde-authentication-agent-1[731]: New PolkitAgentListener  0x56388d6ea370
+Oct 28 17:06:01 <HOST> polkit-kde-authentication-agent-1[731]: Adding new listener  PolkitQt1::Agent::Listener(0x56388d6ea000) for  0x56388d6ea370
+Oct 28 17:06:01 <HOST> polkit-kde-authentication-agent-1[731]: Listener online
+Oct 28 17:06:01 <HOST> polkit-kde-authentication-agent-1[731]: Authentication agent result: true
+Oct 28 17:06:01 <HOST> polkit-kde-authentication-agent-1[731]: Failed to register with host portal QDBusError("org.freedesktop.portal.Error.Failed", "Could not register app ID: Unable to open /proc/731/root")
+Oct 28 17:06:01 <HOST> polkit-kde-authentication-agent-1[731]: Failed to register with host portal QDBusError("org.freedesktop.portal.Error.Failed", "Could not register app ID: Unable to open /proc/731/root")
+
+=== 사용자 서비스 로그 shittim-idle.service ===
+[종료 코드 0]
 Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: vicinae_hotkey_manager_v1 v1
 Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: ext_workspace_manager_v1 v1
 Oct 28 17:28:33 <HOST> bash[2459]: [LOG]   | got iface: ext_data_control_manager_v1 v1
@@ -343,6 +312,17 @@ Oct 28 17:31:04 <HOST> bash[2459]: [LOG] Process Created with pid 2597
 Oct 28 17:31:07 <HOST> bash[2459]: [LOG] Wayland session got unlocked
 Oct 28 17:31:07 <HOST> bash[2459]: [LOG] Inhibited sleep with fd 10
 
+=== Shittim 실행 상태 ===
+[종료 코드 0]
+  WARN: Detected locale "C" with character encoding "ANSI_X3.4-1968", which is not UTF-8.
+Qt depends on a UTF-8 locale, and has switched to "C.UTF-8" instead.
+If this causes problems, reconfigure your locale. See the locale(1) manual
+for more information.
+[민감 정보 의심 줄 제외]
+
+=== Hyprland 모니터 ===
+eDP-1 disabled=False dpms=True focused=True
+
 === tty1 로그인 서비스 로그 ===
 [종료 코드 0]
 Oct 28 17:05:49 <HOST> systemd[1]: Started Getty on tty1.
@@ -356,110 +336,7 @@ Oct 28 17:06:00 <HOST> login[579]: pam_unix(login:session): session opened for u
 [파일 없음]
 
 === Hyprland 실행 로그 1 ===
-upports Colorspace (122)
-DEBUG from aquamarine ]: drm: Connector 120 connection state: 1
-DEBUG from aquamarine ]: drm: Scanning connector id 128
-DEBUG from aquamarine ]: drm: Connector id 128 already initialized
-DEBUG from aquamarine ]: drm: Connector 128 connection state: 2
-DEBUG from aquamarine ]: drm: Scanning connector id 135
-DEBUG from aquamarine ]: drm: Connector id 135 already initialized
-DEBUG from aquamarine ]: drm: Connector 135 connection state: 2
-DEBUG from aquamarine ]: drm: Rechecking CRTCs
-DEBUG from aquamarine ]: drm: Skipping connector eDP-1, has crtc 103 and is connected
-DEBUG from aquamarine ]: drm: connector HDMI-A-1, has crtc -1, will be rechecked
-DEBUG from aquamarine ]: drm: connector DP-1, has crtc -1, will be rechecked
-DEBUG from aquamarine ]: drm: slot 0 crtc 103 taken by eDP-1, skipping
-DEBUG from aquamarine ]: drm: slot 1 crtc 108 unassigned
-DEBUG from aquamarine ]: drm: slot 2 crtc 113 unassigned
-DEBUG from aquamarine ]: drm: slot 3 crtc 118 unassigned
-DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
-DEBUG from aquamarine ]: drm: Disabling output eDP-1
-DEBUG from aquamarine ]: drm: Connector eDP-1 enabledState changed true -> false
-DEBUG from aquamarine ]: drm: Ignoring a stale pf event, flip 2404 on crtc 103
-DEBUG from aquamarine ]: drm: Scanning connectors for /dev/dri/card1
-DEBUG from aquamarine ]: drm: Scanning connector id 120
-DEBUG from aquamarine ]: drm: Connector id 120 already initialized
-DEBUG from aquamarine ]: drm: connector eDP-1 crtc is capable of vrr: props.vrr_capable -> 123, crtc->props.vrr_enabled -> 25
-DEBUG from aquamarine ]: drm: Explicit sync supported
-DEBUG from aquamarine ]: drm: connector eDP-1 crtc supports CTM
-DEBUG from aquamarine ]: drm: connector eDP-1 crtc supports HDR (8)
-DEBUG from aquamarine ]: drm: connector eDP-1 crtc supports Colorspace (122)
-DEBUG from aquamarine ]: drm: Connector 120 connection state: 1
-DEBUG from aquamarine ]: drm: Scanning connector id 128
-DEBUG from aquamarine ]: drm: Connector id 128 already initialized
-DEBUG from aquamarine ]: drm: Connector 128 connection state: 2
-DEBUG from aquamarine ]: drm: Scanning connector id 135
-DEBUG from aquamarine ]: drm: Connector id 135 already initialized
-DEBUG from aquamarine ]: drm: Connector 135 connection state: 2
-DEBUG from aquamarine ]: drm: Rechecking CRTCs
-DEBUG from aquamarine ]: drm: eDP-1 is disabled, releasing crtc 103
-DEBUG from aquamarine ]: drm: connector eDP-1, has crtc -1, will be rechecked
-DEBUG from aquamarine ]: drm: connector HDMI-A-1, has crtc -1, will be rechecked
-DEBUG from aquamarine ]: drm: connector DP-1, has crtc -1, will be rechecked
-DEBUG from aquamarine ]: drm: slot 0 crtc 103 unassigned
-DEBUG from aquamarine ]: drm: slot 1 crtc 108 unassigned
-DEBUG from aquamarine ]: drm: slot 2 crtc 113 unassigned
-DEBUG from aquamarine ]: drm: slot 3 crtc 118 unassigned
-DEBUG from aquamarine ]: drm: backup slot 0 crtc 103 assigned to disabled eDP-1
-DEBUG from aquamarine ]: drm: Modesetting eDP-1 with 1920x1080@60.03Hz
-DEBUG from aquamarine ]: drm: Connector eDP-1 enabledState changed false -> true
-ERR from aquamarine ]: [libinput] event3  - AT Translated Set 2 keyboard: client bug: event processing lagging behind by 84ms, your system is too slow
-DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
-DEBUG from aquamarine ]: drm: Scanning connectors for /dev/dri/card1
-DEBUG from aquamarine ]: drm: Scanning connector id 120
-DEBUG from aquamarine ]: drm: Connector id 120 already initialized
-DEBUG from aquamarine ]: drm: connector eDP-1 crtc is capable of vrr: props.vrr_capable -> 123, crtc->props.vrr_enabled -> 25
-DEBUG from aquamarine ]: drm: Explicit sync supported
-DEBUG from aquamarine ]: drm: connector eDP-1 crtc supports CTM
-DEBUG from aquamarine ]: drm: connector eDP-1 crtc supports HDR (8)
-DEBUG from aquamarine ]: drm: connector eDP-1 crtc supports Colorspace (122)
-DEBUG from aquamarine ]: drm: Connector 120 connection state: 1
-DEBUG from aquamarine ]: drm: Scanning connector id 128
-DEBUG from aquamarine ]: drm: Connector id 128 already initialized
-DEBUG from aquamarine ]: drm: Connector 128 connection state: 2
-DEBUG from aquamarine ]: drm: Scanning connector id 135
-DEBUG from aquamarine ]: drm: Connector id 135 already initialized
-DEBUG from aquamarine ]: drm: Connector 135 connection state: 2
-DEBUG from aquamarine ]: drm: Rechecking CRTCs
-DEBUG from aquamarine ]: drm: Skipping connector eDP-1, has crtc 103 and is connected
-DEBUG from aquamarine ]: drm: connector HDMI-A-1, has crtc -1, will be rechecked
-DEBUG from aquamarine ]: drm: connector DP-1, has crtc -1, will be rechecked
-DEBUG from aquamarine ]: drm: slot 0 crtc 103 taken by eDP-1, skipping
-DEBUG from aquamarine ]: drm: slot 1 crtc 108 unassigned
-DEBUG from aquamarine ]: drm: slot 2 crtc 113 unassigned
-DEBUG from aquamarine ]: drm: slot 3 crtc 118 unassigned
-DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
-DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 155
-DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 155
-DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
-DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
-DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 148
-DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 155
-DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
-DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
-DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
-DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
-DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
-DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_NONE    event BUTTON_EVENT_IN_AREA     to BUTTON_STATE_AREA   
-DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_BEGIN), tap state TAP_STATE_IDLE → TAP_EVENT_TOUCH → TAP_STATE_TOUCH
-DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_NONE → GESTURE_EVENT_FINGER_DETECTED → GESTURE_STATE_UNKNOWN
-DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] state GESTURE_STATE_NONE → GESTURE_STATE_UNKNOWN
-DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_UPDATE), tap state TAP_STATE_TOUCH → TAP_EVENT_MOTION → TAP_STATE_DEAD
-DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_UNKNOWN → GESTURE_EVENT_POINTER_MOTION_START → GESTURE_STATE_POINTER_MOTION
-DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] state GESTURE_STATE_UNKNOWN → GESTURE_STATE_POINTER_MOTION
-DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 148
-DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 155
-DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 148
-DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 155
-DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_AREA    event BUTTON_EVENT_UP          to BUTTON_STATE_NONE   
-DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_POINTER_MOTION → GESTURE_EVENT_END → GESTURE_STATE_NONE
-DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_END), tap state TAP_STATE_DEAD → TAP_EVENT_RELEASE → TAP_STATE_IDLE
-DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_NONE    event BUTTON_EVENT_IN_AREA     to BUTTON_STATE_AREA   
-DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_BEGIN), tap state TAP_STATE_IDLE → TAP_EVENT_TOUCH → TAP_STATE_TOUCH
-DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_NONE → GESTURE_EVENT_FINGER_DETECTED → GESTURE_STATE_UNKNOWN
-DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] state GESTURE_STATE_NONE → GESTURE_STATE_UNKNOWN
-DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_UNKNOWN → GESTURE_EVENT_HOLD_TIMEOUT → GESTURE_STATE_HOLD
-DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_UPDATE), tap state TAP_STATE_TOUCH → TAP_EVENT_MOTION → TAP_STATE_DEAD
+AD
 DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_HOLD → GESTURE_EVENT_CANCEL → GESTURE_STATE_NONE
 DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_HOLD → GESTURE_EVENT_POINTER_MOTION_START → GESTURE_STATE_POINTER_MOTION
 DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] state GESTURE_STATE_HOLD → GESTURE_STATE_POINTER_MOTION
@@ -579,3 +456,104 @@ DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 148
 DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_POINTER_MOTION → GESTURE_EVENT_END → GESTURE_STATE_NONE
 DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_AREA    event BUTTON_EVENT_UP          to BUTTON_STATE_NONE   
 DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_END), tap state TAP_STATE_DEAD → TAP_EVENT_RELEASE → TAP_STATE_IDLE
+DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 155
+DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_NONE    event BUTTON_EVENT_IN_AREA     to BUTTON_STATE_AREA   
+DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_BEGIN), tap state TAP_STATE_IDLE → TAP_EVENT_TOUCH → TAP_STATE_TOUCH
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_NONE → GESTURE_EVENT_FINGER_DETECTED → GESTURE_STATE_UNKNOWN
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] state GESTURE_STATE_NONE → GESTURE_STATE_UNKNOWN
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_UNKNOWN → GESTURE_EVENT_HOLD_TIMEOUT → GESTURE_STATE_HOLD
+DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_UPDATE), tap state TAP_STATE_TOUCH → TAP_EVENT_MOTION → TAP_STATE_DEAD
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_HOLD → GESTURE_EVENT_CANCEL → GESTURE_STATE_NONE
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_HOLD → GESTURE_EVENT_POINTER_MOTION_START → GESTURE_STATE_POINTER_MOTION
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] state GESTURE_STATE_HOLD → GESTURE_STATE_POINTER_MOTION
+DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 148
+DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 155
+DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 148
+DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 148
+DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 155
+DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 155
+DEBUG from aquamarine ]: [libinput] event8  - button state: touch 0 from BUTTON_STATE_AREA    event BUTTON_EVENT_UP          to BUTTON_STATE_NONE   
+DEBUG from aquamarine ]: [libinput] event8  - gesture: [1fg] event GESTURE_STATE_POINTER_MOTION → GESTURE_EVENT_END → GESTURE_STATE_NONE
+DEBUG from aquamarine ]: [libinput] event8  - tap: touch 0 (TOUCH_END), tap state TAP_STATE_DEAD → TAP_EVENT_RELEASE → TAP_STATE_IDLE
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - lid: suspending touchpad
+DEBUG from aquamarine ]: [libinput] Plugin:button-debounce - debounce state: DEBOUNCE_STATE_IS_DOWN → DEBOUNCE_EVENT_RELEASE → DEBOUNCE_STATE_IS_UP_DETECTING_SPURIOUS
+DEBUG from aquamarine ]: [libinput] event7  - middlebutton state: MIDDLEBUTTON_PASSTHROUGH → MIDDLEBUTTON_EVENT_L_UP → MIDDLEBUTTON_PASSTHROUGH, rc 0
+DEBUG from aquamarine ]: [libinput] event7  - middlebutton state: MIDDLEBUTTON_PASSTHROUGH → MIDDLEBUTTON_EVENT_ALL_UP → MIDDLEBUTTON_IDLE, rc 1
+DEBUG from aquamarine ]: [libinput] Plugin:button-debounce - debounce state: DEBOUNCE_STATE_IS_UP_DETECTING_SPURIOUS → DEBOUNCE_EVENT_TIMEOUT_SHORT → DEBOUNCE_STATE_IS_UP_WAITING
+DEBUG from aquamarine ]: [libinput] Plugin:button-debounce - debounce state: DEBOUNCE_STATE_IS_UP_WAITING → DEBOUNCE_EVENT_TIMEOUT → DEBOUNCE_STATE_IS_UP
+DEBUG from aquamarine ]: [libinput] event8  - lid: resume touchpad
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: udev: new udev change event for card1
+DEBUG from aquamarine ]: udev: DRM device card1 changed
+DEBUG from aquamarine ]: drm: Got a hotplug event for /dev/dri/card1
+DEBUG from aquamarine ]: drm: Scanning connectors for /dev/dri/card1
+DEBUG from aquamarine ]: drm: Scanning connector id 120
+DEBUG from aquamarine ]: drm: Connector id 120 already initialized
+DEBUG from aquamarine ]: drm: connector eDP-1 crtc is capable of vrr: props.vrr_capable -> 123, crtc->props.vrr_enabled -> 25
+DEBUG from aquamarine ]: drm: Explicit sync supported
+DEBUG from aquamarine ]: drm: connector eDP-1 crtc supports CTM
+DEBUG from aquamarine ]: drm: connector eDP-1 crtc supports HDR (8)
+DEBUG from aquamarine ]: drm: connector eDP-1 crtc supports Colorspace (122)
+DEBUG from aquamarine ]: drm: Connector 120 connection state: 1
+DEBUG from aquamarine ]: drm: Scanning connector id 128
+DEBUG from aquamarine ]: drm: Connector id 128 already initialized
+DEBUG from aquamarine ]: drm: Connector 128 connection state: 2
+DEBUG from aquamarine ]: drm: Scanning connector id 135
+DEBUG from aquamarine ]: drm: Connector id 135 already initialized
+DEBUG from aquamarine ]: drm: Connector 135 connection state: 2
+DEBUG from aquamarine ]: drm: Rechecking CRTCs
+DEBUG from aquamarine ]: drm: Skipping connector eDP-1, has crtc 103 and is connected
+DEBUG from aquamarine ]: drm: connector HDMI-A-1, has crtc -1, will be rechecked
+DEBUG from aquamarine ]: drm: connector DP-1, has crtc -1, will be rechecked
+DEBUG from aquamarine ]: drm: slot 0 crtc 103 taken by eDP-1, skipping
+DEBUG from aquamarine ]: drm: slot 1 crtc 108 unassigned
+DEBUG from aquamarine ]: drm: slot 2 crtc 113 unassigned
+DEBUG from aquamarine ]: drm: slot 3 crtc 118 unassigned
+DEBUG from aquamarine ]: udev: new udev change event for card1
+DEBUG from aquamarine ]: udev: DRM device card1 changed
+DEBUG from aquamarine ]: drm: Got a hotplug event for /dev/dri/card1
+DEBUG from aquamarine ]: drm: Scanning connectors for /dev/dri/card1
+DEBUG from aquamarine ]: drm: Scanning connector id 120
+DEBUG from aquamarine ]: drm: Connector id 120 already initialized
+DEBUG from aquamarine ]: drm: connector eDP-1 crtc is capable of vrr: props.vrr_capable -> 123, crtc->props.vrr_enabled -> 25
+DEBUG from aquamarine ]: drm: Explicit sync supported
+DEBUG from aquamarine ]: drm: connector eDP-1 crtc supports CTM
+DEBUG from aquamarine ]: drm: connector eDP-1 crtc supports HDR (8)
+DEBUG from aquamarine ]: drm: connector eDP-1 crtc supports Colorspace (122)
+DEBUG from aquamarine ]: drm: Connector 120 connection state: 1
+DEBUG from aquamarine ]: drm: Scanning connector id 128
+DEBUG from aquamarine ]: drm: Connector id 128 already initialized
+DEBUG from aquamarine ]: drm: Connector 128 connection state: 2
+DEBUG from aquamarine ]: drm: Scanning connector id 135
+DEBUG from aquamarine ]: drm: Connector id 135 already initialized
+DEBUG from aquamarine ]: drm: Connector 135 connection state: 2
+DEBUG from aquamarine ]: drm: Rechecking CRTCs
+DEBUG from aquamarine ]: drm: Skipping connector eDP-1, has crtc 103 and is connected
+DEBUG from aquamarine ]: drm: connector HDMI-A-1, has crtc -1, will be rechecked
+DEBUG from aquamarine ]: drm: connector DP-1, has crtc -1, will be rechecked
+DEBUG from aquamarine ]: drm: slot 0 crtc 103 taken by eDP-1, skipping
+DEBUG from aquamarine ]: drm: slot 1 crtc 108 unassigned
+DEBUG from aquamarine ]: drm: slot 2 crtc 113 unassigned
+DEBUG from aquamarine ]: drm: slot 3 crtc 118 unassigned
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout refresh
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout refresh
+DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 148
+DEBUG from aquamarine ]: drm: Cursor buffer imported into KMS with id 148
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout refresh
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout refresh
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
+DEBUG from aquamarine ]: [libinput] event8  - palm: keyboard timeout
