@@ -3,6 +3,7 @@
 import argparse
 from datetime import datetime, timezone
 import importlib.util
+import json
 import os
 from pathlib import Path
 import re
@@ -48,6 +49,17 @@ def command(args, timeout=10):
         return '[시간 제한: {}초]'.format(timeout)
     except OSError as error:
         return '[실행 불가: {}]'.format(error)
+
+
+def monitors():
+    """Name, enabled and DPMS state per monitor only (hyprctl also reports serial numbers)."""
+    text = command(['hyprctl', '-j', 'monitors', 'all'])
+    try:
+        data = json.loads(text.split('\n', 1)[1])
+    except (IndexError, ValueError):
+        return text
+    return '\n'.join('{} disabled={} dpms={} focused={}'.format(item.get('name'), item.get('disabled'), item.get('dpmsStatus'), item.get('focused'))
+                     for item in data) or '[모니터 없음]'
 
 
 def read_tail(path):
@@ -107,8 +119,11 @@ def collect():
     add('사용자 서비스 상태', command(['systemctl', '--user', 'show', *units,
         '-p', 'Id', '-p', 'ActiveState', '-p', 'SubState', '-p', 'Result', '-p', 'ExecMainStatus']))
     add('사용자 서비스 정의', command(['systemctl', '--user', 'cat', *units]))
-    add('사용자 서비스 로그', command(['journalctl', '--user', '-b', '--no-pager', '-n', '100',
-        *[argument for unit in units for argument in ('-u', unit)]]))
+    # One tail per unit: hypridle logs every timeout and would push the shell's own lines out of a shared tail.
+    for unit in units:
+        add('사용자 서비스 로그 ' + unit, command(['journalctl', '--user', '-b', '--no-pager', '-n', '150' if unit == 'shittim.service' else '40', '-u', unit]))
+    add('Shittim 실행 상태', command(['quickshell', 'ipc', '--path', str(ROOT / 'shell/shell.qml'), 'call', 'runtime', 'status']))
+    add('Hyprland 모니터', monitors())
     add('tty1 로그인 서비스 로그', command(['journalctl', '-b', '--no-pager', '-n', '80', '-u', 'getty@tty1.service']))
     add('현재 사용자 Hyprland journal', command(['journalctl', '-b', '--no-pager', '-n', '100',
         '_UID=' + str(os.getuid()), '_COMM=Hyprland', '_COMM=start-hyprland']))

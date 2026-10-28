@@ -17,7 +17,10 @@ Scope {
             return JSON.stringify({protocol:1,contract:root.contract,fingerprint:root.fingerprint,pid:Quickshell.processId,
                 configRoot:Quickshell.shellDir,owner:InteractionState.owner ? InteractionState.owner.name : "",
                 generation:InteractionState.generation,windowBusy:WindowCommands.busy,
-                windowRequests:Object.keys(WindowCommands.requests).length,launcherReady:LauncherState.ready})
+                windowRequests:Object.keys(WindowCommands.requests).length,launcherReady:LauncherState.ready,
+                screens:Quickshell.screens.map(output=>output.name),ownerScreen:InteractionState.screen ? InteractionState.screen.name : "",
+                control:{opened:ControlState.opened,page:ControlState.page,
+                    anchorScreen:ControlState.anchorWindow && ControlState.anchorWindow.screen ? ControlState.anchorWindow.screen.name : ""}})
         }
     }
 }
