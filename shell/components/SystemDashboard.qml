@@ -12,7 +12,7 @@ import "../ui/AssetPaths.js" as AssetPaths
 PanelWindow {
     id: window
     screen: DashboardState.targetScreen
-    visible: DashboardState.opened && screen !== null
+    visible: DashboardState.opened && DashboardState.targetScreen !== null
     anchors { top: true; left: true }
     margins.top: Math.min(Theme.barHeight + Theme.spaceS, Math.max(0, (screen ? screen.height : 0) - 80))
     margins.left: Theme.spaceS

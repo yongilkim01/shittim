@@ -9,7 +9,7 @@ import "./windows"
 PanelWindow {
     id: window
     screen: WindowState.targetScreen
-    visible: WindowState.opened && screen !== null
+    visible: WindowState.opened && WindowState.targetScreen !== null
     implicitWidth: Math.max(1, Math.min(680, (screen ? screen.width : 0) - 24))
     implicitHeight: Math.max(1, Math.min(420, (screen ? screen.height : 0) - Theme.barHeight - 24))
     color: Theme.transparent; exclusionMode: ExclusionMode.Ignore

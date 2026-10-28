@@ -62,6 +62,29 @@ def monitors():
                      for item in data) or '[모니터 없음]'
 
 
+def shell_status():
+    """runtime status without the fingerprint: a 64-character hash would make scrub drop the whole line."""
+    text = command(['quickshell', 'ipc', '--path', str(ROOT / 'shell/shell.qml'), 'call', 'runtime', 'status'])
+    line = next((item for item in text.splitlines() if item.startswith('{')), None)
+    try:
+        data = json.loads(line)
+    except (TypeError, ValueError):
+        return text
+    data.pop('fingerprint', None)
+    return json.dumps(data, ensure_ascii=False, sort_keys=True)
+
+
+def layers():
+    """Namespaces of the layer surfaces Hyprland currently maps, per monitor (shows whether shell panels exist)."""
+    text = command(['hyprctl', '-j', 'layers'])
+    try:
+        data = json.loads(text.split('\n', 1)[1])
+    except (IndexError, ValueError):
+        return text
+    return '\n'.join('{}: {}'.format(monitor, ', '.join(sorted(item.get('namespace', '') for level in value.get('levels', {}).values() for item in level)))
+                     for monitor, value in data.items()) or '[레이어 없음]'
+
+
 def read_tail(path):
     try:
         if not path.is_file():
@@ -122,8 +145,9 @@ def collect():
     # One tail per unit: hypridle logs every timeout and would push the shell's own lines out of a shared tail.
     for unit in units:
         add('사용자 서비스 로그 ' + unit, command(['journalctl', '--user', '-b', '--no-pager', '-n', '150' if unit == 'shittim.service' else '40', '-u', unit]))
-    add('Shittim 실행 상태', command(['quickshell', 'ipc', '--path', str(ROOT / 'shell/shell.qml'), 'call', 'runtime', 'status']))
+    add('Shittim 실행 상태', shell_status())
     add('Hyprland 모니터', monitors())
+    add('Hyprland 레이어', layers())
     add('tty1 로그인 서비스 로그', command(['journalctl', '-b', '--no-pager', '-n', '80', '-u', 'getty@tty1.service']))
     add('현재 사용자 Hyprland journal', command(['journalctl', '-b', '--no-pager', '-n', '100',
         '_UID=' + str(os.getuid()), '_COMM=Hyprland', '_COMM=start-hyprland']))

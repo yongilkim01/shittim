@@ -18,4 +18,7 @@ Scope {
         onCleared:root.session.close("outside")
     }
     Shortcut { sequence:"Escape";enabled:root.eligible && root.session.kind==="panel";onActivated:root.session.close("escape") }
+    // The compositor can close a layer surface itself (an output recreated across suspend); release the session
+    // so the shell does not keep an invisible panel "open" and the next click opens it again.
+    Connections { target:root.window;ignoreUnknownSignals:true;function onClosed() { if (root.session.active) root.session.close("closed") } }
 }

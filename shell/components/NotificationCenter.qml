@@ -9,7 +9,7 @@ import "./notifications"
 PanelWindow {
     id: window
     screen: NotificationState.targetScreen
-    visible: NotificationState.opened && screen !== null
+    visible: NotificationState.opened && NotificationState.targetScreen !== null
     anchors { top: true; right: true }
     margins.top: Math.min(Theme.barHeight + Theme.spaceS, Math.max(0, (screen ? screen.height : 0) - 80))
     margins.right: Theme.spaceS

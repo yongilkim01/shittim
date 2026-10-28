@@ -9,7 +9,7 @@ import "./media"
 PanelWindow {
     id: window
     screen: MediaState.targetScreen
-    visible: MediaState.opened && screen !== null
+    visible: MediaState.opened && MediaState.targetScreen !== null
     anchors { bottom: true; right: true }
     margins.bottom: Theme.spaceS; margins.right: Theme.spaceS
     readonly property real panelScale: Math.max(0.01, Math.min(1,

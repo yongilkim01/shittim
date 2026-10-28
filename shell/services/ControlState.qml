@@ -6,6 +6,7 @@ QtObject {
 	id: root
 	readonly property bool opened: session.active
 	readonly property var anchorWindow: session.anchorWindow
+	readonly property var targetScreen: session.screen
 	readonly property alias panelSession: session
 	property PanelSession sessionObject: PanelSession {
 		id:session

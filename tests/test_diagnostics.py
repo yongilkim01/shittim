@@ -59,6 +59,15 @@ class Diagnostics(unittest.TestCase):
             self.assertNotIn('do-not-upload', result)
             self.assertEqual(profile.read_text().count('do-not-upload'), 1)
 
+    def test_shell_status_and_layers_survive_scrub(self):
+        status = '[종료 코드 0]\n  WARN: locale\n{"fingerprint":"' + 'a' * 64 + '","owner":"control","screens":["eDP-1"]}\n'
+        layers = '[종료 코드 0]\n{"eDP-1":{"levels":{"0":[{"namespace":"shittim-surface"}],"2":[{"namespace":"shittim-bar"}]}}}'
+        with patch.object(TOOL, 'command', side_effect=[status, layers]):
+            report = TOOL.scrub(TOOL.shell_status() + '\n' + TOOL.layers())
+        self.assertIn('"owner": "control"', report)
+        self.assertNotIn('a' * 64, report)
+        self.assertIn('eDP-1: shittim-bar, shittim-surface', report)
+
     def test_failed_and_missing_commands_do_not_abort_collection(self):
         with patch.object(TOOL.subprocess, 'run', return_value=subprocess.CompletedProcess([], 7, 'failure details')):
             self.assertIn('7', TOOL.command(['example']))

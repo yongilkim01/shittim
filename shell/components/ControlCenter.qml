@@ -8,8 +8,8 @@ import "./control"
 
 PanelWindow {
 	id: window
-	screen: ControlState.anchorWindow !== null ? ControlState.anchorWindow.screen : null
-	visible: ControlState.opened && screen !== null
+	screen: ControlState.targetScreen
+	visible: ControlState.opened && ControlState.targetScreen !== null
 	anchors { top: true; right: true }
 	margins.top: Math.min(Theme.barHeight + Theme.spaceS, Math.max(0, (screen ? screen.height : 0) - 120))
 	margins.right: Theme.spaceS

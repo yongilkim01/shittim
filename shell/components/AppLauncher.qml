@@ -9,7 +9,7 @@ import "./launcher"
 PanelWindow {
     id: window
     screen: LauncherState.targetScreen
-    visible: LauncherState.opened && screen !== null
+    visible: LauncherState.opened && LauncherState.targetScreen !== null
     implicitWidth: Math.max(1, Math.min(Theme.launcherWidth, (screen ? screen.width : 0) - Theme.spaceL * 2))
     implicitHeight: Math.max(1, Math.min(Theme.launcherHeight * implicitWidth / Theme.launcherWidth, (screen ? screen.height : 0) - Theme.spaceL * 2))
     exclusionMode: ExclusionMode.Ignore
