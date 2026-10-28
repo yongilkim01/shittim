@@ -124,7 +124,8 @@ class Child:
             return False
         self.starts.append(now)
         try:
-            self.process = subprocess.Popen(args, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            # Output goes to the service journal: hypridle logs every timeout and the command it ran.
+            self.process = subprocess.Popen(args, stdin=subprocess.DEVNULL)
         except OSError:
             self.process = None
             return False

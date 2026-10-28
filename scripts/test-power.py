@@ -210,7 +210,8 @@ class Tester:
     def auto_lock_and_screen_off(self, source):
         name = '자동 잠금 1분 · 화면 끄기 2분'
         if not self.ready(name, ['설정을 잠시 자동 잠금 1분 · 화면 끄기 2분 · 자동 절전 끔으로 바꿉니다(끝나면 되돌림).',
-                                 'Enter 후 키보드·마우스를 만지지 마세요. 약 1분 뒤 잠기고 2분 뒤 화면이 꺼집니다.',
+                                 'Enter 후 키보드·마우스·터치패드를 만지지 마세요. 약 1분 뒤 잠기고 2분 뒤 화면이 꺼집니다.',
+                                 '잠긴 뒤에도 화면이 꺼질 때까지 만지지 마세요. 입력이 들어가면 2분을 처음부터 다시 셉니다.',
                                  '화면이 꺼지면 아무 키나 눌러 켜고 비밀번호로 해제하세요.']):
             return
         if not self.apply(source, lock=1, screenOff=2, suspend=0):
@@ -219,8 +220,8 @@ class Tester:
         failures = []
         if not wait_until(locked, 90, 1):
             failures.append('90초 안에 자동 잠금 안 됨')
-        elif not wait_until(lambda: not all(screens_on()), 90, 1):
-            failures.append('잠금 후 화면이 꺼지지 않음')
+        elif not wait_until(lambda: not all(screens_on()), 150, 1):
+            failures.append('잠금 후 화면이 꺼지지 않음 — journalctl --user -u shittim-idle.service 의 hypridle 로그 확인')
         if not wait_until(lambda: all(screens_on()) and not locked(), 300, 1):
             failures.append('화면 복귀 또는 해제 확인 안 됨')
         self.record(name, 'FAIL' if failures else 'PASS', ', '.join(failures))
