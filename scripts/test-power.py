@@ -55,6 +55,31 @@ def screens_on():
     return [bool(item.get('dpmsStatus')) for item in monitors]
 
 
+def power_action(name):
+    subprocess.run(['/usr/bin/bash', str(ROOT / 'scripts/power-action.sh'), name], capture_output=True, timeout=15)
+
+
+WAKE_OPTIONS = ('key_press_enables_dpms', 'mouse_move_enables_dpms')
+
+
+def wake_option(name):
+    data = hyprctl_json('getoption', 'misc:' + name) or {}
+    value = data.get('bool', data.get('int'))
+    return None if value is None else bool(value)
+
+
+def set_wake(values):
+    """Sets the Hyprland options that let input turn a DPMS-off screen back on (runtime only, reload restores)."""
+    items = ', '.join(f'{key} = {"true" if value else "false"}' for key, value in values.items())
+    code, output = run(['hyprctl', 'eval', 'hl.config({ misc = { ' + items + ' } })'])
+    return code == 0 and output.strip() == 'ok' and all(wake_option(key) == value for key, value in values.items())
+
+
+def input_devices():
+    data = hyprctl_json('devices') or {}
+    return {kind: [str(item.get('name')) for item in data.get(kind) or []] for kind in ('keyboards', 'mice', 'touch', 'tablets')}
+
+
 def windows():
     return sorted(str(item.get('address')) for item in hyprctl_json('clients') or [])
 
@@ -207,6 +232,52 @@ class Tester:
             return
         self.record(name, 'PASS' if self.wait_unlock() else 'FAIL')
 
+    def screen_wake(self):
+        """Finds input that turns a DPMS-off screen back on by itself. One wake path always stays on and the
+        script turns the screen back on after every round, so the screen never stays dark."""
+        name = '꺼진 화면이 저절로 켜지는지'
+        original = {key: wake_option(key) for key in WAKE_OPTIONS}
+        if None in original.values() or not screens_on():
+            self.record(name, 'FAIL', 'Hyprland 옵션·모니터 상태를 읽지 못함')
+            return
+        if not self.ready(name, ['화면을 5초씩 세 번 끕니다. 매번 스크립트가 다시 켭니다.',
+                                 '1) 지금 설정 그대로  2) «키 입력으로 화면 켜기» 만 끔  3) «마우스로 화면 켜기» 만 끔',
+                                 '키보드·마우스 자체는 계속 동작합니다. 꺼지는 것은 «꺼진 화면을 켜는 기능» 하나씩입니다.',
+                                 'Enter 후 끝날 때까지(약 30초) 키보드·마우스·터치패드를 만지지 마세요.',
+                                 '화면이 15초 넘게 안 돌아오면 키를 누르거나 마우스를 움직이세요(둘 중 하나는 항상 켜져 있음).']):
+            return
+        rounds = [('그대로', original), ('키 입력 켜기 끔', {WAKE_OPTIONS[0]: False, WAKE_OPTIONS[1]: True}),
+                  ('마우스 켜기 끔', {WAKE_OPTIONS[0]: True, WAKE_OPTIONS[1]: False})]
+        woke = {}
+        try:
+            for label, values in rounds:
+                if not set_wake(values):
+                    self.record(name, 'FAIL', 'hyprctl eval 로 옵션을 바꾸지 못함')
+                    return
+                time.sleep(2)  # releasing Enter is a key event and would wake the screen
+                power_action('screen-off')
+                time.sleep(5)
+                woke[label] = all(screens_on())
+                power_action('screen-on')
+                wait_until(lambda: all(screens_on()), 5)
+                time.sleep(1)
+        finally:
+            set_wake(original)
+            power_action('screen-on')
+        detail = ' · '.join(f'{label}: ' + ('저절로 켜짐' if value else '꺼진 채 유지') for label, value in woke.items())
+        if not woke['그대로']:
+            self.record(name, 'PASS', detail)
+            return
+        if not woke['키 입력 켜기 끔'] and woke['마우스 켜기 끔']:
+            cause = '키보드 쪽 입력(가상 키보드 포함)이 켬'
+        elif woke['키 입력 켜기 끔'] and not woke['마우스 켜기 끔']:
+            cause = '마우스·터치패드·터치 쪽 입력이 켬'
+        else:
+            cause = '양쪽 모두 또는 입력이 아닌 원인'
+        devices = input_devices()
+        listed = '; '.join(f'{kind}: ' + ', '.join(names) for kind, names in devices.items() if names)
+        self.record(name, 'FAIL', f'{detail} → {cause} · 장치 {listed}')
+
     def auto_lock_and_screen_off(self, source):
         name = '자동 잠금 1분 · 화면 끄기 2분'
         if not self.ready(name, ['설정을 잠시 자동 잠금 1분 · 화면 끄기 2분 · 자동 절전 끔으로 바꿉니다(끝나면 되돌림).',
@@ -323,6 +394,19 @@ class Tester:
         lines.append(f'통과 {counts["PASS"]} · 실패 {counts["FAIL"]} · 건너뜀 {counts["SKIP"]}')
         return '\n'.join(lines)
 
+    def finish(self):
+        text = self.summary()
+        self.out(text)
+        log = Path(os.environ.get('XDG_STATE_HOME') or Path.home() / '.local/state') / 'shittim' / time.strftime('power-test-%Y%m%d-%H%M%S.txt')
+        log.parent.mkdir(parents=True, exist_ok=True)
+        log.write_text(text + '\n', encoding='utf-8')
+        self.out('결과 저장: ' + str(log))
+        return 1 if any(outcome == 'FAIL' for _, outcome, _ in self.results) else 0
+
+    def run_screen_wake(self):
+        self.screen_wake()
+        return self.finish()
+
     def run(self, with_suspend):
         status = self.check_service()
         if not status:
@@ -331,6 +415,7 @@ class Tester:
         try:
             self.manual_lock()
             self.control_center_lock()
+            self.screen_wake()
             self.auto_lock_and_screen_off(source)
             self.settings.restore()
             self.keep_awake(source)
@@ -346,24 +431,25 @@ class Tester:
             if self.keep_awake_on:
                 self.ipc('toggleKeepAwake')
             self.settings.restore()
-        text = self.summary()
-        self.out(text)
-        log = Path(os.environ.get('XDG_STATE_HOME') or Path.home() / '.local/state') / 'shittim' / time.strftime('power-test-%Y%m%d-%H%M%S.txt')
-        log.parent.mkdir(parents=True, exist_ok=True)
-        log.write_text(text + '\n', encoding='utf-8')
-        self.out('결과 저장: ' + str(log))
-        return 1 if any(outcome == 'FAIL' for _, outcome, _ in self.results) else 0
+        return self.finish()
 
 
 def main(argv=None):
     argv = sys.argv[1:] if argv is None else argv
-    if any(arg not in ('--with-suspend',) for arg in argv):
-        print('사용법: test-power.sh [--with-suspend]', file=sys.stderr)
+    if len(argv) > 1 or any(arg not in ('--with-suspend', '--screen-wake') for arg in argv):
+        print('사용법: test-power.sh [--with-suspend | --screen-wake]', file=sys.stderr)
         return 2
     if not os.environ.get('HYPRLAND_INSTANCE_SIGNATURE') or not shutil.which('hyprctl'):
         print('[Shittim:오류] Hyprland 세션의 터미널에서 실행하세요.', file=sys.stderr)
         return 1
     print('Shittim 전원·잠금 실기 검사 (docs/power.md 수동 검사 순서)')
+    if argv == ['--screen-wake']:
+        print('Shittim 꺼진 화면 깨움 검사 · 화면을 5초씩 세 번 끄고 다시 켭니다. 설정은 끝나면 되돌립니다.')
+        try:
+            return Tester().run_screen_wake()
+        except KeyboardInterrupt:
+            print('\n중단했습니다. 화면 깨움 설정은 되돌렸습니다.')
+            return 130
     print('· 이 검사는 화면을 잠그고 끕니다' + (' · 실제로 절전합니다' if argv else '') + '. 열린 작업을 저장하세요.')
     print('· 설정은 검사 중에만 바꾸고 끝나면(중간에 Ctrl+C 해도) 되돌립니다. 자동 절전은 검사 내내 꺼 둡니다.')
     print('· 비밀번호는 잠금 화면에만 입력합니다. 이 스크립트는 비밀번호를 묻거나 기록하지 않습니다.')

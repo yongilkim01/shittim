@@ -297,11 +297,41 @@ class Guide(unittest.TestCase):
         def boom(source):
             tester.settings.set('ac', lock=1); tester.keep_awake_on = True
             raise KeyboardInterrupt
-        with patch.object(tester, 'check_service', return_value={'source': 'ac', 'hasBattery': False}),              patch.object(tester, 'manual_lock'), patch.object(tester, 'control_center_lock'),              patch.object(tester, 'auto_lock_and_screen_off', side_effect=boom),              patch.object(tester, 'ipc', side_effect=lambda function: calls.append(function) or (0, '')):
+        with patch.object(tester, 'check_service', return_value={'source': 'ac', 'hasBattery': False}),              patch.object(tester, 'manual_lock'), patch.object(tester, 'control_center_lock'), patch.object(tester, 'screen_wake'),              patch.object(tester, 'auto_lock_and_screen_off', side_effect=boom),              patch.object(tester, 'ipc', side_effect=lambda function: calls.append(function) or (0, '')):
             with self.assertRaises(KeyboardInterrupt):
                 tester.run(False)
         self.assertFalse(self.personal.exists())
         self.assertEqual(calls, ['toggleKeepAwake'])
+
+    def screen_wake(self, wakes):
+        """Runs the screen wake step with a fake Hyprland; wakes(options) says whether the screen came back on its own."""
+        tester = GUIDE.Tester(ask=lambda prompt: '', out=lambda text: None)
+        options = {'key_press_enables_dpms': True, 'mouse_move_enables_dpms': True}
+        state = {'on': True}
+        history, actions = [], []
+        def set_wake(values):
+            options.update(values); history.append(dict(options)); return True
+        def action(name):
+            actions.append(name)
+            state['on'] = name == 'screen-on' or wakes(options)
+        with patch.object(GUIDE, 'wake_option', side_effect=lambda key: options[key]), \
+             patch.object(GUIDE, 'set_wake', side_effect=set_wake), patch.object(GUIDE, 'power_action', side_effect=action), \
+             patch.object(GUIDE, 'screens_on', side_effect=lambda: [state['on']]), patch.object(GUIDE.time, 'sleep'), \
+             patch.object(GUIDE, 'input_devices', return_value={'keyboards': ['fcitx-virtual'], 'mice': [], 'touch': [], 'tablets': []}):
+            tester.screen_wake()
+        self.assertTrue(all(any(values.values()) for values in history))
+        self.assertEqual(history[-1], {'key_press_enables_dpms': True, 'mouse_move_enables_dpms': True})
+        self.assertEqual(actions[-1], 'screen-on')
+        self.assertTrue(state['on'])
+        return tester.results[-1]
+
+    def test_screen_wake_names_the_input_side_and_always_restores(self):
+        self.assertEqual(self.screen_wake(lambda options: False)[1], 'PASS')
+        name, outcome, detail = self.screen_wake(lambda options: options['key_press_enables_dpms'])
+        self.assertEqual(outcome, 'FAIL')
+        self.assertIn('키보드 쪽', detail)
+        self.assertIn('fcitx-virtual', detail)
+        self.assertIn('마우스·터치패드', self.screen_wake(lambda options: options['mouse_move_enables_dpms'])[2])
 
     def test_requires_hyprland_session(self):
         with patch.dict(os.environ, HYPRLAND_INSTANCE_SIGNATURE=''):

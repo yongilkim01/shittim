@@ -58,7 +58,10 @@ bash scripts/verify-power.sh
 ```bash
 bash ~/projects/shittim/scripts/test-power.sh                 # 잠금·자동 잠금·화면 끄기·절전 방지·전원 감지
 bash ~/projects/shittim/scripts/test-power.sh --with-suspend  # + 실제 절전 · 덮개 절전 (복귀 직후 잠김 확인)
+bash ~/projects/shittim/scripts/test-power.sh --screen-wake   # 꺼진 화면이 저절로 켜지는지만 (약 30초)
 ```
+
+«꺼진 화면이 저절로 켜지는지» 는 화면을 5초씩 세 번 끈다. 지금 설정 그대로 → 키 입력 켜기만 끔 → 마우스 켜기만 끔 순서이며(`hyprctl eval`, 실행 중에만 바뀜), 두 가지를 동시에 끄지 않고 매 회 스크립트가 화면을 다시 켠다. 손대지 않았는데 켜지면 어느 쪽 입력인지와 `hyprctl devices` 장치 이름을 결과에 적는다.
 
 각 단계는 `s` 로 건너뛸 수 있다. 결과는 화면과 `~/.local/state/shittim/power-test-<시각>.txt` 에 남는다.
 
