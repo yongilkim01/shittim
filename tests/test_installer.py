@@ -268,14 +268,17 @@ class InstallerFiles(unittest.TestCase):
 
     @unittest.skipUnless(shutil.which('lua'), 'Lua 실행 파일이 있는 Linux에서 생성 설정 실행 검사')
     def test_generated_lua_applies_and_reverts_only_the_opted_in_binding(self):
-        self.file(self.config.config, 'hypr/shittim-base.lua', 'hl.bind("SUPER + R", hl.dsp.exec_cmd("fuzzel"))\n')
+        self.file(self.config.config, 'hypr/shittim-base.lua', 'hl.bind("SUPER + R", hl.dsp.exec_cmd("fuzzel"))\n'
+                  'hl.config({ misc = { key_press_enables_dpms = false } })\n')
         generated = self.file(self.config.config, 'hypr/hyprland.lua', self.config.lua())
-        prelude = ('local bindings = {}\nhl = { dsp = {exec_cmd = function(command) return command end},\n'
+        prelude = ('local bindings, misc = {}, {}\nhl = { dsp = {exec_cmd = function(command) return command end},\n'
+                   'config = function(options) for key, value in pairs(options.misc or {}) do misc[key] = value end end,\n'
                    'on = function() end, env = function() end, exec_cmd = function() end,\n'
                    'bind = function(key, command) bindings[key] = command end,\n'
                    'unbind = function(key) bindings[key] = nil end }\n'
                    'dofile(' + json.dumps(str(generated)) + ')\n'
-                   'assert(bindings["SUPER + SPACE"]:find("launcher.sh", 1, true))\n')
+                   'assert(bindings["SUPER + SPACE"]:find("launcher.sh", 1, true))\n'
+                   'assert(misc.mouse_move_enables_dpms == true and misc.key_press_enables_dpms == false)\n')
         for replace in [False, True, False]:
             with self.subTest(replace=replace):
                 self.config.launcher_key(replace)

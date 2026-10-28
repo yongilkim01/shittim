@@ -314,6 +314,8 @@ class Config:
         launcher_key = self.config / 'shittim/launcher-key'
         return ('-- ' + MARKER + '; original settings are loaded without editing.\n'
                 'assert(hl and hl.on and hl.exec_cmd, "Shittim requires Hyprland >= 0.55 Lua API")\n'
+                '-- Input wakes a screen turned off by DPMS; set before the original settings so they can still override it.\n'
+                'hl.config({ misc = { key_press_enables_dpms = true, mouse_move_enables_dpms = true } })\n'
                 'dofile(' + json.dumps(str(base), ensure_ascii=False) + ')\n'
                 'hl.env("QT_IM_MODULE", os.getenv("QT_IM_MODULE") or "fcitx")\n'
                 'hl.env("XMODIFIERS", os.getenv("XMODIFIERS") or "@im=fcitx")\n'
