@@ -172,7 +172,15 @@ inline void shittimTitlebarDrag(PHLWINDOW window, bool active) {
     g_pShittimTitlebarDrag = makeShared<Event::CEventBus::CCustomEvent>("shittim.titlebar_drag",
         std::vector{Event::CEventBus::CCustomEvent::TYPE_WINDOW, Event::CEventBus::CCustomEvent::TYPE_BOOL});
     if (HyprlandAPI::addEvent(PHANDLE, g_pShittimTitlebarDrag))
-        HyprlandAPI::addLuaFunction(PHANDLE, "hyprbars", "shittim_drag_events", [](lua_State*) -> int { return 0; });''')
+        HyprlandAPI::addLuaFunction(PHANDLE, "hyprbars", "shittim_drag_events", [](lua_State*) -> int { return 0; });
+    // Hyprland 0.57 rebuilds its Lua event handler on every reload and only links plugin events added after that,
+    // so register the event again once the reloaded config has subscribed to it.
+    static auto PShittimDrag = Event::bus()->m_events.config.reloaded.listen([] {
+        if (!g_pShittimTitlebarDrag)
+            return;
+        HyprlandAPI::removeEvent(PHANDLE, "shittim.titlebar_drag");
+        HyprlandAPI::addEvent(PHANDLE, g_pShittimTitlebarDrag);
+    });''')
             .replace(exit_hook, exit_hook + '\n    HyprlandAPI::removeEvent(PHANDLE, "shittim.titlebar_drag");\n    g_pShittimTitlebarDrag.reset();'))
 
 
