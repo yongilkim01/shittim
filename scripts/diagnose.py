@@ -58,7 +58,9 @@ def monitors():
         data = json.loads(text.split('\n', 1)[1])
     except (IndexError, ValueError):
         return text
-    return '\n'.join('{} disabled={} dpms={} focused={}'.format(item.get('name'), item.get('disabled'), item.get('dpmsStatus'), item.get('focused'))
+    return '\n'.join('{} disabled={} dpms={} focused={} mode={}x{}@{} position={}x{} scale={} transform={}'.format(
+        item.get('name'), item.get('disabled'), item.get('dpmsStatus'), item.get('focused'), item.get('width'), item.get('height'),
+        item.get('refreshRate'), item.get('x'), item.get('y'), item.get('scale'), item.get('transform'))
                      for item in data) or '[모니터 없음]'
 
 
@@ -148,6 +150,13 @@ def collect():
     add('Shittim 실행 상태', shell_status())
     add('Hyprland 모니터', monitors())
     add('Hyprland 레이어', layers())
+    add('Hyprland 플러그인', command(['hyprctl', 'plugin', 'list']))
+    for option in ('enabled', 'bar_height'):
+        add('제목 표시줄 설정 ' + option, command(['hyprctl', 'getoption', 'plugin:hyprbars:' + option]))
+    add('제목 표시줄 검증', command(['bash', str(ROOT / 'scripts/setup-titlebars.sh'), '--verify'], timeout=30))
+    runtime_shittim = Path(os.environ.get('XDG_RUNTIME_DIR') or '/run/user/{}'.format(os.getuid())) / 'shittim'
+    add('디스플레이 적용 상태', read_tail(runtime_shittim / 'display-status.json'))
+    add('디스플레이 확인 서비스 로그', command(['journalctl', '--user', '-b', '--no-pager', '-n', '60', '-u', 'shittim-display-guard']))
     state = Path(os.environ.get('XDG_STATE_HOME') or home / '.local/state') / 'shittim'
     watches = sorted(state.glob('panel-watch-*.txt')) if state.is_dir() else []
     add('패널 상태 기록 ' + (watches[-1].name if watches else ''), read_tail(watches[-1]) if watches else '[기록 없음]')
