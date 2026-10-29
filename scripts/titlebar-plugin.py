@@ -235,12 +235,15 @@ def load(config, version):
         if any(p.get('name') == 'hyprbars' and p.get('version') == data['renderer'] for p in plugins):
             return
         previous = unload_custom(config, plugins)
+        # Only a loaded stock hyprbars needs hyprpm; after a Hyprland upgrade hyprpm can refuse every reload.
+        stock = previous is None and any(p.get('name') == 'hyprbars' for p in plugins)
         attempted_load = False
         try:
-            command('hyprpm', 'disable', 'hyprbars')
-            command('hyprpm', 'reload')
-            if any(p.get('name') == 'hyprbars' for p in query('plugin', 'list')):
-                raise ValueError('기존 hyprbars를 해제하지 못했습니다. 중복 플러그인은 로드하지 않았습니다.')
+            if stock:
+                command('hyprpm', 'disable', 'hyprbars')
+                command('hyprpm', 'reload')
+                if any(p.get('name') == 'hyprbars' for p in query('plugin', 'list')):
+                    raise ValueError('기존 hyprbars를 해제하지 못했습니다. 중복 플러그인은 로드하지 않았습니다.')
             attempted_load = True
             command('hyprctl', 'plugin', 'load', data['library'])
             if not any(p.get('name') == 'hyprbars' and p.get('version') == data['renderer'] for p in query('plugin', 'list')):
@@ -254,7 +257,7 @@ def load(config, version):
             if previous and previous.get('commit') == version.get('commit') and previous.get('abiHash') == version.get('abiHash'):
                 command('hyprctl', 'plugin', 'load', previous['library'])
                 config.write(loaded_record(config), json.dumps(previous, indent=2) + '\n')
-            else:
+            elif stock:
                 command('hyprpm', 'enable', 'hyprbars')
                 command('hyprpm', 'reload')
             raise

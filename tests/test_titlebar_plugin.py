@@ -85,6 +85,13 @@ class TitlebarPlugin(unittest.TestCase):
         self.assertEqual(json.loads(PLUGIN.loaded_record(self.config).read_text()),self.data)
 
     @unittest.skipIf(os.name=='nt','Linux 플러그인 로드 잠금 검사')
+    def test_load_without_stock_plugin_does_not_touch_hyprpm(self):
+        self.manifest()
+        with patch.object(PLUGIN,'query',side_effect=[[],[dict(name='hyprbars',version=self.data['renderer'])]]),patch.object(PLUGIN,'command') as commands:
+            PLUGIN.load(self.config,VERSION)
+        self.assertEqual(commands.call_args_list,[call('hyprctl','plugin','load',str(self.library)),call('hyprctl','reload')])
+
+    @unittest.skipIf(os.name=='nt','Linux 플러그인 로드 잠금 검사')
     def test_repeated_load_does_not_reload_or_duplicate_any_plugin(self):
         self.manifest()
         with patch.object(PLUGIN,'query',return_value=[dict(name='hyprbars',version=self.data['renderer']),dict(name='other-plugin')]),patch.object(PLUGIN,'command') as commands:
@@ -107,9 +114,10 @@ class TitlebarPlugin(unittest.TestCase):
         previous=dict(self.data,renderer='shittim-vector-previous')
         PLUGIN.loaded_record(self.config).write_text(json.dumps(previous))
         def command(*args):
-            if args==('hyprpm','reload'): raise ValueError('header mismatch')
-        with patch.object(PLUGIN,'query',return_value=[dict(name='hyprbars',version=previous['renderer'])]),patch.object(PLUGIN,'command',side_effect=command) as commands:
+            if args==('hyprctl','plugin','load',str(self.library)): raise ValueError('header mismatch')
+        with patch.object(PLUGIN,'query',return_value=[dict(name='hyprbars',version=previous['renderer'])]),patch.object(PLUGIN,'command',side_effect=command) as commands,patch.object(PLUGIN.subprocess,'run'):
             with self.assertRaisesRegex(ValueError,'header mismatch'): PLUGIN.load(self.config,VERSION)
+        self.assertNotIn(call('hyprpm','reload'),commands.call_args_list)
         self.assertEqual(commands.call_args_list[-1],call('hyprctl','plugin','load',previous['library']))
         self.assertEqual(json.loads(PLUGIN.loaded_record(self.config).read_text()),previous)
 
