@@ -17,7 +17,70 @@
 | 상단 바·컨트롤 | `barHeight` 40 / `controlHeight` 28 |
 | 전환 | `hoverDuration` 150 / `stateDuration` 200 / `panelDuration` 250ms |
 
-기본 배경은 `#020f15`이다. 시안은 활성·호버·중요 정보에 집중한다. 평면과 얇은 직선을 사용하며, 그림자·블러·반복 발광은 사용하지 않는다. 패널 등장 시간은 토큰만 제공하며 현재 상단 바에는 등장 애니메이션을 실행하지 않는다.
+기본 배경은 `#020f15`이다. 시안은 활성·호버·중요 정보에 집중한다. 평면과 얇은 직선을 사용하며, 그림자·블러·반복(펄스) 발광은 사용하지 않는다. 떠 있는 층(팝업·Dock·툴팁)에만 정적인 옅은 외곽 후광을 쓴다(아래 2.0 참조). 패널 등장 시간은 토큰만 제공하며 현재 상단 바에는 등장 애니메이션을 실행하지 않는다.
+
+## Design System 2.0 (2026-10-29)
+
+색·배경·로고는 그대로 두고 테두리·모서리·계층·상태 표현을 정교하게 만든 개정이다. 시각 목표는 사용자 시안(시스템 설정 창: 좌측 메뉴, 시스템 개요 게이지, 저장 공간·네트워크·세부 설정 카드)이다.
+
+### 참고 저장소에서 가져온 것
+
+| 저장소 (라이선스) | 확인한 구현 | 채택 | 채택하지 않음 |
+| --- | --- | --- | --- |
+| [caelestia-dots/shell](https://github.com/caelestia-dots/shell) (GPL-3.0) | C++ 토큰(`tokens.hpp`: 간격·둥글기·시간·곡선), 중앙 `Anim`/`CAnim`, `StateLayer`(호버 0.08 + 누름 파문), 단계별 표면색 `Colours.layer`, `Elevation` dp 그림자, SDF 셰이더 프레임 | 모션·상태 값을 토큰으로 모으기, 상태 표현을 색과 형태로 분리, 떠 있는 층에만 높이감 | Material You 색, 둥근 블롭 변형, 과한 탄성 곡선 |
+| [43PR/dotfiles](https://github.com/43PR/dotfiles) (MIT) | `Theme.qml` 의미 색(`bgPanel`·`bgCard`·`trackBg`), 상태 우선순위(누름 > 활성 > 경고, 호버 오버레이), 36×20 토글, 강조색 아이콘 상자·자간 라벨, 모서리만 그라데이션인 테두리 | 상태 우선순위, 선택 = 1px 강조 테두리 + 옅은 강조 채움, 토글 크기·동작, 모서리 강조 | 파일마다 다시 만든 인라인 컴포넌트(중복) |
+| [ViegPhunt/Dotfiles](https://github.com/ViegPhunt/Dotfiles) (MIT) | waybar·swaync·rofi·wlogout CSS(QML 없음), 호버 밑줄 / 활성 전체 테두리 | 선택 막대(버튼 하단 강조선) | 파스텔 다색 모듈, 반복 펄스 발광 |
+| [ViegPhunt/Arch-Hyprland](https://github.com/ViegPhunt/Arch-Hyprland) (MIT) | `install.sh`(stow)만 있고 UI 파일 없음 | — | — |
+
+네 저장소 모두 화면 가장자리 스냅·HUD식 깎인 모서리는 구현하지 않았다. README 스크린샷은 동영상·첨부 링크라 시각 특징은 확인하지 않았다. 코드는 복사하지 않았다.
+
+### 표면 계층 (`HudFrame.level`)
+
+| 단계 | 쓰는 곳 | 모서리 | 강조선 | 기타 |
+| --- | --- | --- | --- | --- |
+| `window` | 대시보드·제어 센터·런처·알림 센터 바깥 틀 | 우상·좌하 14px | 네 모서리 밝은 시안 2px, 28px | 안쪽 4px 보조선 |
+| `panel` | 시스템 개요, 미디어 플레이어, 알림 팝업, Dock | 좌상·우하 10px (비대칭) | 깎인 모서리에 어두운 시안 2px, 18px | |
+| `card` | 저장 공간·네트워크, 목록 항목(`HudPanel`) | 좌상·우하 6px | 깎인 모서리에 어두운 시안 1px, 10px | |
+| `control` | 버튼·타일·메뉴 항목·설정 행(`ControlFrame`) | 한 모서리 4~6px | 없음 (켜진 타일만 10px) | 상태가 테두리·채움으로 드러남 |
+
+떠 있는 층(`glow: true`: 런처·알림·미디어·Dock·툴팁)만 옅은 외곽 후광을 가진다. 강한 시안은 `window` 모서리, 선택·켜짐 상태, 게이지 값에만 쓴다.
+
+### 상태 우선순위
+
+비활성 > 누름 > 선택(켜짐) > 오류/경고 > 포커스·호버 > 기본. 채움은 시안의 고정 투명도로 통일한다.
+
+| 상태 | 채움 | 테두리 | 글자 |
+| --- | --- | --- | --- |
+| 기본 | `surface` | `border` | `textSecondary` |
+| 호버 | `hoverFill` (8%) | `accentDim` | `accentBright` |
+| 포커스 | — | `accent` | — |
+| 선택·켜짐 | `selectedFill` (15%) | `accent` + 하단/좌측 강조 막대 | `accentBright` 굵게 |
+| 누름 | `pressedFill` (18%), 90ms | `accent` | `accentBright` |
+| 오류·긴급 | — | `warning`·`danger` 테두리와 강조선 | 같은 색 |
+| 비활성 | `disabledFill` | `border` 반투명 | `textMuted` |
+
+### 공용 컴포넌트
+
+| 컴포넌트 | 역할 |
+| --- | --- |
+| `HudFrame` | 모든 표면의 틀. 단계·모서리별 깎임·강조선·이중선·후광. QtQuick.Shapes 하나로 그려 Canvas 재그리기가 없다 |
+| `HudPanel` | `card` 단계 목록 항목 |
+| `HudButton` | 상태 우선순위 + 선택 막대. `compact`는 상단 바 워크스페이스 칩 |
+| `HudToggle` | 켜짐/꺼짐 스위치. 손잡이 이동 160ms, 켜지면 손잡이 후광 |
+| `HudSlider` | 그라데이션 채움, 누르면 손잡이 1.2배, 호버·드래그·포커스 시 후광 고리 |
+| `HudProgress` | 둥근 트랙·그라데이션 채움·현재 값 밝은 끝 |
+| `HudSectionHeader` | 강조 막대(또는 아이콘)·제목·보조 값·`⋯` 표지 |
+| `HudToolTip` | 창 안 힌트. `HudInfoCard` 카드 + 150ms 페이드. 상단 바는 `BarTooltip`(팝업 창) |
+| `HudCallout`/`HudInfoCard` | 화살표가 있는 떠 있는 카드. 좌상·우하 강조선과 후광 |
+| `ControlFrame` | 기존 API를 유지한 `control` 단계 `HudFrame` |
+
+### 토큰 추가
+
+`hoverFill` `pressedFill` `selectedFill` `accentGlow` `trackFill` `frameLine` `disabledFill`, 단계별 `windowCut` `panelCut` `cardCut` `controlCut` 과 `windowAccent` `panelAccent` `cardAccent`, `accentLineWidth` `frameInset` `sectionBarWidth`, `toggleWidth` `toggleHeight`, `pressDuration` 90 `toggleDuration` 160. 정본은 `config/design-tokens.json`이고 `scripts/design-tokens.py --write`로 `Theme.qml`을 생성한다.
+
+### 적용 범위
+
+대시보드(창 틀·좌측 메뉴 레일 표시·시스템 개요 게이지·저장 공간·네트워크 그래프 채움), 제어 센터(창 틀·타일 상태), 전원 및 잠금·디스플레이 설정(`ControlFrame` 행), 런처·알림 센터·알림 팝업·미디어·Dock 틀, 상단 바 노치 강조선, 모든 창 안 툴팁. 잠금 화면(hyprlock)과 GTK 앱 색은 이번 개정 범위 밖이다. 배치 좌표는 바꾸지 않아 기존 화면 시험이 그대로 통과한다.
 
 ## 모듈과 사용법
 

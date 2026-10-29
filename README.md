@@ -287,7 +287,7 @@ quickshell --path "$PWD/shell/shell.qml"
 
 `shell/ui/Theme.qml`이 색상·폰트·크기·간격·모션의 정본이다. 기본 배경은 `#020f15`, 상단 바는 40px이다. 얇은 시안 경계, 직선 패널, 절제된 모서리와 활성·호버 강조를 사용한다.
 
-`shell/ui/`의 `HudPanel`, `HudButton`, `HudText`, `HudDivider`, `HudProgress`, `HudIcon`, `HudStatus`를 재사용한다. 컴포넌트의 `import "../ui"`와 `qmldir` 싱글턴 등록을 사용하며 별도 설치나 외부 라이브러리는 필요하지 않다. 폰트는 Arch에 설치된 Hack Nerd Font Mono와 D2Coding을 사용한다.
+`shell/ui/`의 `HudFrame`(window·panel·card·control 계층), `HudPanel`, `HudButton`, `HudToggle`, `HudSlider`, `HudSectionHeader`, `HudToolTip`, `HudText`, `HudDivider`, `HudProgress`, `HudIcon`, `HudStatus`를 재사용한다. 계층별 모서리·강조선·상태 우선순위는 [Design System 2.0](docs/DESIGN.md#design-system-20-2026-10-29)에 있다. 컴포넌트의 `import "../ui"`와 `qmldir` 싱글턴 등록을 사용하며 별도 설치나 외부 라이브러리는 필요하지 않다. 폰트는 Arch에 설치된 Hack Nerd Font Mono와 D2Coding을 사용한다.
 
 사용 예·토큰·레이아웃·검증 절차는 [디자인 문서](docs/DESIGN.md)에 있다. 저장소 루트의 `qmltestrunner -input shell/tests`는 시스템 장치와 독립적인 Qt Quick 기본 요소 검사다. 실제 Quickshell·Hyprland·오디오·네트워크·배터리 검증은 Arch에서 수행한다.
 
