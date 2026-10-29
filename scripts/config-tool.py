@@ -44,7 +44,7 @@ def allowed(relative):
         return False
     group = relative.parts[0]
     if group == 'hypr':
-        return relative.suffix in ('.lua', '.conf') and relative.name not in ('shittim-base.lua', 'shittim-desktop.lua', 'shittim-windows.lua', 'shittim-titlebars.lua', 'shittim-lock.conf')
+        return relative.suffix in ('.lua', '.conf') and relative.name not in ('shittim-base.lua', 'shittim-desktop.lua', 'shittim-windows.lua', 'shittim-titlebars.lua', 'shittim-monitors.lua', 'shittim-lock.conf')
     if group == 'kitty':
         return relative.suffix == '.conf'
     if group == 'fcitx5':
@@ -334,7 +334,11 @@ class Config:
                 'if windows_file then windows_file:close(); dofile(windows_path) end\n'
                 'local titlebars_path = ' + json.dumps(str(self.config / 'hypr/shittim-titlebars.lua'), ensure_ascii=False) + '\n'
                 'local titlebars_file = io.open(titlebars_path, "r")\n'
-                'if titlebars_file then titlebars_file:close(); dofile(titlebars_path) end\n')
+                'if titlebars_file then titlebars_file:close(); dofile(titlebars_path) end\n'
+                '-- Monitor layout kept in the display settings; last, so it wins over the original monitor rules.\n'
+                'local monitors_path = ' + json.dumps(str(self.config / 'hypr/shittim-monitors.lua'), ensure_ascii=False) + '\n'
+                'local monitors_file = io.open(monitors_path, "r")\n'
+                'if monitors_file then monitors_file:close(); dofile(monitors_path) end\n')
 
     def launcher_key(self, replace=False):
         self.write(self.config / 'shittim/launcher-key', 'SUPER + R\n' if replace else 'SUPER + SPACE\n')

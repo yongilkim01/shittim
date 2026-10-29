@@ -10,7 +10,7 @@ Arch Linux + Hyprland + Quickshell 기반 데스크톱 환경. SHITTIM HUD 디�
 
 상단 바의 종 아이콘은 원본 시안 3번의 Notification Center를 연다. 실제 Linux 알림·팝업·세션 기록·액션·미읽음·ALL/SYSTEM/APP 필터와 Control Center 공통 DND를 지원한다. 다른 알림 데몬은 자동 종료하지 않는다. [알림 적용·충돌 검사·실기 테스트](docs/notifications.md)를 참고한다.
 
-상단 바의 **SHITTIM 로고**는 원본 시안 4번의 System Dashboard를 연다. CPU·RAM·GPU·온도·Storage·Network의 실제 Linux 정보를 표시하며, 사이드바는 기존 런처와 시스템 제어 서비스를 재사용한다. [대시보드 사용법·센서 지원·검증](docs/dashboard.md)을 참고한다.
+상단 바의 **SHITTIM 로고**는 원본 시안 4번의 System Dashboard를 연다. CPU·RAM·GPU·온도·Storage·Network의 실제 Linux 정보를 표시하며, 사이드바는 기존 런처와 시스템 제어 서비스를 재사용한다. [대시보드 사용법·센서 지원·검증](docs/dashboard.md)을 참고한다. 사이드바 «Display» 에서 모니터 배치·해상도·주사율·배율·방향·주 디스플레이를 바꾸며, 적용 후 15초 안에 유지하지 않으면 이전 설정으로 돌아간다([디스플레이 설정](docs/display.md)).
 
 상단 바의 **음악 아이콘**은 원본 시안 6번의 App / Media Controls를 오른쪽 하단에 연다. 실제 MPRIS 재생·탐색·플레이어 전환과 설치된 즐겨찾기 앱 실행·기존 창 활성화를 지원한다. [미디어 사용법·즐겨찾기 설정·실기 검사](docs/media-controls.md)를 참고한다.
 

@@ -29,6 +29,7 @@ ShellRoot {
 	NotificationCenter {}
 	NotificationPopups {}
 	SystemDashboard {}
+	DisplayConfirm {}
 	AppMediaControls {}
 	WindowManager {}
 	SnapPreview {}

@@ -26,3 +26,4 @@ singleton MicrophoneState 1.0 MicrophoneState.qml
 singleton CameraState 1.0 CameraState.qml
 singleton ScreenShareState 1.0 ScreenShareState.qml
 singleton PowerPolicyState 1.0 PowerPolicyState.qml
+singleton DisplayState 1.0 DisplayState.qml
