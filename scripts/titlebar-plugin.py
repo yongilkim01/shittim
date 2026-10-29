@@ -157,9 +157,15 @@ inline void shittimTitlebarDrag(PHLWINDOW window, bool active) {
     begin = 'LOG(Log::DEBUG, "[hyprbars] Dragging initiated on {:x}", (uintptr_t)m_pWindow.lock().get());'
     up = 'LOG(Log::DEBUG, "[hyprbars] Dragging ended on {:x}", (uintptr_t)m_pWindow.lock().get());'
     down = 'LOG(Log::DEBUG, "[hyprbars] Dragging ended on {:x}", (uintptr_t)PWINDOW.get());'
-    if text.count(begin) != 1 or text.count(up) != 1 or text.count(down) != 1:
+    button = 'void CHyprBar::onMouseButton(Event::SCallbackInfo& info, IPointer::SButtonEvent e) {\n    if (!inputIsValid())'
+    if text.count(begin) != 1 or text.count(up) != 1 or text.count(down) != 1 or text.count(button) != 1:
         raise ValueError('확인한 hyprbars 끌기 구문과 다릅니다.')
-    text = (text.replace(begin, begin + '\n    shittimTitlebarDrag(m_pWindow.lock(), true);')
+    # inputIsValid() rejects a cursor over any top layer, which is exactly where a snap drag is released
+    # (the Shittim snap preview, the top bar), so the release would be dropped and the drag never ended.
+    text = (text.replace(button, button.replace('    if (!inputIsValid())',
+                         '    if (e.state != WL_POINTER_BUTTON_STATE_PRESSED && m_bDraggingThis) {\n'
+                         '        handleUpEvent(info);\n        return;\n    }\n    if (!inputIsValid())'))
+            .replace(begin, begin + '\n    shittimTitlebarDrag(m_pWindow.lock(), true);')
             .replace(up, up + '\n        shittimTitlebarDrag(m_pWindow.lock(), false);')
             .replace(down, down + '\n            shittimTitlebarDrag(PWINDOW, false);'))
     patched_source.write_text(text, encoding='utf-8')
