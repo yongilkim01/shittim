@@ -14,6 +14,7 @@ SPEC_PLUGIN = importlib.util.spec_from_file_location('shittim_titlebar_plugin', 
 plugin = importlib.util.module_from_spec(SPEC_PLUGIN); SPEC_PLUGIN.loader.exec_module(plugin)
 # Official hyprland-plugins/hyprpm.toml commit pins for released Hyprland 0.55/0.56.
 # https://github.com/hyprwm/hyprland-plugins/blob/main/hyprpm.toml
+# 0.57.0 had no official pin yet (2026-10-29): d2427d4 was compiled with the Shittim patch against the 0.57.0 headers.
 COMPATIBLE = json.loads((Path(__file__).resolve().parents[1] / 'config/compatibility.json').read_text(encoding='utf-8'))['titlebars']
 
 

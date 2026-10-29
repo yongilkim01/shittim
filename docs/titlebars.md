@@ -28,6 +28,8 @@ bash scripts/setup-titlebars.sh --install-hyprbars
 
 빌드한 `.so`와 원본 BSD 3-Clause 라이선스는 `${XDG_DATA_HOME:-~/.local/share}/shittim/titlebars/`의 버전별 경로에 저장한다. 로드 전에 바이너리 SHA-256, Hyprland 커밋·ABI, 수정 코드 버전을 확인한다. 빌드 완료 후에만 기본 hyprbars를 비활성화하고 수정본 하나를 로드한다. 로드 실패 시 이전 수정본 또는 기본 플러그인 복구를 시도하며 실패를 출력한다. 검증은 실제 로드된 버전이 `shittim-vector-1-...`인지 확인한다. 기본 글꼴 렌더러만 쓰는 경우에는 별도 주의를 출력한다.
 
+Hyprland 0.57.0은 공식 `hyprpm.toml`에 핀이 없어(2026-10-29) hyprland-plugins `d2427d4`를 지정했다. 이 커밋에 Shittim 수정을 적용한 소스를 0.57.0 헤더로 빌드했고, 플러그인이 요구하는 동적 심볼 239개가 모두 0.57.0 Hyprland와 그 라이브러리에서 해석됨을 확인했다. 실제 화면 동작은 노트북에서 확인한다. 0.57부터 hyprbars는 렌더 컨텍스트를 받고 아이콘 글꼴을 `bar_text_font`에서 읽으며, 이벤트 송신은 `IPC::Socket2`로 옮겨졌다. 수정 단계가 이 세 가지를 버전별로 나눠 적용한다.
+
 실행 중인 세션 아래에서 `pacman -Syu`로 Hyprland 패키지가 바뀌면 `hyprpm`이 실행 중인 Hyprland를 거부해 `load`가 실패한다. 이때 `python3 scripts/titlebar-tool.py reattach`는 `hyprpm` 없이 설치된 수정본을 같은 검사(SHA-256·커밋·ABI·렌더러) 후 다시 로드한다. 실행 중인 Hyprland와 빌드가 다르면 아무것도 로드하지 않는다.
 
 이 변경은 `git pull`이나 `apply-desktop-design.sh`만으로 설치되지 않는다. 위의 `bash scripts/setup-titlebars.sh --install-hyprbars`를 한 번 실행해 수정본을 빌드·로드해야 한다. 다음 로그인에서는 생성한 Lua 설정이 저장소의 로더를 실행하며 다운로드·빌드 없이 수정본을 다시 로드한다. Hyprland 또는 렌더러 코드 변경 후에는 같은 설치 명령으로 다시 빌드한다. 이전 버전이 만든 전용 기호 글꼴 링크는 현재 저장소의 이전 글꼴을 가리킬 때만 백업으로 이동하며 사용자가 교체한 글꼴은 보존한다.

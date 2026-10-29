@@ -117,6 +117,15 @@ class DesktopSetup(unittest.TestCase):
             allowed, conflicts = self.desktop.bindings()
         self.assertIn('SUPER + E', allowed); self.assertIn('SUPER + B', conflicts)
 
+    def test_hyprland_057_dispatcher_object_is_migrated_like_a_lua_reference(self):
+        self.write('hypr/shittim-base.lua', 'local mainMod="SUPER"\nlocal fileManager="dolphin"\n'
+            'hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))\n')
+        bindings = [{'modmask': 64, 'key': 'E', 'dispatcher': 'HL.Dispatcher(exec_cmd)', 'arg': '23', 'description': ''},
+                    {'modmask': 64, 'key': 'B', 'dispatcher': 'HL.Dispatcher(exec_cmd)', 'arg': '24', 'description': ''}]
+        with patch.dict(os.environ, HYPRLAND_INSTANCE_SIGNATURE='test'), patch.object(TOOL.subprocess, 'run', return_value=Mock(stdout=json.dumps(bindings))):
+            allowed, conflicts = self.desktop.bindings()
+        self.assertIn('SUPER + E', allowed); self.assertIn('SUPER + B', conflicts)
+
     def test_dry_run_creates_no_config_or_state(self):
         self.config.dry = True
         self.desktop.setup()

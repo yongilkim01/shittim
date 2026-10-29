@@ -13,6 +13,8 @@ import tempfile
 
 UPSTREAM = 'https://github.com/hyprwm/hyprland-plugins.git'
 TEXT_RENDER = 'g_pHyprRenderer->renderText(button.icon, fgcol, std::round(button.size * 0.62 * scale), false, "sans", scaledButtonSize)'
+# Hyprland 0.57 hyprbars: render context, icon font from bar_text_font, icon textures redrawn per monitor scale.
+TEXT_RENDER_CONTEXT = 'g_pHyprRenderer->renderText(button.icon, fgcol, std::round(button.size * 0.62 * scale), false, g_pGlobalState->config.barTextFont->value(), scaledButtonSize)'
 DESCRIPTION = '{"hyprbars", "A plugin to add title bars to windows.", "Vaxry", "1.0"}'
 
 
@@ -33,14 +35,18 @@ def patch_source(directory, config):
     source = directory / 'barDeco.cpp'
     text = source.read_text(encoding='utf-8')
     modern = '#include <hyprland/src/desktop/state/WindowState.hpp>' in text
+    context = 'Render::CRenderContext& ctx' in text
+    text_render = TEXT_RENDER_CONTEXT if context else TEXT_RENDER
     maximized = ('Fullscreen::controller()->getFullscreenModes(m_pWindow.lock()).internal == Fullscreen::FSMODE_MAXIMIZED' if modern
                  else 'm_pWindow->m_fullscreenState.internal == FSMODE_MAXIMIZED')
     maximized = '(' + maximized + ') || m_pWindow->m_ruleApplicator->m_tagKeeper.isTagged("shittim-maximized", true)'
-    original = 'if ((!button.iconTex || button.iconTex->m_texID == 0) && !button.icon.empty()) {'
+    original = 'const bool NEEDICON = ' if context else 'if ((!button.iconTex || button.iconTex->m_texID == 0) && !button.icon.empty()) {'
     foreground = 'auto fgcol = button.userfg ? button.fgcol : (button.bgcol.r + button.bgcol.g + button.bgcol.b < 1) ? CHyprColor(0xFFFFFFFF) : CHyprColor(0xFF000000);'
     begin = 'void CHyprBar::renderBarButtonsText('
     end = 'void CHyprBar::draw('
-    if text.count(TEXT_RENDER) != 1 or text.count(original) != 1 or text.count(begin) != 1 or text.count(end) != 1 or text.count(foreground) != 1:
+    need = 'if (NEEDICON) {'
+    if (text.count(text_render) != 1 or text.count(original) != 1 or text.count(begin) != 1 or text.count(end) != 1 or text.count(foreground) != 1 or
+            (context and text.count(need) != 1)):
         raise ValueError('확인한 hyprbars 렌더링 소스와 다릅니다. 원본 플러그인을 유지했습니다.')
     reserved = 'm_hidden || !ENABLED ? 0 : HEIGHT'
     if text.count(reserved) != 1:
@@ -58,42 +64,51 @@ def patch_source(directory, config):
              '        if (controlIndex >= 0 && m_shittimControls[controlIndex].color != fgcol) {\n'
              '            iconTex = nullptr; m_shittimControls[controlIndex].color = fgcol;\n'
              '        }\n'
-             '        if ((!iconTex || iconTex->m_texID == 0 || '
-             '(controlIndex >= 0 && iconTex->m_size.x != std::ceil(scaledButtonSize))) && !button.icon.empty()) {')
+             '        ' + ('const bool NEEDICON = ' if context else
+             'if ((!iconTex || iconTex->m_texID == 0 || '
+             '(controlIndex >= 0 && iconTex->m_size.x != std::ceil(scaledButtonSize))) && !button.icon.empty()) {'))
     expression = ('controlIndex >= 0 ? '
                   'ShittimHUD::controlTexture(controlIcon, scaledButtonSize, fgcol, '
-                  '[](cairo_surface_t* surface) { return g_pHyprRenderer->createTexture(surface); }) : ' + TEXT_RENDER)
+                  '[](cairo_surface_t* surface) { return g_pHyprRenderer->createTexture(surface); }) : ' + text_render)
     start, stop = text.index(begin), text.index(end)
     body = text[start:stop].replace(foreground, '').replace('button.iconTex', 'iconTex')
-    body = body.replace(original.replace('button.iconTex', 'iconTex'), setup).replace(TEXT_RENDER, expression)
+    body = body.replace(original.replace('button.iconTex', 'iconTex'), setup).replace(text_render, expression)
+    if context:
+        # The scale stamp is shared by all windows; per-window control textures also follow their own size.
+        body = body.replace(need, 'if (NEEDICON || (controlIndex >= 0 && iconTex && iconTex->m_size.x != std::ceil(scaledButtonSize))) {')
     includes = '#include "shittim-controls.hpp"\n'
     patched = includes + text[:start] + body + text[stop:]
     if modern:
         patched = patched.replace('#include "barDeco.hpp"', '#include "barDeco.hpp"\n#include <hyprland/src/managers/fullscreen/FullscreenController.hpp>', 1)
     hooks = {
         'void CHyprBar::onMouseMove(Vector2D coords) {': '\n    updateShittimHover();',
-        'void CHyprBar::renderPass(PHLMONITOR pMonitor, const float& a) {': '\n    updateShittimHover();',
+        ('void CHyprBar::renderPass(Render::CRenderContext& ctx, PHLMONITOR pMonitor, const float& a) {' if context else
+         'void CHyprBar::renderPass(PHLMONITOR pMonitor, const float& a) {'): '\n    updateShittimHover();',
         'CHyprBar::~CHyprBar() {': '\n    clearShittimHover();',
         'void CHyprBar::onConfigReloaded() {': '\n    clearShittimHover();',
     }
     for hook, addition in hooks.items():
         if patched.count(hook) != 1: raise ValueError('확인한 hyprbars 호버 갱신 구문과 다릅니다.')
         patched = patched.replace(hook, hook + addition)
-    rectangle = 'g_pHyprOpenGL->renderRect(buttonBox, color, {.round = static_cast<int>(std::round(scaledButtonSize / 2.0)), .roundingPower = 2.F});'
+    rectangle = ('g_pHyprOpenGL->renderRect(ctx, buttonBox, color, {.round = sc<int>(std::round(scaledButtonSize / 2.0)), .roundingPower = 2.F});' if context else
+                 'g_pHyprOpenGL->renderRect(buttonBox, color, {.round = static_cast<int>(std::round(scaledButtonSize / 2.0)), .roundingPower = 2.F});')
     if patched.count(rectangle) != 1: raise ValueError('확인한 hyprbars 버튼 배경 구문과 다릅니다.')
     highlight = '''
         if (m_shittimHoverIndex == static_cast<int>(i))
             ShittimHUD::drawHoverFrame({buttonBox.x, buttonBox.y, buttonBox.w, buttonBox.h}, scale, a,
-                [](ShittimHUD::HoverRect r, ShittimHUD::HoverColor c) {
-                    g_pHyprOpenGL->renderRect(CBox{r.x, r.y, r.width, r.height}, CHyprColor{c.r, c.g, c.b, c.a}, {.round = 0});
-                });'''
+                [&](ShittimHUD::HoverRect r, ShittimHUD::HoverColor c) {
+                    g_pHyprOpenGL->renderRect(__CTX__CBox{r.x, r.y, r.width, r.height}, CHyprColor{c.r, c.g, c.b, c.a}, {.round = 0});
+                });'''.replace('__CTX__', 'ctx, ' if context else '')
     patched = patched.replace(rectangle, rectangle + highlight)
     patched = '#include "shittim-interaction.hpp"\n#include <format>\n' + patched
-    patched = patched.replace('#include "barDeco.hpp"', '#include "barDeco.hpp"\n#include <hyprland/src/managers/EventManager.hpp>', 1)
+    events = '<hyprland/src/ipc/s2/S2.hpp>' if context else '<hyprland/src/managers/EventManager.hpp>'
+    patched = patched.replace('#include "barDeco.hpp"', '#include "barDeco.hpp"\n#include ' + events, 1)
     hit_flags = 'Desktop::View::RESERVED_EXTENTS | Desktop::View::INPUT_EXTENTS | Desktop::View::ALLOW_FLOATING'
     under_cursor = ('Desktop::CViewHitTester{*Desktop::viewState()}.windowAt(g_pInputManager->getMouseCoordsInternal(), ' + hit_flags + ')' if modern
                     else 'g_pCompositor->vectorToWindowUnified(g_pInputManager->getMouseCoordsInternal(), ' + hit_flags + ')') + ' == m_pWindow.lock()'
     hover = (config.root / 'native/titlebars/hover.cpp.inc').read_text(encoding='utf-8').replace('__SHITTIM_MAXIMIZED__', maximized).replace('__SHITTIM_UNDER_CURSOR__', under_cursor)
+    if context:
+        hover = hover.replace('g_pEventManager', 'IPC::Socket2::sock()')
     source.write_text(patched + '\n' + hover, encoding='utf-8')
     header = directory / 'barDeco.hpp'
     text = header.read_text(encoding='utf-8')

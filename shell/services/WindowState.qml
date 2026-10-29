@@ -16,6 +16,7 @@ Scope {
     readonly property var recent:WindowCatalog.recent
     property string error: ""
     property var requests: []
+    property var lastMinimize: ({key: "", time: 0})
     readonly property bool busy:WindowCommands.busy
     readonly property alias model: selection
     readonly property var windows:WindowCatalog.windows
@@ -45,6 +46,10 @@ Scope {
         const parts = data.split(","), address = parts[0].replace(/^0x/, "")
         if (parts.length !== 2 || !/^[0-9a-fA-F]{1,16}$/.test(address) || ["0", "1"].indexOf(parts[1]) < 0) return
         const request = {operation: parts[1] === "1" ? "hide" : "activate", address: address}
+        // Hyprland 0.57 sends one foreign-toplevel request as both the socket2 event and the Lua window.minimize hook.
+        const key = request.operation + "," + address, now = Date.now()
+        if (key === lastMinimize.key && now - lastMinimize.time < 500) return
+        lastMinimize = {key: key, time: now}
         if (!requests.some(item => item.operation === request.operation && item.address === address)) requests = requests.concat([request]).slice(-64)
         requestTimer.restart()
     }

@@ -128,11 +128,13 @@ class Desktop:
                     allowed = binding.get('description') == binding_marker(key, command)
                     allowed = allowed or (binding.get('dispatcher') in ('exec', 'exec_cmd') and binding.get('arg') == command)
                     allowed = allowed or (key == 'SUPER + E' and binding.get('dispatcher') in ('exec', 'exec_cmd') and binding.get('arg') in ('dolphin', 'nemo'))
-                    # Lua handlers expose a function reference, not their command.
+                    # Lua handlers expose a function reference, not their command
+                    # (Hyprland 0.57 prints hl.dsp.exec_cmd(...) as HL.Dispatcher(exec_cmd)).
                     # The captured, simple default file-manager binding is explicitly
                     # migrated to the managed file handler; opaque/custom Lua remains a conflict.
                     allowed = allowed or (key in source_defaults and key not in source_conflicts and not binding.get('description')
-                                          and str(binding.get('dispatcher', '')).startswith('function:') and str(binding.get('arg', '')).isdigit())
+                                          and (str(binding.get('dispatcher', '')).startswith('function:') or binding.get('dispatcher') == 'HL.Dispatcher(exec_cmd)')
+                                          and str(binding.get('arg', '')).isdigit())
                     if not allowed:
                         conflicts.add(key)
         else:

@@ -10,7 +10,7 @@ local function emit(state, w, zone, monitor)
     end
 end
 local function valid(w)
-    return w and w.mapped and w.floating and not w.pinned and not w.group and w.workspace and w.workspace.id > 0 and ((w.fullscreen or 0) & 2)==0 and ((w.fullscreen_client or 0) & 2)==0
+    return w and w.mapped and w.floating and not w.pinned and not w.group and w.workspace and (w.workspace.id or 0) > 0 and ((w.fullscreen or 0) & 2)==0 and ((w.fullscreen_client or 0) & 2)==0
 end
 local function clear_maximize(w)
     local managed=false

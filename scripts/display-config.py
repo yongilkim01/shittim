@@ -83,7 +83,7 @@ def clean(width, height, scale):
 
 
 def exact_scale(width, height, reported):
-    """hyprctl prints the scale with two decimals; recover the clean n/120 value Hyprland actually uses."""
+    """hyprctl 0.55 prints the scale with two decimals (0.57 prints it in full); recover the clean n/120 value Hyprland actually uses."""
     centre = round(reported * 120)
     found = [step / 120 for step in range(centre - 2, centre + 3) if step > 0 and clean(width, height, step / 120)
              and abs(step / 120 - reported) <= 0.005 + 1e-9]
