@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Controls.Basic as Controls
 import "../../ui"
 import "../control"
 import "MediaData.js" as Data
@@ -47,10 +46,9 @@ FocusScope {
                 enabled: root.model !== null && root.model.players.length > 1
                 cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
                 onClicked: root.model.cyclePlayer()
-                Controls.ToolTip {
-                    visible: playerChoice.containsMouse; delay: 450
-                    contentItem: HudText { text: root.model && root.model.player ? Data.text(root.model.player.identity) + " · 클릭하여 플레이어 전환" : ""; font.pixelSize: 10 }
-                    background: Rectangle { color: Theme.background; border.color: Theme.border }
+                HudToolTip {
+                    visible: playerChoice.containsMouse
+                    text: root.model && root.model.player ? Data.text(root.model.player.identity) + " · 클릭하여 플레이어 전환" : ""
                 }
             }
             HudSlider {

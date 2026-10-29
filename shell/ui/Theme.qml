@@ -97,4 +97,25 @@ QtObject {
     readonly property color fileGradientEnd: "#011721"
     readonly property color fileFrame: "#009fad"
     readonly property string gtkFont: "Hack Nerd Font Mono 9"
+    readonly property color hoverFill: "#1400d9f5"
+    readonly property color pressedFill: "#2e00d9f5"
+    readonly property color selectedFill: "#2600d9f5"
+    readonly property color accentGlow: "#5900d9f5"
+    readonly property color trackFill: "#0b2e3a"
+    readonly property color frameLine: "#0d3a47"
+    readonly property color disabledFill: "#06161d"
+    readonly property int windowCut: 14
+    readonly property int panelCut: 10
+    readonly property int cardCut: 6
+    readonly property int controlCut: 4
+    readonly property int windowAccent: 28
+    readonly property int panelAccent: 18
+    readonly property int cardAccent: 10
+    readonly property int accentLineWidth: 2
+    readonly property int frameInset: 4
+    readonly property int sectionBarWidth: 3
+    readonly property int toggleWidth: 34
+    readonly property int toggleHeight: 18
+    readonly property int pressDuration: 90
+    readonly property int toggleDuration: 160
 }

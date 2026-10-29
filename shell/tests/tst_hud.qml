@@ -38,7 +38,8 @@ TestCase {
 		compare(clicks.count, 1)
 		button.active = true
 		wait(Theme.stateDuration + 30)
-		compare(button.border.color, Theme.borderActive)
+		compare(button.strokeColor, Theme.borderActive)
+		compare(button.fillColor, Theme.selectedFill)
 		button.forceActiveFocus()
 		keyClick(Qt.Key_Space)
 		compare(clicks.count, 2)
@@ -79,9 +80,9 @@ TestCase {
 
 	function test_panelAndDivider() {
 		const panel = createTemporaryObject(panelFactory, testCase)
-		compare(panel.color, Theme.surface)
+		compare(panel.fillColor, Theme.surface)
 		panel.active = true
-		compare(panel.border.color, Theme.borderActive)
+		tryCompare(panel, "strokeColor", Theme.borderActive)
 		const divider = createTemporaryObject(dividerFactory, testCase)
 		compare(divider.implicitWidth, Theme.lineWidth)
 		divider.vertical = false

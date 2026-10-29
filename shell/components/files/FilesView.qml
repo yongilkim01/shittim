@@ -160,7 +160,7 @@ FocusScope {
                         onDoubleClicked:root.model.activate(cell.modelData)
                     }
                     DropArea { anchors.fill:parent;enabled:cell.modelData.directory && root.model.writable && !root.model.busy;onDropped:drop=>{if(drop.hasUrls && drop.source!==cell){root.model.action("drop",{target:cell.modelData.id,uris:drop.urls.map(url=>String(url))});drop.acceptProposedAction()}} }
-                    Controls.ToolTip { visible:hover.containsMouse;delay:800;text:cell.modelData.name;contentItem:HudText {text:cell.modelData.name;font.pixelSize:Theme.fileText} background:Rectangle {color:Theme.background;border.color:Theme.border} }
+                    HudToolTip { visible:hover.containsMouse;delay:800;text:cell.modelData.name }
                 }
                 Controls.ScrollBar.vertical:Controls.ScrollBar {width:3;contentItem:Rectangle{color:Theme.accentDim;implicitWidth:3} background:Item{}}
             }

@@ -38,8 +38,8 @@ FocusScope {
             objectName: "notificationDnd"; x: 206; y: 8; width: 18; height: 18; text: "\uf186"; font.pixelSize: 14
             color: ["conflict", "error"].indexOf(root.ownership) >= 0 ? Theme.warning : root.model.dnd ? Theme.accent : Theme.textMuted
             MouseArea { id: dndMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: root.ownership === "owned" ? Qt.PointingHandCursor : Qt.ArrowCursor; onClicked: if (root.ownership === "owned") root.dndRequested() }
-            Controls.ToolTip.visible: dndMouse.containsMouse
-            Controls.ToolTip.text: root.ownership === "conflict" ? "다른 알림 서버가 실행 중입니다. PID " + root.ownerPid : root.ownership !== "owned" ? "Shittim 알림 서버 소유권을 확인하세요." : root.model.dnd ? "방해 금지 사용 중 · 긴급 알림은 표시" : "방해 금지 켜기"
+            HudToolTip { visible: dndMouse.containsMouse; text: parent.hint }
+            readonly property string hint: root.ownership === "conflict" ? "다른 알림 서버가 실행 중입니다. PID " + root.ownerPid : root.ownership !== "owned" ? "Shittim 알림 서버 소유권을 확인하세요." : root.model.dnd ? "방해 금지 사용 중 · 긴급 알림은 표시" : "방해 금지 켜기"
         }
         HudText {
             x: 280; y: 1; width: 57; height: 33; text: "Clear All"; font.pixelSize: Theme.textCaption; horizontalAlignment: Text.AlignRight

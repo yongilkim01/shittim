@@ -2,6 +2,7 @@ singleton Theme 1.0 Theme.qml
 HudText 1.0 HudText.qml
 HudIcon 1.0 HudIcon.qml
 HudStatus 1.0 HudStatus.qml
+HudFrame 1.0 HudFrame.qml
 HudPanel 1.0 HudPanel.qml
 HudButton 1.0 HudButton.qml
 HudDivider 1.0 HudDivider.qml
@@ -11,3 +12,6 @@ HudInput 1.0 HudInput.qml
 ActionInput 1.0 ActionInput.qml
 HudCallout 1.0 HudCallout.qml
 HudInfoCard 1.0 HudInfoCard.qml
+HudSectionHeader 1.0 HudSectionHeader.qml
+HudToggle 1.0 HudToggle.qml
+HudToolTip 1.0 HudToolTip.qml

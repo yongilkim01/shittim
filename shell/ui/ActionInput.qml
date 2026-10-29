@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Controls.Basic as Controls
 
 // Shared behavior only. Each control keeps its own HUD drawing.
 Item {
@@ -33,10 +32,8 @@ Item {
         cursorShape:root.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
         onClicked:event=>{if(event.button===Qt.RightButton)root.contextRequested();else root.triggered()}
     }
-    Controls.ToolTip {
+    HudToolTip {
         visible:root.enabled && (mouse.containsMouse || root.activeFocus) && root.label.length>0
-        delay:Theme.tooltipDelay
-        contentItem:HudText {text:root.label;font.pixelSize:Theme.textCaption;maximumLineCount:4;wrapMode:Text.Wrap;width:Math.min(280,implicitWidth)}
-        background:Rectangle {color:Theme.background;border.color:Theme.border}
+        text:root.label
     }
 }
