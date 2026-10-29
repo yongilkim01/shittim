@@ -100,12 +100,12 @@ local function update()
 end
 timer=hl.timer(update,{timeout=40,type="repeat"})
 timer:set_enabled(false)
-hl.bind("mouse:272",function()
-    local w,p=hl.get_active_window(),hl.get_cursor_pos()
+local function start(w)
+    local p=hl.get_cursor_pos()
     if not valid(w) or not p then return end
     drag={window=w,pointer=p,at={x=w.at.x,y=w.at.y},size={x=w.size.x,y=w.size.y}}; last_zone=""; ticks=0; timer:set_enabled(true)
-end,{non_consuming=true,transparent=true,ignore_mods=true})
-hl.bind("mouse:272",function()
+end
+local function finish()
     if drag then
         update()
         if drag and drag.moved and drag.zone and drag.zone~="none" then
@@ -115,5 +115,11 @@ hl.bind("mouse:272",function()
         end
     end
     cancel()
-end,{release=true,non_consuming=true,transparent=true,ignore_mods=true})
+end
+hl.bind("mouse:272",function() start(hl.get_active_window()) end,{non_consuming=true,transparent=true,ignore_mods=true})
+hl.bind("mouse:272",finish,{release=true,non_consuming=true,transparent=true,ignore_mods=true})
+-- The Shittim title bar consumes its own clicks, so the binds above never see a title-bar drag; its plugin reports it instead.
+if hl.plugin and hl.plugin.hyprbars and hl.plugin.hyprbars.shittim_drag_events then
+    hl.on("shittim.titlebar_drag",function(w,active) if active then start(w) else finish() end end)
+end
 hl.on("window.close",function(w) if w then previous[w.address]=nil end end)

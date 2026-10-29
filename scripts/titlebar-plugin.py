@@ -129,10 +129,51 @@ def patch_source(directory, config):
     if text.count(DESCRIPTION) != 1 or text.count(foreground) != 1:
         raise ValueError('확인한 hyprbars 플러그인 정보와 다릅니다.')
     replacement = '{"hyprbars", "Shittim vector controls; based on official hyprbars.", "Vaxry / Shittim", "' + identity(config) + '"}'
-    main.write_text(text.replace(DESCRIPTION, replacement).replace(foreground, foreground + '\n        button.userfg = true;'), encoding='utf-8')
+    text = text.replace(DESCRIPTION, replacement).replace(foreground, foreground + '\n        button.userfg = true;')
+    if context:
+        text = patch_drag_event(directory, patched_source=source, main=text)
+    main.write_text(text, encoding='utf-8')
     shutil.copyfile(config.root / 'native/titlebars/controls.hpp', directory / 'shittim-controls.hpp')
     shutil.copyfile(config.root / 'native/titlebars/design.hpp', directory / 'design.hpp')
     shutil.copyfile(config.root / 'native/titlebars/interaction.hpp', directory / 'shittim-interaction.hpp')
+
+
+def patch_drag_event(directory, patched_source, main):
+    """Hyprland 0.57: the bar consumes its own clicks, so tell Lua (desktop-snap.lua) when a title-bar drag starts and ends."""
+    globals_path = directory / 'globals.hpp'
+    text = globals_path.read_text(encoding='utf-8')
+    anchor = 'inline UP<SGlobalState> g_pGlobalState;'
+    if text.count(anchor) != 1:
+        raise ValueError('확인한 hyprbars 전역 상태 구문과 다릅니다.')
+    globals_path.write_text(text.replace(anchor, anchor + '''
+#include <hyprland/src/event/EventBus.hpp>
+inline SP<Event::CEventBus::CCustomEvent> g_pShittimTitlebarDrag;
+inline void shittimTitlebarDrag(PHLWINDOW window, bool active) {
+    using Value = Event::CEventBus::CCustomEvent::ValidVariant;
+    if (g_pShittimTitlebarDrag && window)
+        (void)g_pShittimTitlebarDrag->emit({Value{PHLWINDOWREF{window}}, Value{active}});
+}'''), encoding='utf-8')
+    text = patched_source.read_text(encoding='utf-8')
+    begin = 'LOG(Log::DEBUG, "[hyprbars] Dragging initiated on {:x}", (uintptr_t)m_pWindow.lock().get());'
+    up = 'LOG(Log::DEBUG, "[hyprbars] Dragging ended on {:x}", (uintptr_t)m_pWindow.lock().get());'
+    down = 'LOG(Log::DEBUG, "[hyprbars] Dragging ended on {:x}", (uintptr_t)PWINDOW.get());'
+    if text.count(begin) != 1 or text.count(up) != 1 or text.count(down) != 1:
+        raise ValueError('확인한 hyprbars 끌기 구문과 다릅니다.')
+    text = (text.replace(begin, begin + '\n    shittimTitlebarDrag(m_pWindow.lock(), true);')
+            .replace(up, up + '\n        shittimTitlebarDrag(m_pWindow.lock(), false);')
+            .replace(down, down + '\n            shittimTitlebarDrag(PWINDOW, false);'))
+    patched_source.write_text(text, encoding='utf-8')
+    register = 'HyprlandAPI::addLuaFunction(PHANDLE, "hyprbars", "set_title", ::setLuaTitle);'
+    exit_hook = 'APICALL EXPORT void PLUGIN_EXIT() {'
+    if main.count(register) != 1 or main.count(exit_hook) != 1:
+        raise ValueError('확인한 hyprbars 초기화 구문과 다릅니다.')
+    # The marker function lets Lua subscribe only when this build declares the event (an unknown hl.on event is a config error).
+    return (main.replace(register, register + '''
+    g_pShittimTitlebarDrag = makeShared<Event::CEventBus::CCustomEvent>("shittim.titlebar_drag",
+        std::vector{Event::CEventBus::CCustomEvent::TYPE_WINDOW, Event::CEventBus::CCustomEvent::TYPE_BOOL});
+    if (HyprlandAPI::addEvent(PHANDLE, g_pShittimTitlebarDrag))
+        HyprlandAPI::addLuaFunction(PHANDLE, "hyprbars", "shittim_drag_events", [](lua_State*) -> int { return 0; });''')
+            .replace(exit_hook, exit_hook + '\n    HyprlandAPI::removeEvent(PHANDLE, "shittim.titlebar_drag");\n    g_pShittimTitlebarDrag.reset();'))
 
 
 def query(*args):
