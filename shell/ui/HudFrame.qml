@@ -15,11 +15,11 @@ Item {
 	readonly property bool window: level === "window"
 	readonly property bool panel: level === "panel"
 	readonly property bool card: level === "card"
-	readonly property real cut: window ? Theme.windowCut : panel ? Theme.panelCut : card ? Theme.cardCut : Theme.controlCut
-	property real cutTopLeft: window ? 0 : (panel || card) ? cut : 0
-	property real cutTopRight: window ? cut : (panel || card) ? 0 : cut
-	property real cutBottomRight: window ? 0 : (panel || card) ? cut : 0
-	property real cutBottomLeft: window ? cut : (panel || card) ? 0 : cut
+	readonly property real levelCut: window ? Theme.windowCut : panel ? Theme.panelCut : card ? Theme.cardCut : Theme.controlCut
+	property real cutTopLeft: window ? 0 : (panel || card) ? levelCut : 0
+	property real cutTopRight: window ? levelCut : (panel || card) ? 0 : levelCut
+	property real cutBottomRight: window ? 0 : (panel || card) ? levelCut : 0
+	property real cutBottomLeft: window ? levelCut : (panel || card) ? 0 : levelCut
 	property color fillColor: window ? Qt.rgba(Theme.background.r, Theme.background.g, Theme.background.b, 0.98) : panel ? Theme.background : Theme.surface
 	property color gradientColor: fillColor
 	property color strokeColor: active ? Theme.borderActive : hovered ? Theme.accentDim : Theme.border
@@ -32,6 +32,8 @@ Item {
 		: [cutTopLeft > 0, cutTopRight > 0, cutBottomRight > 0, cutBottomLeft > 0]
 	property real inset: window ? Theme.frameInset : 0
 	property color innerColor: Theme.frameLine
+	// Floating layers (popups, dock, tooltips) get a faint outer halo; surfaces inside a window do not.
+	property bool glow: false
 	Behavior on strokeColor { ColorAnimation { duration: Theme.hoverDuration; easing.type: Theme.easing } }
 	Behavior on accentColor { ColorAnimation { duration: Theme.stateDuration; easing.type: Theme.easing } }
 
@@ -63,6 +65,13 @@ Item {
 	Shape {
 		anchors.fill: parent
 		preferredRendererType: Shape.CurveRenderer
+		ShapePath {
+			strokeColor: root.glow && root.points.length ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.14) : "transparent"
+			strokeWidth: 5
+			fillColor: "transparent"
+			joinStyle: ShapePath.MiterJoin
+			PathPolyline { path: root.glow && root.points.length ? root.points.concat([root.points[0]]).map(p => Qt.point(p[0], p[1])) : [] }
+		}
 		ShapePath {
 			strokeColor: root.strokeColor
 			strokeWidth: root.strokeWidth

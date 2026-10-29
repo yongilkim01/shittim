@@ -1,6 +1,7 @@
 import QtQuick
 
-// Bevelled HUD frame with a pointer toward the item it describes.
+// Bevelled HUD frame with a pointer toward the item it describes. Floating layer: a faint outer glow
+// and bright accents on the top-left and bottom-right bevels set it above the surface it covers.
 Item {
 	id: root
 	property string arrow: "top"   // "top" | "bottom" | "none"
@@ -19,8 +20,8 @@ Item {
 		onWidthChanged: requestPaint(); onHeightChanged: requestPaint()
 		onPaint: {
 			const c = getContext("2d"), d = root.cut, a = root.arrowSize
-			const top = (root.arrow === "top" ? a : 0) + 0.5, bottom = height - (root.arrow === "bottom" ? a : 0) - 0.5
-			const left = 0.5, right = width - 0.5
+			const top = (root.arrow === "top" ? a : 0) + 1.5, bottom = height - (root.arrow === "bottom" ? a : 0) - 1.5
+			const left = 1.5, right = width - 1.5
 			const ax = Math.max(left + d + a, Math.min(right - d - a, root.arrowX))
 			c.clearRect(0, 0, width, height)
 			c.beginPath()
@@ -30,7 +31,12 @@ Item {
 			if (root.arrow === "bottom") { c.lineTo(ax + a, bottom); c.lineTo(ax, bottom + a); c.lineTo(ax - a, bottom) }
 			c.lineTo(left + d, bottom); c.lineTo(left, bottom - d); c.lineTo(left, top + d); c.closePath()
 			c.fillStyle = root.fillColor; c.fill()
-			c.strokeStyle = root.strokeColor; c.lineWidth = 1; c.stroke()
+			c.strokeStyle = Theme.accentGlow; c.globalAlpha = 0.35; c.lineWidth = 3; c.stroke()
+			c.globalAlpha = 1; c.strokeStyle = root.strokeColor; c.lineWidth = 1; c.stroke()
+			const e = Math.min(14, (right - left) / 4)
+			c.strokeStyle = Theme.accent; c.lineWidth = 2
+			c.beginPath(); c.moveTo(left, top + d + e); c.lineTo(left, top + d); c.lineTo(left + d, top); c.lineTo(left + d + e, top); c.stroke()
+			c.beginPath(); c.moveTo(right, bottom - d - e); c.lineTo(right, bottom - d); c.lineTo(right - d, bottom); c.lineTo(right - d - e, bottom); c.stroke()
 		}
 	}
 	onArrowChanged: canvas.requestPaint(); onArrowXChanged: canvas.requestPaint()

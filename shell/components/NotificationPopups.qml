@@ -24,10 +24,12 @@ PanelWindow {
         id: stack; width: parent.width; spacing: 6
         Repeater {
             model: NotificationState.model.popups
-            ControlFrame {
+            HudFrame {
                 required property var modelData
-                width: stack.width; height: window.rowHeight; cut: 4
+                width: stack.width; height: window.rowHeight; level: "panel"; glow: true
+                // Critical notifications carry the warning tone on stroke and corner accents.
                 strokeColor: modelData.urgency === 2 ? Theme.warning : Theme.accentDim
+                accentColor: modelData.urgency === 2 ? Theme.warning : Theme.accent
                 fillColor: Qt.rgba(Theme.background.r, Theme.background.g, Theme.background.b, 0.98)
                 NotificationRow {
                     width: Theme.notificationWidth; height: 50

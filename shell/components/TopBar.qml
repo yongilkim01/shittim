@@ -50,6 +50,13 @@ PanelWindow {
 			ctx.strokeStyle = Theme.accentDim
 			ctx.lineWidth = Theme.lineWidth
 			ctx.stroke()
+			// Bright accents on the two notch bevels; the long edge stays dim.
+			ctx.beginPath()
+			ctx.moveTo(0, shoulder); ctx.lineTo(Theme.barNotchShoulder, shoulder); ctx.lineTo(Theme.barNotchWidth, bottom); ctx.lineTo(Theme.barNotchWidth + Theme.windowAccent, bottom)
+			ctx.moveTo(width, shoulder); ctx.lineTo(width - Theme.barNotchShoulder, shoulder); ctx.lineTo(width - Theme.barNotchWidth, bottom); ctx.lineTo(width - Theme.barNotchWidth - Theme.windowAccent, bottom)
+			ctx.strokeStyle = Theme.accent
+			ctx.lineWidth = Theme.accentLineWidth
+			ctx.stroke()
 		}
 	}
 	RowLayout {

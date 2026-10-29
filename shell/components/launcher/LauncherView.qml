@@ -24,10 +24,7 @@ FocusScope {
             root.launchRequested(root.model.selected.id)
     }
     onActiveFocusChanged: if (activeFocus) focusSearch()
-    ControlFrame {
-        anchors.fill: parent; cut: 4; strokeColor: Theme.accentDim
-        fillColor: Qt.rgba(Theme.background.r, Theme.background.g, Theme.background.b, 0.98)
-    }
+    HudFrame { anchors.fill: parent; level: "window"; glow: true }
     Item {
         width: Theme.launcherWidth; height: root.height / root.contentScale
         scale: root.contentScale; transformOrigin: Item.TopLeft

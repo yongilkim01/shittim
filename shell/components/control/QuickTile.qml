@@ -13,10 +13,15 @@ ControlFrame {
 	property string hint: ""
 	signal clicked()
 	signal detailsRequested()
-	cut: 4
-	fillColor: active ? Theme.surfaceElevated : Theme.surface
-	gradientColor: active ? Theme.surface : Theme.background
-	strokeColor: active ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.75) : Qt.rgba(Theme.border.r, Theme.border.g, Theme.border.b, 0.55)
+	cut: 6
+	// State priority: unavailable > pressed > on > hover > rest. Only an "on" tile earns corner accents.
+	hovered: interactive && mouse.containsMouse
+	fillColor: !interactive ? Theme.disabledFill : mouse.pressed ? Theme.pressedFill : active ? Theme.selectedFill : hovered ? Theme.hoverFill : Theme.surface
+	gradientColor: !interactive ? Theme.background : active ? Theme.transparent : Theme.background
+	strokeColor: !interactive ? Qt.rgba(Theme.border.r, Theme.border.g, Theme.border.b, 0.5) : active || mouse.pressed ? Theme.accent : hovered ? Theme.accentDim : Theme.border
+	accentLength: active && interactive ? Theme.cardAccent : 0
+	accentColor: Theme.accentBright
+	Behavior on fillColor { ColorAnimation { duration: mouse.pressed ? Theme.pressDuration : Theme.hoverDuration; easing.type: Theme.easing } }
 	Column {
 		width: root.width - 8
 		anchors.centerIn: parent

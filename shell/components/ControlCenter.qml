@@ -23,8 +23,8 @@ PanelWindow {
 	WlrLayershell.keyboardFocus:input.keyboardFocus
 	PanelInput { id:input;window:window;session:ControlState.panelSession }
 	onVisibleChanged: if (visible) Qt.callLater(() => content.forceActiveFocus())
-	ControlFrame {
-		anchors.fill: parent; strokeColor: Theme.accentDim
+	HudFrame {
+		anchors.fill: parent; level: "window"
 		fillColor: Qt.rgba(Theme.background.r, Theme.background.g, Theme.background.b, 0.97)
 		ControlContent {
 			id: content; anchors.fill: parent
