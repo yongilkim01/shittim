@@ -113,6 +113,19 @@ class TitlebarPlugin(unittest.TestCase):
         self.assertEqual(commands.call_args_list[-1],call('hyprctl','plugin','load',previous['library']))
         self.assertEqual(json.loads(PLUGIN.loaded_record(self.config).read_text()),previous)
 
+    def test_reattach_loads_verified_build_without_hyprpm(self):
+        self.manifest()
+        loaded=[dict(name='hyprbars',version=self.data['renderer'])]
+        with patch.object(PLUGIN,'query',side_effect=[[],loaded]),patch.object(PLUGIN,'command') as commands:
+            TOOL.reattach(self.config,VERSION)
+        self.assertEqual(commands.call_args_list,[call('hyprctl','plugin','load',str(self.library)),call('hyprctl','reload')])
+        with patch.object(PLUGIN,'query',return_value=loaded),patch.object(PLUGIN,'command') as commands:
+            TOOL.reattach(self.config,VERSION)
+        commands.assert_not_called()
+        with patch.object(PLUGIN,'command') as commands:
+            with self.assertRaisesRegex(ValueError,'다시 빌드'): TOOL.reattach(self.config,dict(VERSION,commit='b'*40))
+        commands.assert_not_called()
+
     def test_custom_unload_uses_recorded_managed_path_only(self):
         self.config.state.mkdir(parents=True)
         record=PLUGIN.loaded_record(self.config);record.write_text(json.dumps(self.data))

@@ -41,9 +41,24 @@ def source(config):
     return text
 
 
+def reattach(config, version):
+    """Load the existing vector build again without hyprpm, which refuses once pacman has upgraded Hyprland under the running session."""
+    data = plugin.read_manifest(config, version)
+    if data is None:
+        raise ValueError('벡터 제목 표시줄 빌드가 없습니다. 이 명령은 설치된 빌드만 다시 로드합니다.')
+    if any(p.get('name') == 'hyprbars' for p in plugin.query('plugin', 'list')):
+        files.say('hyprbars가 이미 로드되어 있습니다. 바꾼 것이 없습니다.'); return
+    plugin.command('hyprctl', 'plugin', 'load', data['library'])
+    if not any(p.get('name') == 'hyprbars' and p.get('version') == data['renderer'] for p in plugin.query('plugin', 'list')):
+        raise ValueError('벡터 렌더러의 실제 로드 상태가 다릅니다.')
+    config.write(plugin.loaded_record(config), json.dumps(data, indent=2) + '\n')
+    plugin.command('hyprctl', 'reload')
+    files.say('기존 벡터 제목 표시줄을 다시 로드했습니다.')
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', choices=['revision', 'setup', 'disable', 'verify', 'build', 'load'])
+    parser.add_argument('action', choices=['revision', 'setup', 'disable', 'verify', 'build', 'load', 'reattach'])
     parser.add_argument('--dry-run', action='store_true')
     args = parser.parse_args()
     if args.action == 'revision':
@@ -51,12 +66,13 @@ def main():
         print(revision(json.loads(result.stdout))); return
     config = files.Config(dry=args.dry_run)
     destination = config.config / 'hypr/shittim-titlebars.lua'
-    if args.action in ('build', 'load'):
+    if args.action in ('build', 'load', 'reattach'):
         if config.dry:
             files.say('벡터 제목 표시줄 ' + args.action + ' 계획. 파일·세션은 변경하지 않았습니다.'); return
         version = plugin.query('version')
         if args.action == 'build': plugin.build(config, version, revision(version))
-        else: plugin.load(config, version)
+        elif args.action == 'load': plugin.load(config, version)
+        else: reattach(config, version)
         return
     if args.action == 'setup':
         config.write(destination, source(config))
