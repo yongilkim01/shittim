@@ -73,6 +73,8 @@
 | `HudToolTip` | 창 안 힌트. `HudInfoCard` 카드 + 150ms 페이드. 상단 바는 `BarTooltip`(팝업 창) |
 | `HudCallout`/`HudInfoCard` | 화살표가 있는 떠 있는 카드. 좌상·우하 강조선과 후광 |
 | `ControlFrame` | 기존 API를 유지한 `control` 단계 `HudFrame` |
+| `HudSelect` / `HudOptionList` | 드롭다운 필드와, 페이지가 띄우는 선택 목록(페이지 안에 그려 잘리지 않음, 화살표·Return·Escape) |
+| `HudLevelMeter` | 칸 막대 레벨 미터. 측정값만 그리고 위쪽 1/6은 경고색 |
 
 ### 토큰 추가
 

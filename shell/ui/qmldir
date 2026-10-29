@@ -15,3 +15,6 @@ HudInfoCard 1.0 HudInfoCard.qml
 HudSectionHeader 1.0 HudSectionHeader.qml
 HudToggle 1.0 HudToggle.qml
 HudToolTip 1.0 HudToolTip.qml
+HudSelect 1.0 HudSelect.qml
+HudOptionList 1.0 HudOptionList.qml
+HudLevelMeter 1.0 HudLevelMeter.qml

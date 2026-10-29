@@ -30,7 +30,8 @@ PanelWindow {
         id: content; anchors.fill: parent; model: DashboardState.model; page: DashboardState.page
         onNavigate: destination => DashboardState.select(destination)
         onCloseRequested: DashboardState.close()
-        detailComponent: DashboardState.page === "apps" ? apps : DashboardState.page === "power" ? powerLock : DashboardState.page === "display" ? display : controls
+        detailComponent: DashboardState.page === "apps" ? apps : DashboardState.page === "power" ? powerLock : DashboardState.page === "display" ? display
+            : DashboardState.page === "audio" ? audioPage : controls
     }
     Component {
         id: apps
@@ -55,6 +56,10 @@ PanelWindow {
     Component {
         id: display
         DisplayPage { display: DisplayState; brightness: BrightnessState }
+    }
+    Component {
+        id: audioPage
+        AudioSettingsPage { audio: AudioState; microphone: MicrophoneState; iconSource: name => Quickshell.iconPath(name, true) }
     }
     Component {
         id: controls
