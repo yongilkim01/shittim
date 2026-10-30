@@ -34,6 +34,8 @@ TestCase {
 		verify(!Devices.isRecording(node({isStream: true, audio: audio, properties: {"stream.monitor": "true"}})))
 		verify(!Devices.isRecording(node({isStream: true, audio: audio, properties: {"stream.capture.sink": "true"}})))
 		verify(!Devices.isRecording(node({isStream: true, isSink: true, audio: audio})))
+		// A peak meter announced before its properties arrive must not be tracked for a moment.
+		verify(!Devices.isRecording(node({isStream: true, audio: audio, ready: false})))
 		compare(Devices.applicationNames([chrome, chrome, node({isStream: true, audio: audio, description: "OBS"})]), ["Google Chrome", "OBS"])
 	}
 	function test_screenCastMatchesPortalStreamsOnly() {

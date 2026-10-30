@@ -19,8 +19,10 @@ function isMicrophone(node) {
 }
 
 // Stream/Input/Audio opened by an application. Peak meters and sink-monitor recorders are not microphone use.
+// Until a node is ready its properties are missing, so a peak meter would briefly look like a recorder; tracking and
+// then dropping it while PipeWire is still announcing it crashes Quickshell 0.3.2.
 function isRecording(node) {
-    if (!node || node.isSink || !node.isStream || node.audio === null || node.audio === undefined) return false
+    if (!node || node.ready === false || node.isSink || !node.isStream || node.audio === null || node.audio === undefined) return false
     return property(node, "stream.monitor") !== "true" && property(node, "stream.capture.sink") !== "true"
 }
 
