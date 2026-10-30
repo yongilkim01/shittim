@@ -329,7 +329,8 @@ pactl set-sink-mute @DEFAULT_SINK@ 0
 - SSID를 구분자로 분리하거나 셸 명령에 전달하지 않는다. 공백·한글·콜론·역슬래시·따옴표를 그대로 보존하며 `HudText`의 일반 텍스트 모드로 표시해 HTML처럼 보이는 SSID도 문자로 처리한다. 텍스트 폭은 `Theme.networkTextWidth`(200px)로 제한하고 긴 이름은 말줄임한다.
 - `signalStrength`는 0~1이다. 25%·50%·75%를 경계로 Nerd Font Wi-Fi 아이콘을 바꾼다.
 - 연결 시 SSID, 해제 시 `Wi-Fi disconnected`, 연결 중 `Wi-Fi connecting`, 종료 중 `Wi-Fi disconnecting`, 소프트웨어 끄기 `Wi-Fi off`, 하드웨어 차단 `Wi-Fi blocked`를 표시한다.
-- 연결된 유선은 `LAN`으로 표시한다. 유선과 Wi-Fi 동시 연결 시 둘 다 표시하며, Wi-Fi 장치 없이 유선만 있으면 해제 상태도 `LAN disconnected`로 표시한다. 이는 장치 연결 상태이며 인터넷 도달 가능 여부를 보장하는 표시는 아니다.
+- 연결된 유선은 `LAN`으로 표시한다. 유선과 Wi-Fi 동시 연결 시 둘 다 표시하며, Wi-Fi 장치 없이 유선만 있으면 해제 상태도 `LAN disconnected`로 표시한다. 연결됐지만 NetworkManager 인터넷 확인이 «제한»·«포털»이면 아이콘을 경고색으로 표시하고, 마우스를 올리면 SSID·신호·인터넷 상태 카드를 보여 준다.
+- 대시보드 «네트워크»는 Wi-Fi·유선·저장된 연결, IP·DNS 변경(자동 복원), 트래픽, 진단을 다룬다. 구조·복원 범위·진단 기준은 [네트워크 설정](docs/network.md), 점검은 `bash scripts/verify-network.sh`.
 - 장치가 없으면 `No network device`, 백엔드를 사용할 수 없으면 `Network unavailable`을 표시한다. QML 바인딩으로 장치 추가·제거, 연결 상태, 무선 활성화, SSID·신호 강도 변경을 반영한다.
 - 사용자 확인 결과의 `QM_Wifi_20F`는 활성 연결 프로필 이름이다. 실제 SSID가 같을 때만 같은 문구가 표시된다.
 

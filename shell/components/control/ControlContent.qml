@@ -89,7 +89,7 @@ FocusScope {
 	}
 	Connections { target: root.bluetooth; function onPromptChanged() { pin.clear(); if (pin.visible) pin.forceActiveFocus() } }
 	Component { id: overviewPage; ControlOverview { audio: root.audio; network: root.network; battery: root.battery; bluetooth: root.bluetooth; brightness: root.brightness; capture: root.capture; microphone: root.microphone; camera: root.camera; screenShare: root.screenShare; notifications: root.notifications; onNavigate: destination => root.navigate(destination) } }
-	Component { id: wifiPage; WifiPage { network: root.network } }
+	Component { id: wifiPage; WifiPage { network: root.network; onNavigate: destination => root.navigate(destination) } }
 	Component { id: bluetoothPage; BluetoothPage { bluetooth: root.bluetooth } }
 	Component { id: audioPage; AudioPage { audio: root.audio; microphone: root.microphone } }
 	Component { id: devicesPage; DevicesPage { microphone: root.microphone; camera: root.camera; screenShare: root.screenShare; onNavigate: destination => root.navigate(destination) } }

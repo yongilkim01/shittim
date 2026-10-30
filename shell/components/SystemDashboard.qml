@@ -31,7 +31,7 @@ PanelWindow {
         onNavigate: destination => DashboardState.select(destination)
         onCloseRequested: DashboardState.close()
         detailComponent: DashboardState.page === "apps" ? apps : DashboardState.page === "power" ? powerLock : DashboardState.page === "display" ? display
-            : DashboardState.page === "audio" ? audioPage : controls
+            : DashboardState.page === "audio" ? audioPage : DashboardState.page === "network" ? networkPage : controls
     }
     Component {
         id: apps
@@ -60,6 +60,10 @@ PanelWindow {
     Component {
         id: audioPage
         AudioSettingsPage { audio: AudioState; microphone: MicrophoneState; iconSource: name => Quickshell.iconPath(name, true) }
+    }
+    Component {
+        id: networkPage
+        NetworkSettingsPage { network: NetworkState; settings: NetworkSettingsState; traffic: DashboardState.model }
     }
     Component {
         id: controls

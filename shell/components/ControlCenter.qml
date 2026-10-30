@@ -32,8 +32,8 @@ PanelWindow {
 			notifications: NotificationState; session: PowerPolicyState
 			page: ControlState.page
 			onNavigate: destination => {
-				if (destination !== "power-settings") { ControlState.page = destination; return }
-				ControlState.close(); DashboardState.show(null); DashboardState.select("power")
+				if (destination !== "power-settings" && destination !== "network-settings") { ControlState.page = destination; return }
+				ControlState.close(); DashboardState.show(null); DashboardState.select(destination === "network-settings" ? "network" : "power")
 			}
 			onCloseRequested: ControlState.close()
 		}

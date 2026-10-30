@@ -30,6 +30,7 @@ ShellRoot {
 	NotificationPopups {}
 	SystemDashboard {}
 	DisplayConfirm {}
+	NetworkConfirm {}
 	AppMediaControls {}
 	WindowManager {}
 	SnapPreview {}

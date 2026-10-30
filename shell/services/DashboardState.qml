@@ -15,7 +15,8 @@ Scope {
     readonly property alias panelSession: session
     PanelSession { id:session;coordinator:InteractionState;name:"dashboard" }
     readonly property alias model: metrics
-    readonly property bool measuring: opened && page === "system"
+    // The network page shows the same collector's traffic; one process either way.
+    readonly property bool measuring: opened && (page === "system" || page === "network")
     readonly property bool controlsActive: opened && ["bluetooth", "display", "power", "settings"].indexOf(page) >= 0
     onMeasuringChanged: if (measuring) metrics.reset()
     function close() { session.close() }

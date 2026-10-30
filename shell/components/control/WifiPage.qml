@@ -5,6 +5,7 @@ import "../../ui"
 ColumnLayout {
 	id: root
 	required property var network
+	signal navigate(string destination)
 	spacing: Theme.spaceS
 	RowLayout {
 		HudText { text: "Wi-Fi"; textStyle: "body"; Layout.fillWidth: true }
@@ -72,5 +73,6 @@ ColumnLayout {
 		}
 	}
 	HudText { visible: root.network.wifiEnabled && root.network.networks.length === 0; text: "검색 결과가 없습니다. 잠시 후 다시 검색하세요."; Layout.fillWidth: true; wrapMode: Text.WordWrap; maximumLineCount: 2 }
+	HudButton { objectName: "wifiOpenSettings"; text: "네트워크 설정 열기"; Layout.fillWidth: true; onClicked: root.navigate("network-settings") }
 	HudButton { text: "기업용 / 숨겨진 네트워크 설정"; Layout.fillWidth: true; onClicked: root.network.openEditor() }
 }

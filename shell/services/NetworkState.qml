@@ -23,6 +23,8 @@ Scope {
 		|| wifiDevices.find(device => device.state === Net.ConnectionState.Connecting)
 		|| wifiDevices[0] || null
 	readonly property bool wifiEnabled: Net.Networking.wifiEnabled && Net.Networking.wifiHardwareEnabled
+	// Radio switched off by a hardware key or rfkill: software cannot turn it back on.
+	readonly property bool wifiBlocked: backendAvailable && !Net.Networking.wifiHardwareEnabled
 	readonly property bool wifiConnected: wifiEnabled && wifiDevice !== null && wifiDevice.connected
 	readonly property var wifiNetwork: {
 		if (!wifiConnected) return null
@@ -57,6 +59,25 @@ Scope {
 	function syncConsumer() { scanning = interactive; if (!interactive) { needsPassword=false;if(!busy)pendingNetwork=null } }
 	readonly property var networks: controlDevice === null ? [] : controlDevice.networks.values.slice().sort((a, b) =>
 		Number(b.connected) - Number(a.connected) || b.signalStrength - a.signalStrength)
+	// NetworkManager's own internet check (Arch: ping.archlinux.org). Being connected is not the same as reaching the internet.
+	readonly property string connectivity: !backendAvailable ? "unknown"
+		: ["unknown", "none", "portal", "limited", "full"][Net.Networking.connectivity] || "unknown"
+	readonly property bool connected: wifiConnected || wiredConnected
+	readonly property bool internetLimited: connected && (connectivity === "limited" || connectivity === "portal")
+	// Same codes as scripts/network-service.py so the settings page has one wording for both sources.
+	function securityCode(network) {
+		if (network === null) return "unknown"
+		switch (network.security) {
+		case Net.WifiSecurityType.Open: return "open"
+		case Net.WifiSecurityType.Owe: return "owe"
+		case Net.WifiSecurityType.StaticWep: case Net.WifiSecurityType.DynamicWep: return "wep"
+		case Net.WifiSecurityType.WpaPsk: return "wpa-psk"
+		case Net.WifiSecurityType.Wpa2Psk: return "wpa2-psk"
+		case Net.WifiSecurityType.Sae: return "sae"
+		case Net.WifiSecurityType.WpaEap: case Net.WifiSecurityType.Wpa2Eap: case Net.WifiSecurityType.Wpa3SuiteB192: case Net.WifiSecurityType.Leap: return "wpa-eap"
+		}
+		return "unknown"
+	}
 	function supportsPsk(network) {
 		return network !== null && [Net.WifiSecurityType.WpaPsk, Net.WifiSecurityType.Wpa2Psk, Net.WifiSecurityType.Sae].indexOf(network.security) >= 0
 	}

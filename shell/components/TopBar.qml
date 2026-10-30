@@ -138,13 +138,14 @@ PanelWindow {
 					iconFor: name => { const entry = DesktopEntries.heuristicLookup(name); return entry && entry.icon ? Quickshell.iconPath(entry.icon, true) : "" }
 					onDetailsRequested: ControlState.show(bar, statusArea, "devices")
 				}
-				Network { compact: true; anchors.verticalCenter: parent.verticalCenter }
+				Network { id: networkStatus; compact: true; anchors.verticalCenter: parent.verticalCenter }
 				Volume { compact: true; anchors.verticalCenter: parent.verticalCenter; onControlCenterRequested: ControlState.toggle(bar,statusArea) }
 				Battery { compact: true; anchors.verticalCenter: parent.verticalCenter }
 				HudDivider { anchors.verticalCenter: parent.verticalCenter }
 				Clock { compact: true; anchors.verticalCenter: parent.verticalCenter }
 			}
 			BarTooltip { target: deviceActivity.hoveredItem; card: deviceActivity.card }
+			BarTooltip { target: networkStatus.hoveredItem; card: networkStatus.card }
 		}
 	}
 }

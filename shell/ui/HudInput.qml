@@ -6,7 +6,8 @@ Controls.TextField {
 	implicitHeight: 36
 	color: Theme.textPrimary
 	placeholderTextColor: Theme.textMuted
-	font.family: /[\u1100-\u11ff\u3130-\u318f\uac00-\ud7af]/.test(text) ? Theme.fontKorean : Theme.fontMono
+	// An empty field shows its placeholder in the same font, so a Korean hint needs the Korean font too.
+	font.family: /[\u1100-\u11ff\u3130-\u318f\uac00-\ud7af]/.test(text || placeholderText) ? Theme.fontKorean : Theme.fontMono
 	font.pixelSize: Theme.textStatus
 	selectByMouse: true
 	background: Rectangle {

@@ -18,6 +18,7 @@ hypridle
 fuzzel
 networkmanager
 nm-connection-editor
+iputils
 bluez
 bluez-utils
 python-dbus-next
